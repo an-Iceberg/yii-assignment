@@ -8,6 +8,7 @@ class BookingController extends Controller
 {
   public function actionIndex()
   {
+    return $this->render('index');
   }
 
   public function actionTreatment()
@@ -22,7 +23,7 @@ class BookingController extends Controller
   {
   }
 
-  public function actionInput()
+  public function actionInputValidation()
   {
   }
 }

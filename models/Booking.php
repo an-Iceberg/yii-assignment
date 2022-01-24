@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\booking\models;
+namespace app\models;
 
 class Booking extends \yii\db\ActiveRecord
 {
@@ -18,9 +18,4 @@ class Booking extends \yii\db\ActiveRecord
   public $patent_email;
   public $newPatient;
   public $recall;
-
-  public function init()
-  {
-    parent::init();
-  }
 }

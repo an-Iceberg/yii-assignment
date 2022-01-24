@@ -19,7 +19,7 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'only' => ['logout'],
                 'rules' => [
                     [
@@ -30,7 +30,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -124,5 +124,55 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    /**
+     * Displays the page too book an appointment
+     *
+     * @return string
+     */
+    public function actionBooking()
+    {
+        return $this->render('booking');
+    }
+
+    /**
+     * Target for Ajax call
+     *
+     * @return void
+     */
+    public function actionTreatment()
+    {
+        if (Yii::$app->request->method == 'GET')
+        {
+            $this->redirect('/site/index');
+        }
+    }
+
+    /**
+     * Target for Ajax call
+     *
+     * @return void
+     */
+    public function actionDate()
+    {
+        if (Yii::$app->request->method == 'GET')
+        {
+            $this->redirect('/site/index');
+        }
+    }
+
+
+    /**
+     * Displays booked appointment on successful booking
+     *
+     * @return void|string
+     */
+    public function actionInputValidation()
+    {
+        if (Yii::$app->request->method == 'GET')
+        {
+            $this->redirect('/site/index');
+        }
     }
 }
