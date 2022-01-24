@@ -9,6 +9,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Profession;
 
 class SiteController extends Controller
 {
@@ -127,13 +128,18 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays the page too book an appointment
+     * Displays the page to book an appointment
      *
      * @return string
      */
     public function actionBooking()
     {
-        return $this->render('booking');
+        $profession = Profession::find()
+        ->all();
+
+        return $this->render('booking', [
+            'data' => $profession
+        ]);
     }
 
     /**
@@ -143,9 +149,9 @@ class SiteController extends Controller
      */
     public function actionTreatment()
     {
-        if (Yii::$app->request->method == 'GET')
+        if (Yii::$app->request->method != 'POST')
         {
-            $this->redirect('/site/index');
+            $this->redirect('/site/booking');
         }
     }
 
@@ -156,9 +162,9 @@ class SiteController extends Controller
      */
     public function actionDate()
     {
-        if (Yii::$app->request->method == 'GET')
+        if (Yii::$app->request->method != 'POST')
         {
-            $this->redirect('/site/index');
+            $this->redirect('/site/booking');
         }
     }
 
@@ -170,9 +176,15 @@ class SiteController extends Controller
      */
     public function actionInputValidation()
     {
-        if (Yii::$app->request->method == 'GET')
+        if (Yii::$app->request->method != 'POST')
         {
-            $this->redirect('/site/index');
+            $this->redirect('/site/booking');
         }
+
+        $parameters = Yii::$app->request->bodyParams;
+
+        return $this->render('bookingSuccess', [
+            'request' => $parameters
+        ]);
     }
 }

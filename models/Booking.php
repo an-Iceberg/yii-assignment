@@ -4,7 +4,7 @@ namespace app\models;
 
 class Booking extends \yii\db\ActiveRecord
 {
-  public $therapist;
+  public $doctor;
   public $treatment;
   public $date;
   public $patient_salutation;
@@ -18,4 +18,9 @@ class Booking extends \yii\db\ActiveRecord
   public $patent_email;
   public $newPatient;
   public $recall;
+
+  public static function tableName()
+  {
+    return 'bookings';
+  }
 }
