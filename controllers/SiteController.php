@@ -127,64 +127,64 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
-    /**
-     * Displays the page to book an appointment
-     *
-     * @return string
-     */
-    public function actionBooking()
-    {
-        $profession = Profession::find()
-        ->all();
+  /**
+   * Displays the page to book an appointment
+   *
+   * @return string
+   */
+  public function actionBooking()
+  {
+    $profession = Profession::find()
+    ->all();
 
-        return $this->render('booking', [
-            'data' => $profession
-        ]);
+    return $this->render('booking', [
+      'data' => $profession
+    ]);
+  }
+
+  /**
+   * Target for Ajax call
+   *
+   * @return void
+   */
+  public function actionTreatment()
+  {
+    if (Yii::$app->request->method != 'POST')
+    {
+      $this->redirect('/site/booking');
+    }
+  }
+
+  /**
+   * Target for Ajax call
+   *
+   * @return void
+   */
+  public function actionDate()
+  {
+    if (Yii::$app->request->method != 'POST')
+    {
+      $this->redirect('/site/booking');
+    }
+  }
+
+
+  /**
+   * Displays booked appointment on successful booking
+   *
+   * @return void|string
+   */
+  public function actionInputValidation()
+  {
+    if (Yii::$app->request->method != 'POST')
+    {
+      $this->redirect('/site/booking');
     }
 
-    /**
-     * Target for Ajax call
-     *
-     * @return void
-     */
-    public function actionTreatment()
-    {
-        if (Yii::$app->request->method != 'POST')
-        {
-            $this->redirect('/site/booking');
-        }
-    }
+    $parameters = Yii::$app->request->bodyParams;
 
-    /**
-     * Target for Ajax call
-     *
-     * @return void
-     */
-    public function actionDate()
-    {
-        if (Yii::$app->request->method != 'POST')
-        {
-            $this->redirect('/site/booking');
-        }
-    }
-
-
-    /**
-     * Displays booked appointment on successful booking
-     *
-     * @return void|string
-     */
-    public function actionInputValidation()
-    {
-        if (Yii::$app->request->method != 'POST')
-        {
-            $this->redirect('/site/booking');
-        }
-
-        $parameters = Yii::$app->request->bodyParams;
-
-        return $this->render('bookingSuccess', [
-            'request' => $parameters
-        ]);
-    }
+    return $this->render('bookingSuccess', [
+      'request' => $parameters
+    ]);
+  }
 }
