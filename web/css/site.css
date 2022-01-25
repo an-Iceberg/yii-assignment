@@ -82,3 +82,11 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.not-visible {
+    visibility: hidden;
+}

@@ -15,7 +15,8 @@ class Booking extends \yii\db\ActiveRecord
   public $patient_zipCode;
   public $patient_city;
   public $patient_phoneNumber;
-  public $patent_email;
+  public $patient_email;
+  public $patient_comment;
   public $newPatient;
   public $recall;
 
