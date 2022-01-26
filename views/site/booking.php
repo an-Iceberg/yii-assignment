@@ -40,6 +40,7 @@ $bookingForm = ActiveForm::begin([
       Please select one of the options!
     </div>
 
+    <hr>
     <div class="form-group col-lg-offset-1 col-lg-11">
       <span class="btn btn-secondary not-visible">Back</span>
       <span id="type-next-btn" class="btn btn-primary">Next</span>
@@ -54,6 +55,13 @@ $bookingForm = ActiveForm::begin([
 
     <?php // Treatment ?>
 
+    <p id="treatment-content"></p>
+
+    <div class="alert alert-danger" id="treatment-error" role="alert">
+      Please select one of the options!
+    </div>
+
+    <hr>
     <div class="form-group col-lg-offset-1 col-lg-11">
       <span id="treatment-back-btn" class="btn btn-outline-secondary">Back</span>
       <span id="treatment-next-btn" class="btn btn-primary">Next</span>
@@ -68,6 +76,7 @@ $bookingForm = ActiveForm::begin([
 
     <?php // Date ?>
 
+    <hr>
     <div class="form-group col-lg-offset-1 col-lg-11">
       <span id="date-back-btn" class="btn btn-outline-secondary">Back</span>
       <span id="date-next-btn" class="btn btn-primary">Next</span>
@@ -81,7 +90,10 @@ $bookingForm = ActiveForm::begin([
     <h2 class="h3">Please enter your personal data</h2>
 
       <div class="d-flex flex-row w-100 container">
+
+        <?php // Left input block ?>
         <div class="mr-3 flex-fill">
+
           <?php // Personal data ?>
           <div class="input-group mb-3">
 
@@ -124,7 +136,9 @@ $bookingForm = ActiveForm::begin([
           </div>
         </div>
 
+        <?php // Right input block ?>
         <div class="flex-fill">
+
           <?php // Comment ?>
           <div class="input-group mb-3">
             <textarea name="booking[patient_comment]" aria-label="Comment" class="form-control" placeholder="Comment" style="height: 200px;"></textarea>
@@ -150,6 +164,7 @@ $bookingForm = ActiveForm::begin([
         </div>
       </div>
 
+      <hr>
       <div class="form-group col-lg-offset-1 col-lg-11">
         <span id="data-back-btn" class="btn btn-outline-secondary">Back</span>
         <span id="data-next-btn" class="btn btn-primary">Next</span>
@@ -164,6 +179,7 @@ $bookingForm = ActiveForm::begin([
 
     <?php // Overview ?>
 
+    <hr>
     <div class="form-group col-lg-offset-1 col-lg-11">
       <span id="overview-back-btn" class="btn btn-outline-secondary">Back</span>
       <?= Html::submitButton('Submit', [

@@ -7,21 +7,57 @@ $('#overview').hide();
 
 // Hiding all the error messages
 $('#treatment-type-error').hide();
+$('#treatment-error').hide();
 
-// --
+
 
 // Switching from type to treatment
 $('#type-next-btn').click(() => {
 
+  elements = document.getElementsByName('booking[doctor]');
+  doctor = '';
+
+  // Puts the value of the selected radio button in 'doctor'
+  for (i = 0; i < elements.length; i++)
+  {
+    if(elements[i].checked)
+    {
+      doctor = elements[i].value;
+      // console.log('doctor:', doctor);
+    }
+  }
+
   // Input validation
   // Only go to the next step, if a radio button has been selected
-  if ($('input[name="booking[doctor]"]').is(':checked'))
+  if (doctor != '')
   {
+    // Ajax call to get all available treatments
+    $.ajax('/site/treatment',{
+      async: true,
+      method: 'POST',
+      // contentType: 'text/plain', // <- for some reason this makes the request body undetectable in Yii
+      data: doctor,
+      success: (data, status, jqXHR) =>
+      {
+        // Puts the returned content into the treatment section
+        $('#treatment-content').html(() =>
+        {
+          string = '<pre>' + data + '</pre>';
+          return string;
+        });
+      },
+      error: (jqXHR, status, error) =>
+      {
+        console.log("Ajax call onto /site/treatment failed");
+        console.log(error);
+      }
+    });
+
     $('#treatment-type-error').hide();
     $('#treatment-type').hide();
     $('#treatment').show();
   }
-  // No radio buttons were selected
+  // No radio button was selected
   else
   {
     $('#treatment-type-error').show();
@@ -32,9 +68,10 @@ $('#type-next-btn').click(() => {
 $('#treatment-back-btn').click(() => {
   $('#treatment').hide();
   $('#treatment-type').show();
+  $('#treatment-content').text('');
 })
 
-// --
+
 
 // Switching from treatment to date
 $('#treatment-next-btn').click(() => {
@@ -48,7 +85,7 @@ $('#date-back-btn').click(() => {
   $('#treatment').show();
 })
 
-// --
+
 
 // Switching from date to personal data
 $('#date-next-btn').click(() => {
@@ -62,9 +99,7 @@ $('#data-back-btn').click(() => {
   $('#date').show();
 })
 
-// --
 
-// Input validation
 
 // Switching from personal data to overview
 $('#data-next-btn').click(() => {
@@ -90,6 +125,7 @@ $('#data-next-btn').click(() => {
 
   let allInputIsValid = true;
 
+  // Input validation
   // Salutation
   if (salutation.val() == null) {
     salutation.css('border-color', '#dc3545');

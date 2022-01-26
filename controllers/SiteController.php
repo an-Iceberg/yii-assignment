@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Profession;
+use app\models\Treatment;
 
 class SiteController extends Controller
 {
@@ -134,8 +135,7 @@ class SiteController extends Controller
    */
   public function actionBooking()
   {
-    $profession = Profession::find()
-    ->all();
+    $profession = Profession::getAllProfessions();
 
     return $this->render('booking', [
       'data' => $profession
@@ -145,14 +145,60 @@ class SiteController extends Controller
   /**
    * Target for Ajax call
    *
-   * @return void
+   * @return void|string
    */
   public function actionTreatment()
   {
+    // If this site is not accessed via POST method, redirect to /site/booking
     if (Yii::$app->request->method != 'POST')
     {
       $this->redirect('/site/booking');
     }
+
+    $bodyParam = Yii::$app->request->bodyParams;
+    $bodyParam = json_encode($bodyParam);
+
+    // Extracts the parameter from the encoded string into $profession (this is a workaround because Yii doesn't seem to be able to detect ajax payloads sent as 'text/plain')
+    $copy = false;
+    $profession = '';
+    for ($i = 0; $i < strlen($bodyParam); $i++)
+    {
+        if (!$copy && $bodyParam[$i] == '"')
+        {
+            $copy = true;
+            continue;
+        }
+
+        if ($copy && $bodyParam[$i] == '"')
+        {
+            break;
+        }
+
+        if ($copy)
+        {
+            $profession .= $bodyParam[$i];
+        }
+    }
+
+    // Replaces all underscores with whitespaces
+    $profession = str_replace('_', ' ', $profession);
+
+    // Retrieves data from database
+    $queryResults = Treatment::getTreatments($profession);
+
+    // Extracts the treatments from $queryResult
+    $treatments = '';
+    for ($i = 0; $i < sizeof($queryResults); $i++)
+    {
+        $treatments .= $queryResults[$i]->treatment;
+
+        if ($i < sizeof($queryResults) - 1)
+        {
+            $treatments .= '<br>';
+        }
+    }
+
+    return $treatments;
   }
 
   /**
@@ -162,6 +208,7 @@ class SiteController extends Controller
    */
   public function actionDate()
   {
+    // If this site is not accessed via POST method, redirect to /site/booking
     if (Yii::$app->request->method != 'POST')
     {
       $this->redirect('/site/booking');
@@ -176,6 +223,7 @@ class SiteController extends Controller
    */
   public function actionInputValidation()
   {
+    // If this site is not accessed via POST method, redirect to /site/booking
     if (Yii::$app->request->method != 'POST')
     {
       $this->redirect('/site/booking');
