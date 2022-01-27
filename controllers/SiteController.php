@@ -155,47 +155,28 @@ class SiteController extends Controller
       $this->redirect('/site/booking');
     }
 
-    $bodyParam = Yii::$app->request->bodyParams;
-    $bodyParam = json_encode($bodyParam);
+    // Extracting the relevant input data from the request
+    $booking = Yii::$app->request->bodyParams['booking'];
 
-    // Extracts the parameter from the encoded string into $profession (this is a workaround because Yii doesn't seem to be able to detect ajax payloads sent as 'text/plain')
-    $copy = false;
-    $profession = '';
-    for ($i = 0; $i < strlen($bodyParam); $i++)
-    {
-        if (!$copy && $bodyParam[$i] == '"')
-        {
-            $copy = true;
-            continue;
-        }
+    // Retrieving data from database
+    $queryResults = Treatment::getTreatments($booking['doctor']);
 
-        if ($copy && $bodyParam[$i] == '"')
-        {
-            break;
-        }
-
-        if ($copy)
-        {
-            $profession .= $bodyParam[$i];
-        }
-    }
-
-    // Replaces all underscores with whitespaces
-    $profession = str_replace('_', ' ', $profession);
-
-    // Retrieves data from database
-    $queryResults = Treatment::getTreatments($profession);
-
-    // Extracts the treatments from $queryResult
+    // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be inserted into the correct place without any additional editing
     $treatments = '';
     for ($i = 0; $i < sizeof($queryResults); $i++)
     {
-        $treatments .= $queryResults[$i]->treatment;
+      $treatments .=
+      '<label>'.
+      '<input type="radio" name="booking[treatment]" value="'.
+      $queryResults[$i]->treatment.
+      '"> '.
+      $queryResults[$i]->treatment.
+      '</label>';
 
-        if ($i < sizeof($queryResults) - 1)
-        {
-            $treatments .= '<br>';
-        }
+      if ($i < sizeof($queryResults) - 1)
+      {
+        $treatments .= '<br>';
+      }
     }
 
     return $treatments;

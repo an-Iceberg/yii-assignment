@@ -1,10 +1,12 @@
 <?php
 use app\assets\BookingAsset;
+use app\assets\JqueryuiAsset;
 use app\models\Booking;
 use yii\helpers\Html;
 // use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
 
+JqueryuiAsset::register($this);
 BookingAsset::register($this);
 
 $booking = new Booking();
@@ -37,11 +39,11 @@ $bookingForm = ActiveForm::begin([
     <?php } ?>
 
     <div class="alert alert-danger" id="treatment-type-error" role="alert">
-      Please select one of the options!
+      Please select one of the options.
     </div>
 
     <hr>
-    <div class="form-group col-lg-offset-1 col-lg-11">
+    <div class="form-group col-lg-offset-1 col-lg-11 pl-0">
       <span class="btn btn-secondary not-visible">Back</span>
       <span id="type-next-btn" class="btn btn-primary">Next</span>
     </div>
@@ -55,14 +57,14 @@ $bookingForm = ActiveForm::begin([
 
     <?php // Treatment ?>
 
-    <p id="treatment-content"></p>
+    <div class="capitalize" id="treatment-content"></div>
 
     <div class="alert alert-danger" id="treatment-error" role="alert">
-      Please select one of the options!
+      Please select one of the options.
     </div>
 
     <hr>
-    <div class="form-group col-lg-offset-1 col-lg-11">
+    <div class="form-group col-lg-offset-1 col-lg-11 pl-0">
       <span id="treatment-back-btn" class="btn btn-outline-secondary">Back</span>
       <span id="treatment-next-btn" class="btn btn-primary">Next</span>
     </div>
@@ -72,12 +74,50 @@ $bookingForm = ActiveForm::begin([
 
   <div id="date">
 
-    <h2 class="h3">Pick a date that's suitable for you</h2>
+    <h2 class="h3">Pick a date and time that's suitable for you</h2>
 
     <?php // Date ?>
 
+    <div id="date-content" class="input-group mb-3">
+      <!-- <input aria-label="date" type="date" name="booking[date]" min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>" max="<?php
+      $date = new DateTime();
+      $date->modify('+6 month');
+      echo $date->format('Y-m-d');
+      ?>" step="0.71" class="form-control"> -->
+
+      <input readonly type="text" id="datepicker" class="form-control" name="booking[date]" placeholder="Pick a date *">
+
+      <select name="booking[hours]" class="form-control">
+        <option value="" selected disabled>Select an hour *</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+      </select>
+
+      <select name="booking[minutes]" class="form-control">
+        <option value="" selected disabled>Select a minute *</option>
+        <option value="00">00</option>
+        <option value="15">15</option>
+        <option value="30">30</option>
+        <option value="45">45</option>
+      </select>
+    </div>
+
+    <div class="alert alert-danger" id="date-error" role="alert">
+      Please pick a date and time.
+    </div>
+
     <hr>
-    <div class="form-group col-lg-offset-1 col-lg-11">
+    <div class="form-group col-lg-offset-1 col-lg-11 pl-0">
       <span id="date-back-btn" class="btn btn-outline-secondary">Back</span>
       <span id="date-next-btn" class="btn btn-primary">Next</span>
     </div>
@@ -165,7 +205,7 @@ $bookingForm = ActiveForm::begin([
       </div>
 
       <hr>
-      <div class="form-group col-lg-offset-1 col-lg-11">
+      <div class="form-group col-lg-offset-1 col-lg-11 pl-0">
         <span id="data-back-btn" class="btn btn-outline-secondary">Back</span>
         <span id="data-next-btn" class="btn btn-primary">Next</span>
       </div>
@@ -180,7 +220,7 @@ $bookingForm = ActiveForm::begin([
     <?php // Overview ?>
 
     <hr>
-    <div class="form-group col-lg-offset-1 col-lg-11">
+    <div class="form-group col-lg-offset-1 col-lg-11 pl-0">
       <span id="overview-back-btn" class="btn btn-outline-secondary">Back</span>
       <?= Html::submitButton('Submit', [
         'class' => 'btn btn-primary submit-button',

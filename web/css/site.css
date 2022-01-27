@@ -91,9 +91,13 @@ a.desc:after {
   visibility: hidden;
 }
 
-/* input:invalid, select:invalid {
-    border-color: #dc3545;
-} */
+.form-control:read-only {
+  background-color: #fff !important;
+}
+
+input[type="text"] {
+  padding-left: 0.75rem !important;
+}
 
 @media (max-width: 1000px) {
   .container {

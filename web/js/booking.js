@@ -8,95 +8,159 @@ $('#overview').hide();
 // Hiding all the error messages
 $('#treatment-type-error').hide();
 $('#treatment-error').hide();
+$('#date-error').hide();
+
+// Creates the date picker
+// To modify the styles, edit the jquery-ui-1.10.0.custom.css
+$('#datepicker').datepicker({
+  beforeShowDay: (date) => {
+    return [(date.getDay() != 0), ''];
+  },
+  minDate: 0,
+  maxDate: '+6m',
+  dateFormat: 'yy-mm-dd',
+  showAnim: 'slideDown',
+  showButtonPanel: true,
+  changeMonth: true,
+  changeYear: true,
+});
 
 
 
 // Switching from type to treatment
 $('#type-next-btn').click(() => {
-
-  elements = document.getElementsByName('booking[doctor]');
-  doctor = '';
-
-  // Puts the value of the selected radio button in 'doctor'
-  for (i = 0; i < elements.length; i++)
-  {
-    if(elements[i].checked)
-    {
-      doctor = elements[i].value;
-      // console.log('doctor:', doctor);
-    }
-  }
+  // Hiding the error whenever the button is clicked makes for a nice effect
+  $('#treatment-type-error').fadeOut();
 
   // Input validation
-  // Only go to the next step, if a radio button has been selected
-  if (doctor != '')
+  // Only proceed, if a radio button has been selected
+  if ($('input[name="booking[doctor]"]').is(':checked'))
   {
+    form = $('#booking-form');
+
     // Ajax call to get all available treatments
     $.ajax('/site/treatment',{
       async: true,
       method: 'POST',
-      // contentType: 'text/plain', // <- for some reason this makes the request body undetectable in Yii
-      data: doctor,
+      data: form.serialize(),
       success: (data, status, jqXHR) =>
       {
-        // Puts the returned content into the treatment section
-        $('#treatment-content').html(() =>
-        {
-          string = '<pre>' + data + '</pre>';
-          return string;
-        });
+        // Puts the returned content into the correct position in the DOM
+        $('#treatment-content').html(data);
       },
       error: (jqXHR, status, error) =>
       {
         console.log("Ajax call onto /site/treatment failed");
         console.log(error);
+        $('#treatment-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>");
       }
     });
 
-    $('#treatment-type-error').hide();
-    $('#treatment-type').hide();
-    $('#treatment').show();
+    $('#treatment-type-error').fadeOut();
+    // Creates a nice fading effect between the two segments
+    $('#treatment-type').fadeOut(400, () => {
+      $('#treatment').fadeIn();
+    });
   }
   // No radio button was selected
   else
   {
-    $('#treatment-type-error').show();
+    $('#treatment-type-error').fadeIn();
   }
 })
 
 // Switching from treatment to type
 $('#treatment-back-btn').click(() => {
-  $('#treatment').hide();
-  $('#treatment-type').show();
-  $('#treatment-content').text('');
+  $('#treatment-error').fadeOut();
+  $('#treatment-type-error').fadeOut();
+  $('#treatment').fadeOut(400, () => {
+    $('#treatment-type').fadeIn();
+    $('#treatment-content').text('');
+  });
 })
 
 
 
 // Switching from treatment to date
 $('#treatment-next-btn').click(() => {
-  $('#treatment').hide();
-  $('#date').show();
+  $('#treatment-error').fadeOut();
+
+  // Input validation
+  // Only proceed, if a radio button has been selected
+  if ($('input[name="booking[treatment]"]').is(':checked'))
+  {
+    form = $('#booking-form');
+
+    // Ajax call to get all available dates
+    $.ajax('/site/date', {
+      async: true,
+      method: 'POST',
+      data: form.serialize(),
+      success: (data, status, jqXHR) =>
+      {
+        // Fill in the available dates correctly
+      },
+      error: (jqXHR, status, error) =>
+      {
+        console.log("Ajax call onto /site/date failed");
+        console.log(error);
+        $('#date-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>")
+      }
+    });
+
+    $('#treatment-error').fadeOut();
+    $('#treatment').fadeOut(400, () => {
+      $('#date').fadeIn();
+    });
+  }
+  // No radio button was selected
+  else
+  {
+    $('#treatment-error').fadeIn();
+  }
 })
 
 // Switching from date to treatment
 $('#date-back-btn').click(() => {
-  $('#date').hide();
-  $('#treatment').show();
+  $('#treatment-error').fadeOut();
+  $('#date').fadeOut(400, () => {
+    $('#treatment').fadeIn();
+  });
 })
 
 
 
 // Switching from date to personal data
 $('#date-next-btn').click(() => {
-  $('#date').hide();
-  $('#personal-data').show();
+  $('#date-error').fadeOut();
+
+  // Input validation
+  date = $('input[name="booking[date]"]').val();
+  hour = $('select[name="booking[hours]"]').val();
+  minute = $('select[name="booking[minutes]"]').val();
+
+  // Only proceed, if none of the selected values are empty
+  if (date != '' && hour != null && minute != null)
+  {
+    $('#date-error').fadeOut();
+    $('#date').fadeOut(400, () => {
+      $('#personal-data').fadeIn();
+    });
+  }
+  // At least one value is empty
+  else
+  {
+    $('#date-error').fadeIn();
+  }
+
 })
 
 // Switching from personal data to date
 $('#data-back-btn').click(() => {
-  $('#personal-data').hide();
-  $('#date').show();
+  $('#date-error').fadeOut();
+  $('#personal-data').fadeOut(400, () => {
+      $('#date').fadeIn();
+  });
 })
 
 
@@ -216,13 +280,15 @@ $('#data-next-btn').click(() => {
 
   // Only moving on to the overview if all data is valid
   if (allInputIsValid) {
-    $('#personal-data').hide();
-    $('#overview').show();
+    $('#personal-data').fadeOut(400, () => {
+      $('#overview').fadeIn();
+    });
   }
 })
 
 // Switching from overview to personal data
 $('#overview-back-btn').click(() => {
-  $('#overview').hide();
-  $('#personal-data').show();
+  $('#overview').fadeOut(400, () => {
+    $('#personal-data').fadeIn();
+  });
 })
