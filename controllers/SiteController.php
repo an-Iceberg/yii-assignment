@@ -9,8 +9,10 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Holidays;
 use app\models\Profession;
 use app\models\Treatment;
+use app\models\Booking;
 
 class SiteController extends Controller
 {
@@ -144,6 +146,7 @@ class SiteController extends Controller
 
   /**
    * Target for Ajax call
+   * Returns all treatments for the selected type
    *
    * @return void|string
    */
@@ -158,7 +161,7 @@ class SiteController extends Controller
     // Extracting the relevant input data from the request
     $booking = Yii::$app->request->bodyParams['booking'];
 
-    // Retrieving data from database
+    // Retrieving treatments from database
     $queryResults = Treatment::getTreatments($booking['doctor']);
 
     // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be inserted into the correct place without any additional editing
@@ -184,18 +187,59 @@ class SiteController extends Controller
 
   /**
    * Target for Ajax call
+   * Returns all holidays
    *
-   * @return void
+   * @return void|string
    */
-  public function actionDate()
+  public function actionGetHolidays()
   {
     // If this site is not accessed via POST method, redirect to /site/booking
     if (Yii::$app->request->method != 'POST')
     {
       $this->redirect('/site/booking');
     }
+
+    // Retrieving holidays and bookings from the database
+    $holidays = Holidays::getHolidays();
+
+    $responseData = [];
+
+    // Populating the response data array with the dates
+    foreach ($holidays as $date)
+    {
+      $responseData[] = $date->date;
+    }
+
+    return json_encode($responseData);
   }
 
+  /**
+   * Target for Ajax call
+   * Returns all bookings for a specific date
+   *
+   * @return void|string
+   */
+  public function actionGetBookings()
+  {
+    // If this site is not accessed via POST method, redirect to /site/booking
+    if (Yii::$app->request->method != 'POST')
+    {
+      $this->redirect('/site/booking');
+    }
+
+    $booking = Yii::$app->request->bodyParams['booking'];
+
+    $queryResults = Booking::getBookings($booking['doctor'], $booking['treatment'], $booking['date']);
+
+    $responseData = [];
+
+    foreach ($queryResults as $value)
+    {
+      $responseData[] = substr($value->date, 11, 5);
+    }
+
+    return json_encode($responseData);
+  }
 
   /**
    * Displays booked appointment on successful booking

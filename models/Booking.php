@@ -73,4 +73,15 @@ class Booking extends \yii\db\ActiveRecord
       'recall' => 'Recall',
     ];
   }
+
+  // Returns the dates and times of the reserved bookings
+  public static function getBookings($doctor, $treatment, $date)
+  {
+    return Booking::find()
+    ->select('date')
+    ->where('doctor=:doctor', [':doctor' => $doctor])
+    ->andWhere('treatment=:treatment', [':treatment' => $treatment])
+    ->andWhere('date LIKE :date', [':date' => '%'.$date.'%'])
+    ->all();
+  }
 }

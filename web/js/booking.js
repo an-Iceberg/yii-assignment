@@ -10,21 +10,6 @@ $('#treatment-type-error').hide();
 $('#treatment-error').hide();
 $('#date-error').hide();
 
-// Creates the date picker
-// To modify the styles, edit the jquery-ui-1.10.0.custom.css
-$('#datepicker').datepicker({
-  beforeShowDay: (date) => {
-    return [(date.getDay() != 0), ''];
-  },
-  minDate: 0,
-  maxDate: '+6m',
-  dateFormat: 'yy-mm-dd',
-  showAnim: 'slideDown',
-  showButtonPanel: true,
-  changeMonth: true,
-  changeYear: true,
-});
-
 
 
 // Switching from type to treatment
@@ -85,6 +70,10 @@ $('#treatment-back-btn').click(() => {
 $('#treatment-next-btn').click(() => {
   $('#treatment-error').fadeOut();
 
+  // Resetting the contents of the date and time inputs
+  $('#datepicker').val(null);
+  $('select[name="booking[time]"').val('');
+
   // Input validation
   // Only proceed, if a radio button has been selected
   if ($('input[name="booking[treatment]"]').is(':checked'))
@@ -92,17 +81,84 @@ $('#treatment-next-btn').click(() => {
     form = $('#booking-form');
 
     // Ajax call to get all available dates
-    $.ajax('/site/date', {
+    $.ajax('/site/get-holidays', {
       async: true,
       method: 'POST',
-      data: form.serialize(),
       success: (data, status, jqXHR) =>
       {
-        // Fill in the available dates correctly
+        let dates = JSON.parse(data);
+
+        // Creates the date picker
+        $('#datepicker').datepicker({
+          beforeShowDay: (date) => {
+
+            // If the date is a sunday, disable it
+            if(date.getDay() == 0)
+            {
+              return [false, ''];
+            }
+
+            // This is a small workaround but it's not tragic
+            isHoliday = false;
+
+            // If the date matches a holiday, set the flag
+            dates.forEach(holiday => {
+              if (date.getDate() == parseInt(holiday.substring(8,10)) && date.getMonth() == parseInt(holiday.substring(5,7)) - 1 && date.getFullYear() == parseInt(holiday.substring(0,4)))
+              {
+                isHoliday = true;
+              }
+            });
+
+            // Disable the date
+            if (isHoliday)
+            {
+              return [false, ''];
+            }
+
+            return [true, ''];
+          },
+          minDate: 0,
+          maxDate: '+6m',
+          dateFormat: 'yy-mm-dd',
+          showAnim: 'slideDown',
+          changeMonth: true,
+          changeYear: true,
+
+          // When the date gets selected, fetch the booking times
+          onSelect: (dateText, inst) =>
+          {
+            $.ajax('/site/get-bookings', {
+              async: true,
+              method: 'POST',
+              data: form.serialize(),
+              success: (data, status, jqXHR) => {
+                let times = JSON.parse(data);
+
+                // Resetting the contents of the time input
+                $('select[name="booking[time]"').val('');
+
+                // Enabling all options upon date change (except the placeholder text)
+                $('option').attr({'disabled': false});
+                $('option[value=""]').attr({'disabled': true});
+
+                // Disable the times that have already been booked
+                times.forEach(time => {
+                  $('option[value="'+time+'"]').attr({'disabled': true});
+                })
+              },
+              error: (jqXHR, status, error) =>
+              {
+                console.log("Ajax call onto /site/get-bookings failed");
+                console.log(error);
+                $('#date-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>")
+              }
+            })
+          }
+        });
       },
       error: (jqXHR, status, error) =>
       {
-        console.log("Ajax call onto /site/date failed");
+        console.log("Ajax call onto /site/get-holidays failed");
         console.log(error);
         $('#date-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>")
       }
@@ -136,11 +192,10 @@ $('#date-next-btn').click(() => {
 
   // Input validation
   date = $('input[name="booking[date]"]').val();
-  hour = $('select[name="booking[hours]"]').val();
-  minute = $('select[name="booking[minutes]"]').val();
+  time = $('select[name="booking[time]"]').val();
 
   // Only proceed, if none of the selected values are empty
-  if (date != '' && hour != null && minute != null)
+  if (date != '' && time != null)
   {
     $('#date-error').fadeOut();
     $('#date').fadeOut(400, () => {

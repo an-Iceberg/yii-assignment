@@ -79,36 +79,71 @@ $bookingForm = ActiveForm::begin([
     <?php // Date ?>
 
     <div id="date-content" class="input-group mb-3">
-      <!-- <input aria-label="date" type="date" name="booking[date]" min="<?= date('Y-m-d') ?>" value="<?= date('Y-m-d') ?>" max="<?php
-      $date = new DateTime();
-      $date->modify('+6 month');
-      echo $date->format('Y-m-d');
-      ?>" step="0.71" class="form-control"> -->
 
       <input readonly type="text" id="datepicker" class="form-control" name="booking[date]" placeholder="Pick a date *">
 
-      <select name="booking[hours]" class="form-control">
-        <option value="" selected disabled>Select an hour *</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
-        <option value="19">19</option>
-      </select>
+      <select name="booking[time]" class="form-control">
+        <option value="" selected disabled>Select a time *</option>
 
-      <select name="booking[minutes]" class="form-control">
-        <option value="" selected disabled>Select a minute *</option>
-        <option value="00">00</option>
-        <option value="15">15</option>
-        <option value="30">30</option>
-        <option value="45">45</option>
+        <option value="08:00">8:00</option>
+        <option value="08:15">8:15</option>
+        <option value="08:30">8:30</option>
+        <option value="08:45">8:45</option>
+
+        <option value="09:00">9:00</option>
+        <option value="09:15">9:15</option>
+        <option value="09:30">9:30</option>
+        <option value="09:45">9:45</option>
+
+        <option value="10:00">10:00</option>
+        <option value="10:15">10:15</option>
+        <option value="10:30">10:30</option>
+        <option value="10:45">10:45</option>
+
+        <option value="11:00">11:00</option>
+        <option value="11:15">11:15</option>
+        <option value="11:30">11:30</option>
+        <option value="11:45">11:45</option>
+
+        <option value="12:00">12:00</option>
+        <option value="12:15">12:15</option>
+        <option value="12:30">12:30</option>
+        <option value="12:45">12:45</option>
+
+        <option value="13:00">13:00</option>
+        <option value="13:15">13:15</option>
+        <option value="13:30">13:30</option>
+        <option value="13:45">13:45</option>
+
+        <option value="14:00">14:00</option>
+        <option value="14:15">14:15</option>
+        <option value="14:30">14:30</option>
+        <option value="14:45">14:45</option>
+
+        <option value="15:00">15:00</option>
+        <option value="15:15">15:15</option>
+        <option value="15:30">15:30</option>
+        <option value="15:45">15:45</option>
+
+        <option value="16:00">16:00</option>
+        <option value="16:15">16:15</option>
+        <option value="16:30">16:30</option>
+        <option value="16:45">16:45</option>
+
+        <option value="17:00">17:00</option>
+        <option value="17:15">17:15</option>
+        <option value="17:30">17:30</option>
+        <option value="17:45">17:45</option>
+
+        <option value="18:00">18:00</option>
+        <option value="18:15">18:15</option>
+        <option value="18:30">18:30</option>
+        <option value="18:45">18:45</option>
+
+        <option value="19:00">19:00</option>
+        <option value="19:15">19:15</option>
+        <option value="19:30">19:30</option>
+        <option value="19:45">19:45</option>
       </select>
     </div>
 
