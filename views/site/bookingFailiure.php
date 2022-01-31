@@ -2,9 +2,10 @@
 
 use yii\helpers\Html;
 ?>
+
 <?= $message ?>
 <br>
 
-<?= Html::a('Back to homepage', '/site/index', [
+<?= Html::a('Try again', '/site/booking', [
   'class' => 'mt-3 btn btn-primary'
 ]) ?>

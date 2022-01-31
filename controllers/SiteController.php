@@ -13,6 +13,7 @@ use app\models\Holidays;
 use app\models\Profession;
 use app\models\Treatment;
 use app\models\Booking;
+use yii\helpers\VarDumper;
 
 class SiteController extends Controller
 {
@@ -254,10 +255,86 @@ class SiteController extends Controller
       $this->redirect('/site/booking');
     }
 
-    $parameters = Yii::$app->request->bodyParams;
+    $booking = new Booking();
 
-    return $this->render('bookingSuccess', [
-      'request' => $parameters
+    $requestData = Yii::$app->request->bodyParams['booking'];
+
+    // Assigning the request data to the Booking object
+    $booking->doctor = $requestData['doctor'];
+    $booking->treatment = $requestData['treatment'];
+    $booking->date = $requestData['date'].' '.$requestData['time'].':00';
+    $booking->patient_salutation = $requestData['patient_salutation'];
+    $booking->patient_firstName = $requestData['patient_firstName'];
+    $booking->patient_lastName = $requestData['patient_lastName'];
+    $booking->patient_birthdate = $requestData['patient_birthdate'];
+    $booking->patient_street = $requestData['patient_street'];
+    $booking->patient_zipCode = $requestData['patient_zipCode'];
+    $booking->patient_city = $requestData['patient_city'];
+    $booking->patient_phoneNumber = $requestData['patient_phoneNumber'];
+    $booking->patient_email = $requestData['patient_email'];
+    $booking->patient_comment = $requestData['patient_comment'];
+    $booking->newPatient = $requestData['newPatient'] == '1' ? 1 : 0;
+    $booking->recall = $requestData['recall'] == '1' ? 1 : 0;
+
+    // If the validation is successful, insert values into database
+    if ($booking->validate()) {
+
+      // Creating insert query
+      $insertQuery = Yii::$app->db->createCommand('INSERT INTO bookings VALUES (
+        :doctor,
+        :treatment,
+        :date,
+        :patient_salutation,
+        :patient_firstName,
+        :patient_lastName,
+        :patient_birthdate,
+        :patient_street,
+        :patient_zipCode,
+        :patient_city,
+        :patient_phoneNumber,
+        :patient_email,
+        :patient_comment,
+        :newPatient,
+        :recall
+      );');
+
+      // Binding values
+      $insertQuery->bindValue(':doctor', $booking->doctor)
+      ->bindValue(':treatment', $booking->treatment)
+      ->bindValue(':date', $booking->date)
+      ->bindValue(':patient_salutation', $booking->patient_salutation)
+      ->bindValue(':patient_firstName', $booking->patient_firstName)
+      ->bindValue(':patient_lastName', $booking->patient_lastName)
+      ->bindValue(':patient_birthdate', $booking->patient_birthdate)
+      ->bindValue(':patient_street', $booking->patient_street)
+      ->bindValue(':patient_zipCode', $booking->patient_zipCode)
+      ->bindValue(':patient_city', $booking->patient_city)
+      ->bindValue(':patient_phoneNumber', $booking->patient_phoneNumber)
+      ->bindValue(':patient_email', $booking->patient_email)
+      ->bindValue(':patient_comment', $booking->patient_comment)
+      ->bindValue(':newPatient', $booking->newPatient)
+      ->bindValue(':recall', $booking->recall);
+
+      // Executing query
+      $insertQuery->execute();
+
+      return $this->render('bookingSuccess', [
+        'message' => 'Your booking has been saved.'
+      ]);
+    }
+
+    $inputErrors = $booking->errors;
+    $displayErrors = [];
+
+    // Extracts all the errors from the object into a separate array
+    foreach ($inputErrors as $errors) {
+      foreach ($errors as $error) {
+        $displayErrors[] = $error;
+      }
+    }
+
+    return $this->render('bookingFailiure', [
+      'message' => implode('<br>', $displayErrors)
     ]);
   }
 }

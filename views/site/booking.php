@@ -55,7 +55,8 @@ $bookingForm = ActiveForm::begin([
 
     <h2 class="h3">Choose a treatment</h2>
 
-    <?php // Treatment ?>
+    <?php // Treatment
+    // The data gets injected via JS ?>
 
     <div class="capitalize" id="treatment-content"></div>
 
@@ -200,13 +201,13 @@ $bookingForm = ActiveForm::begin([
 
           <?php // Postal code and city ?>
           <div class="input-group mb-3">
-            <input type="text" aria-label="Postal code" class="form-control" name="booking[patient_zipCode]" placeholder="Postal Code *" pattern="\d{1,10}" required>
+            <input type="text" aria-label="Postal code" class="form-control" name="booking[patient_zipCode]" placeholder="Postal Code *" required> <!-- pattern="\d{1,10}" -->
             <input type="text" aria-label="City" class="form-control" name="booking[patient_city]" placeholder="City *" pattern="[a-zA-Z0-9\-\.\ ]{1,50}" required>
           </div>
 
           <?php // Phone and E-Mail ?>
           <div class="input-group mb-3">
-            <input type="tel" aria-label="Phone number" class="form-control" name="booking[patient_phoneNumber]" placeholder="Telephone Number *" pattern="[0-9\-\ \+]{1,16}" maxlength="20" required>
+            <input type="tel" aria-label="Phone number" class="form-control" name="booking[patient_phoneNumber]" placeholder="Telephone Number *" maxlength="20" required> <!-- pattern="[0-9\-\ \+]{1,16}" -->
             <input type="email" aria-label="E-Mail address" class="form-control" name="booking[patient_email]" placeholder="E-Mail Address *" pattern="[a-zA-Z\.\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|]{1,64}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{1,255}" required>
           </div>
         </div>
@@ -253,6 +254,8 @@ $bookingForm = ActiveForm::begin([
     <h2 class="h3">Overview</h2>
 
     <?php // Overview ?>
+
+    <dl class="content row capitalize"></dl>
 
     <hr>
     <div class="form-group col-lg-offset-1 col-lg-11 pl-0">

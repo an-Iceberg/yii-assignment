@@ -254,6 +254,7 @@ $('#data-next-btn').click(() => {
   }
 
   // First name
+  // Mark the input field red if it's empty or it does not match the regex
   if (firstName.val() == '' || !nameRegex.test(firstName.val())) {
     firstName.css('border-color', '#dc3545');
     allInputIsValid = false;
@@ -335,6 +336,57 @@ $('#data-next-btn').click(() => {
 
   // Only moving on to the overview if all data is valid
   if (allInputIsValid) {
+
+    // Putting all the input data into the overview section
+    $('#overview>.content').html(
+      `<dt class="col-sm-3">Treatment type</dt><dd class="col-sm-9">
+        ${$('input[name="booking[doctor]"]').val()}
+      </dd>
+
+      <dt class="col-sm-3">Treatment</dt><dd class="col-sm-9">
+        ${$('input[name="booking[treatment]"]').val()}
+      </dd>
+
+      <dt class="col-sm-3">Booking Date and Time</dt><dd class="col-sm-9">
+        ${$('input[name="booking[date]"]').val()}
+        ${$('select[name="booking[time]"]').val()}
+      </dd>
+
+      <dt class="col-sm-3">Patient Information</dt><dd class="col-sm-9">
+        <p>
+          ${salutation.val()}
+          ${firstName.val()}
+          ${lastName.val()}
+        </p>
+        <p>Born
+          ${birthdate.val()}
+        </p>
+        <p>
+          ${zipCode.val()}
+          ${city.val()}
+        </p>
+        <p>
+          ${street.val()}
+        </p>
+        <p>
+          ${phoneNumber.val()}
+        </p>
+        <p>
+          ${email.val()}
+        </p>
+      </dd>
+
+      ${$('textarea[name="booking[patient_comment]"]').val() == '' ? '' : '<dt class="col-sm-3">Comment</dt>' + '<dd class="col-sm-9">' + $('textarea[name="booking[patient_comment]"]').val() + '</dd>'}
+
+      <dt class="col-sm-3">New Patient</dt><dd class="col-sm-9">
+        ${newPatient.val() == 1 ? 'Yes' : 'No'}
+      </dd>
+
+      <dt class="col-sm-3">Recall</dt><dd class="col-sm-9">
+        ${recall.val() == 1 ? 'Yes' : 'No'}
+      </dd>`
+    )
+
     $('#personal-data').fadeOut(400, () => {
       $('#overview').fadeIn();
     });

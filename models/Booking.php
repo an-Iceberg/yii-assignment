@@ -40,13 +40,23 @@ class Booking extends \yii\db\ActiveRecord
   {
     return [
       [['date', 'patient_birthdate'], 'safe'],
-      [['patient_zipCode', 'patient_city', 'patient_phoneNumber'], 'integer'],
+      [['patient_zipCode'], 'integer'],
+      [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_comment'], 'string'],
       [['newPatient', 'recall'], 'boolean'],
-      [['doctor', 'patient_firstName', 'patient_lastName', 'patient_street'], 'string', 'max' => 50],
+      [['doctor', 'patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
       [['treatment'], 'string', 'max' => 100],
       [['patient_salutation'], 'string', 'max' => 8],
       [['patient_email'], 'string', 'max' => 254],
+
+      // Input validation with regular expressions
+      [['patient_firstName', 'patient_lastName'], 'match', 'pattern' => '/^[a-zA-Z\-\ ]{1,50}$/'],
+      [['patient_street'], 'match', 'pattern' => '/^[a-zA-Z0-9\.\-\ ]{1,50}$/'],
+      [['patient_zipCode'], 'match', 'pattern' => '/^\d{1,10}$/'],
+      [['patient_city'], 'match', 'pattern' => '/^[a-zA-Z0-9\-\.\ ]{1,50}$/'],
+      [['patient_phoneNumber'], 'match', 'pattern' => '/^[0-9\-\ \+]{1,16}$/'],
+      [['patient_email'], 'match', 'pattern' => '/^[a-zA-Z\.\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|]{1,64}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{1,255}$/'],
+      [['newPatient', 'recall'], 'match', 'pattern' => '/[0,1]/'],
     ];
   }
 
@@ -59,16 +69,16 @@ class Booking extends \yii\db\ActiveRecord
       'doctor' => 'Doctor',
       'treatment' => 'Treatment',
       'date' => 'Date',
-      'patient_salutation' => 'Patient Salutation',
-      'patient_firstName' => 'Patient First Name',
-      'patient_lastName' => 'Patient Last Name',
-      'patient_birthdate' => 'Patient Birthdate',
-      'patient_street' => 'Patient Street',
-      'patient_zipCode' => 'Patient Zip Code',
-      'patient_city' => 'Patient City',
-      'patient_phoneNumber' => 'Patient Phone Number',
-      'patient_email' => 'Patient Email',
-      'patient_comment' => 'Patient Comment',
+      'patient_salutation' => 'Salutation',
+      'patient_firstName' => 'First Name',
+      'patient_lastName' => 'Last Name',
+      'patient_birthdate' => 'Birthdate',
+      'patient_street' => 'Street',
+      'patient_zipCode' => 'Zip Code',
+      'patient_city' => 'City',
+      'patient_phoneNumber' => 'Phone Number',
+      'patient_email' => 'Email',
+      'patient_comment' => 'Comment',
       'newPatient' => 'New Patient',
       'recall' => 'Recall',
     ];
