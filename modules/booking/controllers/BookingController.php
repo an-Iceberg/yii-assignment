@@ -18,6 +18,7 @@ class BookingController extends Controller
    */
   public function actionIndex()
   {
+    // Retrieving all available professions from the database
     $profession = Profession::getAllProfessions();
 
     return $this->render('index', [
@@ -45,7 +46,7 @@ class BookingController extends Controller
     // Retrieving treatments from database
     $queryResults = Treatment::getTreatments($booking['doctor']);
 
-    // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be inserted into the correct place without any additional editing
+    // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be injected into the correct place without any additional editing
     $treatments = '';
     for ($i = 0; $i < sizeof($queryResults); $i++)
     {
@@ -110,10 +111,12 @@ class BookingController extends Controller
 
     $booking = Yii::$app->request->bodyParams['booking'];
 
+    // Retrieving all existing bookings in the relevant categories
     $queryResults = Booking::getBookings($booking['doctor'], $booking['treatment'], $booking['date']);
 
     $responseData = [];
 
+    // Extracting the date and appending it to the array
     foreach ($queryResults as $value)
     {
       $responseData[] = substr($value->date, 11, 5);

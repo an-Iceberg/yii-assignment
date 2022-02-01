@@ -24,7 +24,7 @@ $('#type-next-btn').click(() => {
     form = $('#booking-form');
 
     // Ajax call to get all available treatments
-    $.ajax('/site/treatment',{
+    $.ajax('/booking/booking/treatment',{
       async: true,
       method: 'POST',
       data: form.serialize(),
@@ -35,7 +35,7 @@ $('#type-next-btn').click(() => {
       },
       error: (jqXHR, status, error) =>
       {
-        console.log("Ajax call onto /site/treatment failed");
+        console.log("Ajax call onto /booking/booking/treatment failed");
         console.log(error);
         $('#treatment-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>");
       }
@@ -81,7 +81,7 @@ $('#treatment-next-btn').click(() => {
     form = $('#booking-form');
 
     // Ajax call to get all available dates
-    $.ajax('/site/get-holidays', {
+    $.ajax('/booking/booking/get-holidays', {
       async: true,
       method: 'POST',
       success: (data, status, jqXHR) =>
@@ -127,7 +127,7 @@ $('#treatment-next-btn').click(() => {
           // When the date gets selected, fetch the booking times
           onSelect: (dateText, inst) =>
           {
-            $.ajax('/site/get-bookings', {
+            $.ajax('/booking/booking/get-bookings', {
               async: true,
               method: 'POST',
               data: form.serialize(),
@@ -148,7 +148,7 @@ $('#treatment-next-btn').click(() => {
               },
               error: (jqXHR, status, error) =>
               {
-                console.log("Ajax call onto /site/get-bookings failed");
+                console.log("Ajax call onto /booking/booking/get-bookings failed");
                 console.log(error);
                 $('#date-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>")
               }
@@ -158,7 +158,7 @@ $('#treatment-next-btn').click(() => {
       },
       error: (jqXHR, status, error) =>
       {
-        console.log("Ajax call onto /site/get-holidays failed");
+        console.log("Ajax call onto /booking/booking/get-holidays failed");
         console.log(error);
         $('#date-content').html("<p class=\"alert alert-warning\">Something went wrong with the Ajax call.</p>")
       }
@@ -337,22 +337,26 @@ $('#data-next-btn').click(() => {
   // Only moving on to the overview if all data is valid
   if (allInputIsValid) {
 
-    // Putting all the input data into the overview section
+    // Injecting all the input data into the overview section
     $('#overview>.content').html(
-      `<dt class="col-sm-3">Treatment type</dt><dd class="col-sm-9">
+      `<dt class="col-sm-3">Treatment type</dt>
+      <dd class="col-sm-9">
         ${$('input[name="booking[doctor]"]').val()}
       </dd>
 
-      <dt class="col-sm-3">Treatment</dt><dd class="col-sm-9">
+      <dt class="col-sm-3">Treatment</dt>
+      <dd class="col-sm-9">
         ${$('input[name="booking[treatment]"]').val()}
       </dd>
 
-      <dt class="col-sm-3">Booking Date and Time</dt><dd class="col-sm-9">
+      <dt class="col-sm-3">Booking Date and Time</dt>
+      <dd class="col-sm-9">
         ${$('input[name="booking[date]"]').val()}
         ${$('select[name="booking[time]"]').val()}
       </dd>
 
-      <dt class="col-sm-3">Patient Information</dt><dd class="col-sm-9">
+      <dt class="col-sm-3">Patient Information</dt>
+      <dd class="col-sm-9">
         <p>
           ${salutation.val()}
           ${firstName.val()}
@@ -378,11 +382,13 @@ $('#data-next-btn').click(() => {
 
       ${$('textarea[name="booking[patient_comment]"]').val() == '' ? '' : '<dt class="col-sm-3">Comment</dt>' + '<dd class="col-sm-9">' + $('textarea[name="booking[patient_comment]"]').val() + '</dd>'}
 
-      <dt class="col-sm-3">New Patient</dt><dd class="col-sm-9">
+      <dt class="col-sm-3">New Patient</dt>
+      <dd class="col-sm-9">
         ${newPatient.val() == 1 ? 'Yes' : 'No'}
       </dd>
 
-      <dt class="col-sm-3">Recall</dt><dd class="col-sm-9">
+      <dt class="col-sm-3">Recall</dt>
+      <dd class="col-sm-9">
         ${recall.val() == 1 ? 'Yes' : 'No'}
       </dd>`
     )
