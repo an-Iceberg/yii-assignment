@@ -53,7 +53,7 @@ $config = [
     'params' => $params,
     'modules' => [
         'booking' => [
-            'class' => 'app\modules\booking\Module'
+            'class' => 'app\modules\booking\Booking'
         ]
     ]
 ];
