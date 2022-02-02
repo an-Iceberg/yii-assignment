@@ -4,10 +4,10 @@ namespace app\modules\booking\controllers;
 
 use Yii;
 use yii\web\Controller;
-use app\models\Holidays;
-use app\models\Profession;
-use app\models\Treatment;
-use app\models\Booking;
+use app\modules\Booking\models\Holidays;
+use app\modules\Booking\models\Profession;
+use app\modules\Booking\models\Treatment;
+use app\modules\Booking\models\Booking;
 
 class BookingController extends Controller
 {

@@ -1,7 +1,7 @@
 <?php
 use app\assets\BookingAsset;
 use app\assets\JqueryuiAsset;
-use app\models\Booking;
+use app\modules\booking\models\Booking;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
