@@ -81,7 +81,8 @@ $bookingForm = ActiveForm::begin([
 
     <div id="date-content" class="input-group mb-3">
 
-      <input readonly type="text" id="datepicker" class="form-control" name="booking[date]" placeholder="Pick a date *">
+<?php // TODO: regex validate this as well (there is a chance the user removes the "readonly" attribute) ?>
+      <input readonly type="text" id="datepicker" class="form-control" name="booking[date]" placeholder="Pick a date *" pattern="\d{4}-\d{2}-\d{2}">
 
       <select name="booking[time]" class="form-control">
         <option value="" selected disabled>Select a time *</option>
@@ -196,19 +197,19 @@ $bookingForm = ActiveForm::begin([
 
           <?php // Street name ?>
           <div class="input-group mb-3">
-            <input type="text" aria-label="Street" class="form-control" name="booking[patient_street]" placeholder="Street *" pattern="[a-zA-Z0-9\.\-\ ]{1,50}" required>
+            <input type="text" aria-label="Street" class="form-control" name="booking[patient_street]" placeholder="Street *" pattern="[a-zA-Z0-9.\-\s]{1,50}" required>
           </div>
 
           <?php // Postal code and city ?>
           <div class="input-group mb-3">
             <input type="text" aria-label="Postal code" class="form-control" name="booking[patient_zipCode]" placeholder="Postal Code *" required> <!-- pattern="\d{1,10}" -->
-            <input type="text" aria-label="City" class="form-control" name="booking[patient_city]" placeholder="City *" pattern="[a-zA-Z0-9\-\.\ ]{1,50}" required>
+            <input type="text" aria-label="City" class="form-control" name="booking[patient_city]" placeholder="City *" pattern="[a-zA-Z0-9\-.\s]{1,50}" required>
           </div>
 
           <?php // Phone and E-Mail ?>
           <div class="input-group mb-3">
             <input type="tel" aria-label="Phone number" class="form-control" name="booking[patient_phoneNumber]" placeholder="Telephone Number *" maxlength="20" required> <!-- pattern="[0-9\-\ \+]{1,16}" -->
-            <input type="email" aria-label="E-Mail address" class="form-control" name="booking[patient_email]" placeholder="E-Mail Address *" pattern="[a-zA-Z\.\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|]{1,64}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{1,255}" required>
+            <input type="email" aria-label="E-Mail address" class="form-control" name="booking[patient_email]" placeholder="E-Mail Address *" pattern="[a-zA-Z.!#$%&'*+\-/=?^_`{|]{1,64}@[a-zA-Z0-9.\-]{1,255}\.[a-z]{1,255}" required>
           </div>
         </div>
 
@@ -256,7 +257,8 @@ $bookingForm = ActiveForm::begin([
     <?php // Overview
     // Gets injected via JS ?>
 
-    <dl class="content row capitalize"></dl>
+    <dl class="content row capitalize">
+    </dl>
 
     <hr>
     <div class="form-group col-lg-offset-1 col-lg-11 pl-0">
@@ -264,7 +266,7 @@ $bookingForm = ActiveForm::begin([
       <?= Html::submitButton('Submit', [
         'class' => 'btn btn-primary submit-button',
         'id' => 'overview-submit-btn'
-      ]) ?>
+      ]); ?>
     </div>
 
   </div>

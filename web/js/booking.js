@@ -190,12 +190,14 @@ $('#date-back-btn').click(() => {
 $('#date-next-btn').click(() => {
   $('#date-error').fadeOut();
 
+  dateRegex = /\d{4}-\d{2}-\d{2}/;
+
   // Input validation
   date = $('input[name="booking[date]"]').val();
   time = $('select[name="booking[time]"]').val();
 
   // Only proceed, if none of the selected values are empty
-  if (date != '' && time != null)
+  if (date != '' && time != null && dateRegex.test(date))
   {
     $('#date-error').fadeOut();
     $('#date').fadeOut(400, () => {
@@ -235,12 +237,12 @@ $('#data-next-btn').click(() => {
   let newPatient = $('select[name="booking[newPatient]"]');
   let recall = $('select[name="booking[recall]"]');
 
-  let nameRegex = /^[a-zA-Z\-\ ]{1,50}$/;
-  let streetRegex = /^[a-zA-Z0-9\.\-\ ]{1,50}$/;
+  let nameRegex = /^[a-zA-Z\-\s]{1,50}$/;
+  let streetRegex = /^[a-zA-Z0-9.\-\s]{1,50}$/;
   let zipRegex = /^\d{1,10}$/;
-  let cityRegex = /^[a-zA-Z0-9\-\.\ ]{1,50}$/;
-  let phoneRegex = /^[0-9\-\ \+]{1,16}$/;
-  let emailRegex = /^[a-zA-Z\.\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|]{1,64}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{1,255}$/;
+  let cityRegex = /^[a-zA-Z0-9\-.\s]{1,50}$/;
+  let phoneRegex = /^[0-9\-\s+]{1,16}$/;
+  let emailRegex = /^[a-zA-Z.!#$%&'*+\-/=?^_`{|]{1,64}@[a-zA-Z0-9.\-]{1,255}\.[a-z]{1,255}$/;
 
   let allInputIsValid = true;
 

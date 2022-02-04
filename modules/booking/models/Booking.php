@@ -50,12 +50,13 @@ class Booking extends \yii\db\ActiveRecord
       [['patient_email'], 'string', 'max' => 254],
 
       // Input validation with regular expressions
-      [['patient_firstName', 'patient_lastName'], 'match', 'pattern' => '/^[a-zA-Z\-\ ]{1,50}$/'],
-      [['patient_street'], 'match', 'pattern' => '/^[a-zA-Z0-9\.\-\ ]{1,50}$/'],
+      [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],
+      [['patient_firstName', 'patient_lastName'], 'match', 'pattern' => '/^[a-zA-Z\-\s]{1,50}$/'],
+      [['patient_street'], 'match', 'pattern' => '/^[a-zA-Z0-9.\-\s]{1,50}$/'],
       [['patient_zipCode'], 'match', 'pattern' => '/^\d{1,10}$/'],
-      [['patient_city'], 'match', 'pattern' => '/^[a-zA-Z0-9\-\.\ ]{1,50}$/'],
-      [['patient_phoneNumber'], 'match', 'pattern' => '/^[0-9\-\ \+]{1,16}$/'],
-      [['patient_email'], 'match', 'pattern' => '/^[a-zA-Z\.\!\#\$\%\&\'\*\+\-\/\=\?\^\_\`\{\|]{1,64}@[a-zA-Z0-9\.\-]{1,255}\.[a-z]{1,255}$/'],
+      [['patient_city'], 'match', 'pattern' => '/^[a-zA-Z0-9\-.\s]{1,50}$/'],
+      [['patient_phoneNumber'], 'match', 'pattern' => '/^[0-9\-\s+]{1,16}$/'],
+      [['patient_email'], 'match', 'pattern' => '/^[a-zA-Z.!#$%&\'*+\-\/=?^_`{|]{1,64}@[a-zA-Z0-9.\-]{1,255}\.[a-z]{1,255}$/'],
       [['newPatient', 'recall'], 'match', 'pattern' => '/[0,1]/'],
     ];
   }
