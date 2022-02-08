@@ -5,7 +5,7 @@ namespace app\modules\booking\controllers;
 use Yii;
 use yii\web\Controller;
 use app\modules\Booking\models\Holidays;
-use app\modules\Booking\models\Profession;
+use app\modules\Booking\models\Role;
 use app\modules\Booking\models\Treatment;
 use app\modules\Booking\models\Booking;
 
@@ -18,11 +18,11 @@ class BookingController extends Controller
    */
   public function actionIndex()
   {
-    // Retrieving all available professions from the database
-    $profession = Profession::getAllProfessions();
+    // Retrieving all available roles from the database
+    $role = Role::getAllRoles();
 
     return $this->render('index', [
-      'data' => $profession
+      'data' => $role
     ]);
   }
 
@@ -44,7 +44,7 @@ class BookingController extends Controller
     $booking = Yii::$app->request->bodyParams['booking'];
 
     // Retrieving treatments from database
-    $queryResults = Treatment::getTreatments($booking['doctor']);
+    $queryResults = Treatment::getTreatments($booking['role']);
 
     // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be injected into the correct place without any additional editing
     $treatments = '';
@@ -112,7 +112,7 @@ class BookingController extends Controller
     $booking = Yii::$app->request->bodyParams['booking'];
 
     // Retrieving all existing bookings in the relevant categories
-    $queryResults = Booking::getBookings($booking['doctor'], $booking['treatment'], $booking['date']);
+    $queryResults = Booking::getBookings($booking['role'], $booking['treatment'], $booking['date']);
 
     $responseData = [];
 
@@ -132,6 +132,7 @@ class BookingController extends Controller
    */
   public function actionInputValidation()
   {
+    // Todo: User can create multiple DB entries by refreshing the page/going back to said page; fix that!
     // If this site is not accessed via POST method, redirect to the index site
     if (Yii::$app->request->method != 'POST')
     {
@@ -143,7 +144,7 @@ class BookingController extends Controller
     $requestData = Yii::$app->request->bodyParams['booking'];
 
     // Assigning the request data to the Booking object
-    $booking->doctor = $requestData['doctor'];
+    $booking->role = $requestData['role'];
     $booking->treatment = $requestData['treatment'];
     $booking->date = $requestData['date'].' '.$requestData['time'].':00';
     $booking->patient_salutation = $requestData['patient_salutation'];
@@ -164,7 +165,7 @@ class BookingController extends Controller
 
       // Creating insert query
       $insertQuery = Yii::$app->db->createCommand('INSERT INTO bookings VALUES (
-        :doctor,
+        :role,
         :treatment,
         :date,
         :patient_salutation,
@@ -182,7 +183,7 @@ class BookingController extends Controller
       );');
 
       // Binding values
-      $insertQuery->bindValue(':doctor', $booking->doctor)
+      $insertQuery->bindValue(':role', $booking->role)
       ->bindValue(':treatment', $booking->treatment)
       ->bindValue(':date', $booking->date)
       ->bindValue(':patient_salutation', $booking->patient_salutation)

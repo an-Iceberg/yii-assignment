@@ -19,7 +19,7 @@ $('#type-next-btn').click(() => {
 
   // Input validation
   // Only proceed, if a radio button has been selected
-  if ($('input[name="booking[doctor]"]').is(':checked'))
+  if ($('input[name="booking[role]"]').is(':checked'))
   {
     form = $('#booking-form');
 
@@ -343,7 +343,7 @@ $('#data-next-btn').click(() => {
     $('#overview>.content').html(
       `<dt class="col-sm-3">Treatment type</dt>
       <dd class="col-sm-9">
-        ${$('input[name="booking[doctor]"]').val()}
+        ${$('input[name="booking[role]"]').val()}
       </dd>
 
       <dt class="col-sm-3">Treatment</dt>

@@ -9,6 +9,7 @@ JqueryuiAsset::register($this);
 BookingAsset::register($this);
 
 $booking = new Booking();
+$this->title = 'Booking';
 ?>
 
 <h1>Booking Form</h1>
@@ -30,8 +31,8 @@ $bookingForm = ActiveForm::begin([
     foreach ($data as $entry) { ?>
 
       <label class="capitalize">
-        <input type="radio" name="booking[doctor]" value="<?= $entry['profession']?>">
-        <?= $entry['profession'] ?>
+        <input type="radio" name="booking[role]" value="<?= $entry['role']?>">
+        <?= $entry['role'] ?>
       </label>
       <br>
 

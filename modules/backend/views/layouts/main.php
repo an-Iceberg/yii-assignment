@@ -1,8 +1,5 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
-
 use app\assets\AppAsset;
 use app\widgets\Alert;
 use yii\helpers\Html;
@@ -19,24 +16,20 @@ AppAsset::register($this);
   <title><?= Html::encode($this->title) ?></title>
   <?php $this->head() ?>
 </head>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-row h-100">
 <?php $this->beginBody() ?>
 
+<div style="width: 150px; background: red;">
+  <ul>
+    <a href="/backend/backend/bookings"><li>Bookings</li></a>
+    <a href="/backend/backend/calendar"><li>Calendar</li></a>
+    <a href="/backend/backend/roles"><li>Roles</li></a>
+    <a href="/backend/backend/holidays"><li>Holidays</li></a>
+  </ul>
+</div>
+
 <main role="main" class="flex-shrink-0">
-  <div class="container">
-    <?= Alert::widget() ?>
-    <?= $content ?>
-
-    <?php
-      if (Yii::$app->request->pathinfo != '' && Yii::$app->request->pathinfo != 'site/index')
-      {
-        echo Html::a('Back home', '/', [
-          'class' => 'btn btn-secondary'
-        ]);
-      }
-    ?>
-
-  </div>
+  <?= $content ?>
 </main>
 
 

@@ -47,6 +47,23 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                // TODO: refactor this
+                'backend' => 'backend/backend/index',
+                'backend/' => 'backend/backend/index',
+                'backend/index' => 'backend/backend/index',
+                'backend/home' => 'backend/backend/index',
+                'backend/bookings' => 'backend/backend/bookings',
+                'backend/booking' => 'backend/backend/bookings',
+                'backend/backend/booking' => 'backend/backend/bookings',
+                'backend/calendar' => 'backend/backend/calendar',
+                'backend/holidays' => 'backend/backend/holidays',
+                'backend/holiday' => 'backend/backend/holidays',
+                'backend/backend/holiday' => 'backend/backend/holidays',
+                'backend/roles' => 'backend/backend/roles',
+                'backend/role' => 'backend/backend/roles',
+                'backend/backend/role' => 'backend/backend/roles',
+
+                'booking' => 'booking/booking/index'
             ],
         ],
     ],
@@ -54,6 +71,9 @@ $config = [
     'modules' => [
         'booking' => [
             'class' => 'app\modules\booking\Booking'
+        ],
+        'backend' => [
+            'class' => 'app\modules\backend\Backend'
         ]
     ]
 ];

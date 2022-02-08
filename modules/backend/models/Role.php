@@ -2,21 +2,19 @@
 
 namespace app\modules\booking\models;
 
-use Yii;
-
 /**
  * This is the model class for table "professions".
  *
  * @property string|null $profession
  */
-class Profession extends \yii\db\ActiveRecord
+class Role extends \yii\db\ActiveRecord
 {
   /**
    * {@inheritdoc}
    */
   public static function tableName()
   {
-    return 'professions';
+    return 'roles';
   }
 
   /**
@@ -25,7 +23,7 @@ class Profession extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['profession'], 'string', 'max' => 50],
+      [['role'], 'string', 'max' => 50],
     ];
   }
 
@@ -35,14 +33,14 @@ class Profession extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
-      'profession' => 'Profession',
+      'role' => 'Role',
     ];
   }
 
   // Retrieves all the different professions available from the db
-  public static function getAllProfessions()
+  public static function getAllRoles()
   {
-    return Profession::find()
+    return Role::find()
     ->all();
   }
 }
