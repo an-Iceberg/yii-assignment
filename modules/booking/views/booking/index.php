@@ -231,9 +231,9 @@ $bookingForm = ActiveForm::begin([
             </select>
           </div>
 
-          <?php // Recall ?>
+          <?php // callback ?>
           <div class="input-group mb-3">
-            <select class="form-control" name="booking[recall]" required>
+            <select class="form-control" name="booking[callback]" required>
               <option value="" selected disabled>Should we call you back? *</option>
               <option value="1">Yes</option>
               <option value="0">No</option>

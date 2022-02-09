@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\booking\models;
+namespace app\modules\backend\models;
 
 /**
  * This is the model class for table "professions".

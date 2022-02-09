@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\booking\models;
+namespace app\modules\backend\models;
 
 /**
  * This is the model class for table "bookings".
@@ -19,7 +19,7 @@ namespace app\modules\booking\models;
  * @property string|null $patient_email
  * @property string|null $patient_comment
  * @property bool|null $newPatient
- * @property bool|null $recall
+ * @property bool|null $callback
  */
 class Booking extends \yii\db\ActiveRecord
 {
@@ -41,7 +41,7 @@ class Booking extends \yii\db\ActiveRecord
       [['patient_zipCode'], 'integer'],
       [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_comment'], 'string'],
-      [['newPatient', 'recall'], 'boolean'],
+      [['newPatient', 'callback'], 'boolean'],
       [['role', 'patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
       [['treatment'], 'string', 'max' => 100],
       [['patient_salutation'], 'string', 'max' => 8],
@@ -55,7 +55,7 @@ class Booking extends \yii\db\ActiveRecord
       [['patient_city'], 'match', 'pattern' => '/^[a-zA-Z0-9\-.\s]{1,50}$/'],
       [['patient_phoneNumber'], 'match', 'pattern' => '/^[0-9\-\s+]{1,16}$/'],
       [['patient_email'], 'match', 'pattern' => '/^[a-zA-Z.!#$%&\'*+\-\/=?^_`{|]{1,64}@[a-zA-Z0-9.\-]{1,255}\.[a-z]{1,255}$/'],
-      [['newPatient', 'recall'], 'match', 'pattern' => '/[0,1]/'],
+      [['newPatient', 'callback'], 'match', 'pattern' => '/[0,1]/'],
     ];
   }
 
@@ -79,18 +79,15 @@ class Booking extends \yii\db\ActiveRecord
       'patient_email' => 'Email',
       'patient_comment' => 'Comment',
       'newPatient' => 'New Patient',
-      'recall' => 'Recall',
+      'callback' => 'Callback',
     ];
   }
 
-  // Returns the dates and times of the reserved bookings
-  public static function getBookings($role, $treatment, $date)
+  // Returns all data for all bookings
+  public static function getAllBookings()
   {
     return Booking::find()
-    ->select('date')
-    ->where('role=:role', [':role' => $role])
-    ->andWhere('treatment=:treatment', [':treatment' => $treatment])
-    ->andWhere('date LIKE :date', [':date' => '%'.$date.'%'])
+    ->select(['role', 'patient_salutation', 'patient_lastName', 'date'])
     ->all();
   }
 }

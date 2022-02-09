@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\backend\models;
+namespace app\models;
 
 use Yii;
 
@@ -44,12 +44,5 @@ class Holidays extends \yii\db\ActiveRecord
             'beginning time' => 'Beginning Time',
             'end time' => 'End Time',
         ];
-    }
-
-    // Returns all holidays
-    public static function getHolidays()
-    {
-        return Holidays::find()
-        ->all();
     }
 }

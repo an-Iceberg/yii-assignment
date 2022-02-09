@@ -3,6 +3,7 @@
 use app\assets\AppAsset;
 use app\widgets\Alert;
 use yii\helpers\Html;
+use yii\helpers\VarDumper;
 
 AppAsset::register($this);
 ?>
@@ -19,19 +20,21 @@ AppAsset::register($this);
 <body class="d-flex flex-row h-100">
 <?php $this->beginBody() ?>
 
-<div style="width: 150px; background: red;">
+<?php // The navigation bar on the left side ?>
+<div class="backend-nav">
   <ul>
-    <a href="/backend/backend/bookings"><li>Bookings</li></a>
-    <a href="/backend/backend/calendar"><li>Calendar</li></a>
-    <a href="/backend/backend/roles"><li>Roles</li></a>
-    <a href="/backend/backend/holidays"><li>Holidays</li></a>
+    <?php // Applying conditional formatting to the selected nav element
+    // TODO: find a better solution, this is very janky ?>
+    <a class="backend-nav-link" href="/backend/bookings"><li class="<?= $this->params['currentPage'] == 'bookings' ? 'selected-nav' : '' ?>">Bookings</li></a>
+    <a class="backend-nav-link" href="/backend/calendar"><li class="<?= $this->params['currentPage'] == 'calendar' ? 'selected-nav' : '' ?>">Calendar</li></a>
+    <a class="backend-nav-link" href="/backend/roles"><li class="<?= $this->params['currentPage'] == 'roles' ? 'selected-nav' : '' ?>">Roles</li></a>
+    <a class="backend-nav-link" href="/backend/holidays"><li class="<?= $this->params['currentPage'] == 'holidays' ? 'selected-nav' : '' ?>">Holidays</li></a>
   </ul>
 </div>
 
-<main role="main" class="flex-shrink-0">
+<main role="main" class="main backend-main flex-shrink-0">
   <?= $content ?>
 </main>
-
 
 <?php $this->endBody() ?>
 </body>

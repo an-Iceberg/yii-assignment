@@ -235,7 +235,7 @@ $('#data-next-btn').click(() => {
   let phoneNumber = $('input[name="booking[patient_phoneNumber]"]');
   let email = $('input[name="booking[patient_email]"]');
   let newPatient = $('select[name="booking[newPatient]"]');
-  let recall = $('select[name="booking[recall]"]');
+  let callback = $('select[name="booking[callback]"]');
 
   let nameRegex = /^[a-zA-Z\-\s]{1,50}$/;
   let streetRegex = /^[a-zA-Z0-9.\-\s]{1,50}$/;
@@ -328,12 +328,12 @@ $('#data-next-btn').click(() => {
     newPatient.css('border-color', '#ced4da');
   }
 
-  // Recall
-  if (recall.val() == null) {
-    recall.css('border-color', '#dc3545');
+  // callback
+  if (callback.val() == null) {
+    callback.css('border-color', '#dc3545');
     allInputIsValid = false;
   } else {
-    recall.css('border-color', '#ced4da');
+    callback.css('border-color', '#ced4da');
   }
 
   // Only moving on to the overview if all data is valid
@@ -389,9 +389,9 @@ $('#data-next-btn').click(() => {
         ${newPatient.val() == 1 ? 'Yes' : 'No'}
       </dd>
 
-      <dt class="col-sm-3">Recall</dt>
+      <dt class="col-sm-3">callback</dt>
       <dd class="col-sm-9">
-        ${recall.val() == 1 ? 'Yes' : 'No'}
+        ${callback.val() == 1 ? 'Yes' : 'No'}
       </dd>`
     )
 

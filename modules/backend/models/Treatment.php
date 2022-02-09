@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\booking\models;
+namespace app\modules\backend\models;
 
 use Yii;
 
@@ -17,7 +17,7 @@ class Treatment extends \yii\db\ActiveRecord
    */
   public static function tableName()
   {
-    return 'services';
+    return 'treatments';
   }
 
   /**
