@@ -113,8 +113,20 @@ li {
   list-style-type: none;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0;
+}
+
 .main.backend-main {
-  margin: 10px !important;
+  padding: 10px 20px;
+  width: calc(100% - 150px);
+  background: #94a3a3;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .backend-login {
@@ -123,7 +135,7 @@ li {
 
 .backend-nav {
   width: 150px;
-  background: #2e2e2e;
+  background: linear-gradient(#190035, #020030);
 }
 
 .backend-nav-link,
@@ -149,6 +161,186 @@ li {
   color: #d4d4d4;
 }
 
+.language-switcher {
+  display: flex;
+  flex-direction: row;
+}
+
+.language {
+  padding: 5px 10px;
+  background: #fff;
+  margin-right: 3px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+.grid-container {
+  background: #fff;
+  border-radius: 5px;
+  padding: 5px 0;
+  border-top-left-radius: 0;
+}
+
 .grid {
   display: grid;
+}
+
+.grid-container input {
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.grid-booking-layout {
+  grid-template-columns: 1fr 1fr 1fr 1fr 150px;
+}
+
+.grid-holiday-layout {
+  grid-template-columns: 1fr 1fr 150px;
+}
+
+.grid-role-layout {
+  grid-template-columns: 1fr 1fr 75px 1fr 150px;
+}
+
+.grid-edit-booking-layout {
+  padding: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 30px;
+}
+
+.grid-edit-booking-layout label {
+  /* padding: 10px; */
+}
+
+/* .grid-edit-booking-layout input, */
+.grid-edit-booking-layout textarea {
+  display: block;
+}
+
+/* .grid-edit-booking-layout input[type="text"],
+.grid-edit-booking-layout input[type="email"],
+.grid-edit-booking-layout textarea {
+  width: auto;
+} */
+
+.grid-edit-booking-layout .description {
+  grid-column: span 3;
+}
+
+.grid-margins {
+  margin: 5px 0 5px 10px;
+}
+
+.grid-margins-top {
+  margin: 5px 0 0 0;
+}
+
+.grid-data-padding {
+  padding: 10px 0 10px 10px;
+}
+
+.gaps {
+  column-gap: 5px;
+  row-gap: 5px;
+}
+
+.search-field {
+  background: #e7e7e7;
+}
+
+.field-title {
+  border-bottom: 3px solid lightgray;
+}
+
+.even {
+  background: #fff;
+}
+
+.odd {
+  background: #ececec;
+}
+
+.create-link-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+  padding-right: 5px;
+  border-top: 3px solid lightgray;
+  border-radius: 0;
+}
+
+.top-row {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.top-row a i {
+  font-size: 2.5rem;
+  line-height: 38px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.top-row a {
+  border: 1px solid gray;
+  border-radius: 5px;
+  background: white;
+}
+
+.input-label {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  background: #e2e9ef;
+  color: #495057;
+  padding-left: 6px;
+  display: flex;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.input-label span {
+  width: 110px;
+}
+
+.input-checkbox {
+  display: block;
+  width: fit-content;
+}
+
+.input-checkbox input {
+  margin-right: 5px;
+}
+
+.input-label input,
+.input-label select {
+  flex-grow: 1;
+  border: none;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.input-label textarea {
+  flex-grow: 1;
+  border: none;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.break {
+  margin: 10px;
+  padding: 10px;
+}
+
+.save {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-top: 10px;
 }

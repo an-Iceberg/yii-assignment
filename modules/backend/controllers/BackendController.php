@@ -2,7 +2,9 @@
 
 namespace app\modules\backend\controllers;
 
-use app\modules\backend\models\Booking;
+use app\models\Bookings;
+use app\models\Holidays;
+use app\models\Roles;
 use Yii;
 use yii\base\Controller;
 use yii\data\ActiveDataProvider;
@@ -27,48 +29,31 @@ class BackendController extends Controller
     return $this->render('index');
   }
 
+  // Displays all bookings present in the DB
   public function actionBookings()
   {
-    // $getParams = Yii::$app->request->get();
-    // if (isset($getParams['page']))
-    // {
-    //   $getParams['page']--;
-    // }
-
     $pagination = new Pagination([
-      'totalCount' => Booking::find()->count(),
+      'totalCount' => Bookings::find()->count(),
       'pageSize' => 4,
       'page' => 0
     ]);
 
-    // $sort = new Sort([ // Doesn't work
-    //   'attributes' => [
-    //     'date'
-    //   ]
-    // ]);
-
-    $bookings = Booking::find()
+    $bookings = Bookings::find()
     ->select(['role', 'patient_salutation', 'patient_lastName', 'date'])
     ->offset($pagination->offset)
     ->limit($pagination->limit)
-    ->orderBy('date ASC') // <== this is uninitialized, 'date ASC' would work
+    ->orderBy('date ASC')
     ->all();
-
-    // ? Maybe a self-made grid would prove easier in the long run?
-    // $provider = new ActiveDataProvider([
-    //   'query' => Booking::find()
-    //   ->select(['role', 'patient_salutation', 'patient_lastName', 'date'])
-    //   ->orderBy('date ASC'),
-    //   'pagination' => [
-    //     'totalCount' => Booking::find()->count(),
-    //     'pageSize' => 4,
-    //     'page' => $getParams['page'] ?? 0
-    //   ],
-    // ]);
 
     return $this->render('bookings', [
       'bookings' => $bookings
     ]);
+  }
+
+  // Displays the data of the selected booking
+  public function actionEditBooking()
+  {
+    return $this->render('editBooking');
   }
 
   public function actionCalendar()
@@ -76,13 +61,56 @@ class BackendController extends Controller
     return $this->render('calendar');
   }
 
+  // Displays all created roles
   public function actionRoles()
   {
-    return $this->render('roles');
+    $pagination = new Pagination([
+      'totalCount' => Roles::find()->count(),
+      'pageSize' => 10,
+      'page' => 0
+    ]);
+
+    $roles = Roles::find()
+    ->select(['role', 'email', 'status', 'sort_order'])
+    ->offset($pagination->offset)
+    ->limit($pagination->limit)
+    ->orderBy('sort_order ASC')
+    ->all();
+
+    return $this->render('roles', [
+      'roles' => $roles
+    ]);
+  }
+
+  // Displays the data of the selected role
+  public function actionEditRole()
+  {
+    return $this->render('editRole');
   }
 
   public function actionHolidays()
   {
-    return $this->render('holidays');
+    $pagination = new Pagination([
+      'totalCount' => Holidays::find()->count(),
+      'pageSize' => 10,
+      'page' => 0
+    ]);
+
+    $holidays = Holidays::find()
+    ->select(['name', 'date'])
+    ->offset($pagination->offset)
+    ->limit($pagination->limit)
+    ->orderBy('date ASC')
+    ->all();
+
+    return $this->render('holidays', [
+      'holidays' => $holidays
+    ]);
+  }
+
+  // Displays the data of the selected holiday
+  public function actionEditHoliday()
+  {
+    return $this->render('editHoliday');
   }
 }

@@ -3,4 +3,4 @@
 $this->title = 'Calendar';
 $this->params['currentPage'] = 'calendar';
 ?>
-<h1>calendar</h1>
+<h1>Calendar</h1>

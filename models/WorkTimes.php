@@ -14,36 +14,36 @@ use Yii;
  */
 class WorkTimes extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'work_times';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public static function tableName()
+  {
+    return 'work_times';
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['from', 'til'], 'safe'],
-            [['has_free'], 'boolean'],
-            [['role'], 'string', 'max' => 50],
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function rules()
+  {
+    return [
+      [['from', 'til'], 'safe'],
+      [['has_free'], 'boolean'],
+      [['role'], 'string', 'max' => 50],
+    ];
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'role' => 'Role',
-            'from' => 'From',
-            'til' => 'Til',
-            'has_free' => 'Has Free',
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function attributeLabels()
+  {
+    return [
+      'role' => 'Role',
+      'from' => 'From',
+      'til' => 'Untill',
+      'has_free' => 'Has Free',
+    ];
+  }
 }

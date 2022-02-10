@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "services".
  *
- * @property string|null $doctor
+ * @property string|null $role
  * @property string|null $treatment
  */
 class Treatment extends \yii\db\ActiveRecord
@@ -26,7 +26,7 @@ class Treatment extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['doctor', 'treatment'], 'string', 'max' => 100],
+      [['role', 'treatment'], 'string', 'max' => 100],
     ];
   }
 
@@ -36,7 +36,7 @@ class Treatment extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
-      'doctor' => 'Doctor',
+      'role' => 'Role',
       'treatment' => 'Treatment',
     ];
   }
@@ -46,7 +46,7 @@ class Treatment extends \yii\db\ActiveRecord
   {
     return Treatment::find()
     ->select('treatment')
-    ->where('doctor=:doctor', [':doctor' => $profession])
+    ->where('role=:role', [':role' => $profession])
     ->all();
   }
 }

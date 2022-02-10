@@ -14,35 +14,42 @@ use Yii;
  */
 class Holidays extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'holidays';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public static function tableName()
+  {
+    return 'holidays';
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['date', 'beginning time', 'end time'], 'safe'],
-            [['name'], 'string', 'max' => 50],
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function rules()
+  {
+    return [
+      [['date', 'beginning time', 'end time'], 'safe'],
+      [['name'], 'string', 'max' => 50],
+    ];
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'name' => 'Name',
-            'date' => 'Date',
-            'beginning time' => 'Beginning Time',
-            'end time' => 'End Time',
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function attributeLabels()
+  {
+    return [
+      'name' => 'Name',
+      'date' => 'Date',
+      'beginning time' => 'Beginning Time',
+      'end time' => 'End Time',
+    ];
+  }
+
+  // Returns all holidays
+  public static function getHolidays()
+  {
+    return Holidays::find()
+    ->all();
+  }
 }

@@ -26,60 +26,81 @@ use Yii;
  * @property bool|null $newPatient
  * @property bool|null $callback
  * @property bool|null $send_confirmation
+ * @property bool|null $status
  */
 class Bookings extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'bookings';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public static function tableName()
+  {
+    return 'bookings';
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['duration', 'patient_zipCode'], 'integer'],
-            [['date2', 'time', 'date', 'patient_birthdate'], 'safe'],
-            [['patient_comment'], 'string'],
-            [['newPatient', 'callback', 'send_confirmation'], 'boolean'],
-            [['role', 'patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
-            [['treatment'], 'string', 'max' => 100],
-            [['patient_salutation'], 'string', 'max' => 8],
-            [['patient_phoneNumber'], 'string', 'max' => 20],
-            [['patient_email'], 'string', 'max' => 254],
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function rules()
+  {
+    return [
+      [['duration', 'patient_zipCode'], 'integer'],
+      [['date2', 'time', 'date', 'patient_birthdate'], 'safe'],
+      [['patient_comment'], 'string'],
+      [['newPatient', 'callback', 'send_confirmation', 'status'], 'boolean'],
+      [['role', 'patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
+      [['treatment'], 'string', 'max' => 100],
+      [['patient_salutation'], 'string', 'max' => 8],
+      [['patient_phoneNumber'], 'string', 'max' => 20],
+      [['patient_email'], 'string', 'max' => 254],
+    ];
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'duration' => 'Duration',
-            'role' => 'Role',
-            'treatment' => 'Treatment',
-            'date2' => 'Date2',
-            'time' => 'Time',
-            'date' => 'Date',
-            'patient_salutation' => 'Patient Salutation',
-            'patient_firstName' => 'Patient First Name',
-            'patient_lastName' => 'Patient Last Name',
-            'patient_birthdate' => 'Patient Birthdate',
-            'patient_street' => 'Patient Street',
-            'patient_zipCode' => 'Patient Zip Code',
-            'patient_city' => 'Patient City',
-            'patient_phoneNumber' => 'Patient Phone Number',
-            'patient_email' => 'Patient Email',
-            'patient_comment' => 'Patient Comment',
-            'newPatient' => 'New Patient',
-            'callback' => 'Callback',
-            'send_confirmation' => 'Send Confirmation',
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function attributeLabels()
+  {
+    return [
+      'duration' => 'Duration',
+      'role' => 'Role',
+      'treatment' => 'Treatment',
+      'date2' => 'Date2',
+      'time' => 'Time',
+      'date' => 'Date',
+      'patient_salutation' => 'Patient Salutation',
+      'patient_firstName' => 'Patient First Name',
+      'patient_lastName' => 'Patient Last Name',
+      'patient_birthdate' => 'Patient Birthdate',
+      'patient_street' => 'Patient Street',
+      'patient_zipCode' => 'Patient Zip Code',
+      'patient_city' => 'Patient City',
+      'patient_phoneNumber' => 'Patient Phone Number',
+      'patient_email' => 'Patient Email',
+      'patient_comment' => 'Patient Comment',
+      'newPatient' => 'New Patient',
+      'callback' => 'Callback',
+      'send_confirmation' => 'Send Confirmation',
+      'status' => 'Status',
+    ];
+  }
+
+  // Returns all data for all bookings
+  public static function getAllBookings()
+  {
+    return Bookings::find()
+    ->select(['role', 'patient_salutation', 'patient_lastName', 'date'])
+    ->all();
+  }
+
+  // Returns the dates and times of the reserved bookings
+  public static function getBookings($role, $treatment, $date)
+  {
+    return Bookings::find()
+    ->select('date')
+    ->where('role=:role', [':role' => $role])
+    ->andWhere('treatment=:treatment', [':treatment' => $treatment])
+    ->andWhere('date LIKE :date', [':date' => '%'.$date.'%'])
+    ->all();
+  }
 }
