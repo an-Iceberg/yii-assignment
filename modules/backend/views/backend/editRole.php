@@ -39,9 +39,19 @@ $this->params['currentPage'] = 'roles';
     <input type="text">
   </label>
 
-  <label class="input-label"><span>Working Hours</span>
-    <input type="text">
-  </label>
+<!-- Here, the working hours can be filled in statically -->
+  <div class="input-label"><span>Working Hours</span>
+    <div>
+      <div>Monday</div>
+        <label>From</label><label>Until</label><label>Has Free</label>
+      <div>Tuesday</div>
+      <div>Wednesday</div>
+      <div>Thursday</div>
+      <div>Friday</div>
+      <div>Saturday</div>
+      <div>Sunday</div>
+    </div>
+  </div>
 
   <div class="break"></div>
 

@@ -31,7 +31,7 @@ class BackendController extends Controller
     return $this->render('index');
   }
 
-  // Displays all bookings pruesent in the DB
+  // Displays all bookings present in the DB
   public function actionBookings()
   {
     $getParams = Yii::$app->request->get();
@@ -107,12 +107,14 @@ class BackendController extends Controller
       BackendController::setSorting($sortCriterium, $getParams['sortOrder'], 'sort_order');
     }
 
+    // Creates pagination numbers
     $pagination = new Pagination([
       'totalCount' => Roles::find()->count(),
       'pageSize' => 10,
       'page' => 0
     ]);
 
+    // Queryies DB with said pagination numbers
     $roles = Roles::find()
     ->select(['role', 'email', 'status', 'sort_order'])
     ->offset($pagination->offset)
@@ -149,12 +151,14 @@ class BackendController extends Controller
       BackendController::setSorting($sortCriterium, $getParams['dateSort'], 'date');
     }
 
+    // Creates pagination numbers
     $pagination = new Pagination([
       'totalCount' => Holidays::find()->count(),
       'pageSize' => 10,
       'page' => 0
     ]);
 
+    // Queryies DB with said pagination numbers
     $holidays = Holidays::find()
     ->select(['name', 'date'])
     ->offset($pagination->offset)

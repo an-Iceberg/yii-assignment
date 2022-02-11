@@ -25,7 +25,7 @@ $dateArrow = '';
 $nameSort = 2;
 $dateSort = 2;
 
-// Setting the arrows only if the sorting criterium is present
+// Setting the arrow and sort order only if the sorting criterium is present
 if (isset($getParams['nameSort']))
 {
   setArrow('nameSort', $nameArrow, $getParams);
@@ -90,7 +90,7 @@ function evenOrOdd(&$key)
       <?php // Generates a link with URL parameters according to which the names shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Name</b>'.$nameArrow, [
         '/backend/backend/booking',
-         'nameSort' => $nameSort
+        'nameSort' => $nameSort
         ]);
       ?>
     </div>
@@ -98,7 +98,7 @@ function evenOrOdd(&$key)
       <?php // Generates a link with URL parameters according to which the dates shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Date and Time</b>'.$dateArrow, [
         '/backend/backend/booking',
-         'dateSort' => $dateSort
+        'dateSort' => $dateSort
         ]);
       ?>
     </div>

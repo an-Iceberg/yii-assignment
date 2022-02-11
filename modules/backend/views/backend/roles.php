@@ -27,7 +27,7 @@ $emailSort = 2;
 $statusSort = 2;
 $sortOrder = 2;
 
-// Setting the arrows only if the sorting criterium is present
+// Setting the arrow and sort order only if the sorting criterium is present
 if (isset($getParams['roleSort']))
 {
   setArrow('roleSort', $roleArrow, $getParams);
@@ -100,31 +100,31 @@ function evenOrOdd(&$key)
       <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Role</b>'.$roleArrow, [
         '/backend/backend/roles',
-         'roleSort' => $roleSort
+        'roleSort' => $roleSort
         ]);
       ?>
     </div>
     <div class="field-title grid-margins-top">
-      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?php // Generates a link with URL parameters according to which the emails shall be sorted ?>
       <?= Html::a('<b class="grid-margins">E-Mail</b>'.$emailArrow, [
         '/backend/backend/roles',
-         'emailSort' => $emailSort
+        'emailSort' => $emailSort
         ]);
       ?>
     </div>
     <div class="field-title grid-margins-top">
-      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?php // Generates a link with URL parameters according to which the statuses shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Status</b>'.$statusArrow, [
         '/backend/backend/roles',
-         'statusSort' => $statusSort
+        'statusSort' => $statusSort
         ]);
       ?>
     </div>
     <div class="field-title grid-margins-top">
-      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?php // Generates a link with URL parameters according to which the order shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Sort Order</b>'.$sortOrderArrow, [
         '/backend/backend/roles',
-         'sortOrder' => $sortOrder
+        'sortOrder' => $sortOrder
         ]);
       ?>
     </div>

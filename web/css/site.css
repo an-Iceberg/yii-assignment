@@ -115,16 +115,16 @@ li {
 
 a:hover {
   text-decoration: none;
-  color: #452f90;
+  /* color: #7b30b0; */
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
 }
 
-a {
+/* a {
   color: #7952ff;
-}
+} */
 
 .main.backend-main {
   padding: 10px 20px;

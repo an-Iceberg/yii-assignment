@@ -23,7 +23,9 @@ $dateArrow = '';
 $nameSort = 2;
 $dateSort = 2;
 
-// Setting the arrows only if the sorting criterium is present
+$searchName = '';
+
+// Setting the arrow and sort order only if the sorting criterium is present
 if (isset($getParams['nameSort']))
 {
   setArrow('nameSort', $nameArrow, $getParams);
@@ -59,30 +61,31 @@ function evenOrOdd(&$key)
   <div class="grid grid-holiday-layout">
 
     <?php // Search fields ?>
+<!-- ? Maybe make a form out of this one to search by wildcard? -->
     <label class="grid-margins input-label">
-      <input type="text" class="search-field">
+      <input name="searchName" type="text" class="search-field">
       <a href="#" class="search-link"><i class="nf nf-oct-search search-icon"></i></a>
     </label>
     <label class="grid-margins input-label">
-      <input type="text" class="search-field">
+      <input name="searchDate" type="text" class="search-field">
       <a href="#" class="search-link"><i class="nf nf-oct-search search-icon"></i></a>
     </label>
     <div></div>
 
     <?php // Field titles ?>
     <div class="field-title grid-margins-top">
-      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?php // Generates a link with URL parameters according to which the names shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Name</b>'.$nameArrow, [
         '/backend/backend/holidays',
-         'nameSort' => $nameSort
+        'nameSort' => $nameSort
         ]);
       ?>
     </div>
     <div class="field-title grid-margins-top">
-      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?php // Generates a link with URL parameters according to which the dates shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Date</b>'.$dateArrow, [
         '/backend/backend/holidays',
-         'dateSort' => $dateSort
+        'dateSort' => $dateSort
         ]);
       ?>
     </div>
