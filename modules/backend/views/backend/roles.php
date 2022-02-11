@@ -1,7 +1,44 @@
 <?php
 
+use yii\helpers\Html;
+use yii\helpers\VarDumper;
+
 $this->title = 'Roles';
 $this->params['currentPage'] = 'roles';
+
+// Setting the arrow according to the sort order selected
+function setArrow($sortingField, &$arrow, &$getParams)
+{
+  switch ($getParams[$sortingField])
+  {
+    case 2: $arrow = '&xvee;'; break;
+    case 1: $arrow = '&xwedge;'; break;
+    default: break;
+  }
+}
+
+$roleArrow = '';
+$emailArrow = '';
+$statusArrow = '';
+$sortOrderArrow = '';
+
+// Setting the arrows only if the sorting criterium is present
+if (isset($getParams['roleSort']))
+{
+  setArrow('roleSort', $roleArrow, $getParams);
+}
+elseif (isset($getParams['emailSort']))
+{
+  setArrow('emailSort', $emailArrow, $getParams);
+}
+elseif (isset($getParams['statusSort']))
+{
+  setArrow('statusSort', $statusArrow, $getParams);
+}
+elseif (isset($getParams['sortOrder']))
+{
+  setArrow('sortOrder', $sortOrderArrow, $getParams);
+}
 ?>
 
 <?php // Create button ?>
@@ -29,24 +66,36 @@ $this->params['currentPage'] = 'roles';
 
     <?php // Field titles ?>
     <div class="field-title grid-margins-top">
-      <a href="#">
-        <b class="grid-margins">Role</b>
-      </a>
+      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?= Html::a('<b class="grid-margins">Role</b>'.$roleArrow, [
+        '/backend/backend/roles',
+         'roleSort' => (isset($getParams['roleSort']) && $getParams['roleSort'] == 2) ? 1 : 2
+        ]);
+      ?>
     </div>
     <div class="field-title grid-margins-top">
-      <a href="#">
-        <b class="grid-margins">E-Mail</b>
-      </a>
+      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?= Html::a('<b class="grid-margins">E-Mail</b>'.$emailArrow, [
+        '/backend/backend/roles',
+         'emailSort' => (isset($getParams['emailSort']) && $getParams['emailSort'] == 2) ? 1 : 2
+        ]);
+      ?>
     </div>
     <div class="field-title grid-margins-top">
-      <a href="#">
-        <b class="grid-margins">Status</b>
-      </a>
+      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?= Html::a('<b class="grid-margins">Status</b>'.$statusArrow, [
+        '/backend/backend/roles',
+         'statusSort' => (isset($getParams['statusSort']) && $getParams['statusSort'] == 2) ? 1 : 2
+        ]);
+      ?>
     </div>
     <div class="field-title grid-margins-top">
-      <a href="#">
-        <b class="grid-margins">Sort Order</b>
-      </a>
+      <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
+      <?= Html::a('<b class="grid-margins">Sort Order</b>'.$sortOrderArrow, [
+        '/backend/backend/roles',
+         'sortOrder' => (isset($getParams['sortOrder']) && $getParams['sortOrder'] == 2) ? 1 : 2
+        ]);
+      ?>
     </div>
     <div class="field-title grid-margins-top">
       <b class="grid-margins">Actions</b>
