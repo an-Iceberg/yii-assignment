@@ -22,22 +22,37 @@ $emailArrow = '';
 $statusArrow = '';
 $sortOrderArrow = '';
 
+$roleSort = 2;
+$emailSort = 2;
+$statusSort = 2;
+$sortOrder = 2;
+
 // Setting the arrows only if the sorting criterium is present
 if (isset($getParams['roleSort']))
 {
   setArrow('roleSort', $roleArrow, $getParams);
+  $roleSort = ($getParams['roleSort']) == 2 ? 1 : 2;
 }
 elseif (isset($getParams['emailSort']))
 {
   setArrow('emailSort', $emailArrow, $getParams);
+  $emailSort = $getParams['emailSort'] == 2 ? 1 : 2;
 }
 elseif (isset($getParams['statusSort']))
 {
   setArrow('statusSort', $statusArrow, $getParams);
+  $statusSort = $getParams['statusSort'] == 2 ? 1 : 2;
 }
 elseif (isset($getParams['sortOrder']))
 {
   setArrow('sortOrder', $sortOrderArrow, $getParams);
+  $sortOrder = $getParams['sortOrder'] == 2 ? 1 : 2;
+}
+
+// Returns the correct class based on the foreach key
+function evenOrOdd(&$key)
+{
+  return ($key % 2 == 0) ? 'even' : 'odd';
 }
 ?>
 
@@ -58,10 +73,26 @@ elseif (isset($getParams['sortOrder']))
   <div class="grid grid-role-layout">
 
     <?php // Search fields ?>
-    <input type="text" class="grid-margins search-field">
-    <input type="text" class="grid-margins search-field">
-    <input type="text" class="grid-margins search-field">
-    <input type="text" class="grid-margins search-field">
+    <label class="grid-margins input-label">
+      <input type="text" class="search-field">
+      <a href="#" class="search-link"><i class="nf nf-oct-search search-icon"></i></a>
+    </label>
+    <label class="grid-margins input-label">
+      <input type="text" class="search-field">
+      <a href="#" class="search-link"><i class="nf nf-oct-search search-icon"></i></a>
+    </label>
+    <label class="grid-margins input-label">
+      <select class="search-field">
+        <option value="">All</option>
+        <option value="1">Active</option>
+        <option value="0">Inactive</option>
+      </select>
+      <a href="#" class="search-link"><i class="nf nf-oct-search search-icon"></i></a>
+    </label>
+    <label class="grid-margins input-label">
+      <input type="text" class="search-field">
+      <a href="#" class="search-link"><i class="nf nf-oct-search search-icon"></i></a>
+    </label>
     <div></div>
 
     <?php // Field titles ?>
@@ -69,7 +100,7 @@ elseif (isset($getParams['sortOrder']))
       <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Role</b>'.$roleArrow, [
         '/backend/backend/roles',
-         'roleSort' => (isset($getParams['roleSort']) && $getParams['roleSort'] == 2) ? 1 : 2
+         'roleSort' => $roleSort
         ]);
       ?>
     </div>
@@ -77,7 +108,7 @@ elseif (isset($getParams['sortOrder']))
       <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
       <?= Html::a('<b class="grid-margins">E-Mail</b>'.$emailArrow, [
         '/backend/backend/roles',
-         'emailSort' => (isset($getParams['emailSort']) && $getParams['emailSort'] == 2) ? 1 : 2
+         'emailSort' => $emailSort
         ]);
       ?>
     </div>
@@ -85,7 +116,7 @@ elseif (isset($getParams['sortOrder']))
       <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Status</b>'.$statusArrow, [
         '/backend/backend/roles',
-         'statusSort' => (isset($getParams['statusSort']) && $getParams['statusSort'] == 2) ? 1 : 2
+         'statusSort' => $statusSort
         ]);
       ?>
     </div>
@@ -93,7 +124,7 @@ elseif (isset($getParams['sortOrder']))
       <?php // Generates a link with URL parameters according to which the roles shall be sorted ?>
       <?= Html::a('<b class="grid-margins">Sort Order</b>'.$sortOrderArrow, [
         '/backend/backend/roles',
-         'sortOrder' => (isset($getParams['sortOrder']) && $getParams['sortOrder'] == 2) ? 1 : 2
+         'sortOrder' => $sortOrder
         ]);
       ?>
     </div>
@@ -104,12 +135,12 @@ elseif (isset($getParams['sortOrder']))
     <?php // Grid data ?>
     <?php foreach ($roles as $roleKey => $role) { ?>
 
-      <div class="grid-data-padding <?= $roleKey % 2 == 0 ? 'even' : 'odd' ?>"><?= $role['role'] ?></div>
-      <div class="grid-data-padding <?= $roleKey % 2 == 0 ? 'even' : 'odd' ?>"><?= $role['email'] ?></div>
-      <div class="grid-data-padding <?= $roleKey % 2 == 0 ? 'even' : 'odd' ?>"><?= $role['status'] ? '<span class="badge badge-pill badge-success">Active</span>' : '<span class="badge badge-pill badge-secondary">Inactive</span>' ?></div>
-      <div class="grid-data-padding <?= $roleKey % 2 == 0 ? 'even' : 'odd' ?>"><?= $role['sort_order'] ?></div>
+      <div class="grid-data-padding <?= evenOrOdd($roleKey) ?>"><?= $role['role'] ?></div>
+      <div class="grid-data-padding <?= evenOrOdd($roleKey) ?>"><?= $role['email'] ?></div>
+      <div class="grid-data-padding <?= evenOrOdd($roleKey) ?>"><?= $role['status'] ? '<span class="badge badge-pill badge-success">Active</span>' : '<span class="badge badge-pill badge-secondary">Inactive</span>' ?></div>
+      <div class="grid-data-padding <?= evenOrOdd($roleKey) ?>"><?= $role['sort_order'] ?></div>
 
-      <div class="actions grid-data-padding <?= $roleKey % 2 == 0 ? 'even' : 'odd' ?>">
+      <div class="actions grid-data-padding <?= evenOrOdd($roleKey) ?>">
         <a href="/backend/backend/edit-role">Edit</a>
         <a href="#">Delete</a>
       </div>
