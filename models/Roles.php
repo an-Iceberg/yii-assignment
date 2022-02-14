@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "roles".
  *
- * @property string|null $role
- * @property string|null $email
+ * @property string $role
+ * @property string $email
  * @property string|null $description
  * @property int|null $sort_order
  * @property int|null $work_duration
@@ -30,11 +30,13 @@ class Roles extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
+      [['role', 'email'], 'required'],
       [['description'], 'string'],
       [['sort_order', 'work_duration'], 'integer'],
       [['status'], 'boolean'],
       [['role'], 'string', 'max' => 50],
       [['email'], 'string', 'max' => 255],
+      [['role', 'email'], 'unique', 'targetAttribute' => ['role', 'email']],
     ];
   }
 

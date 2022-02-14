@@ -101,6 +101,7 @@ $('#treatment-next-btn').click(() => {
             // This is a small workaround but it's not tragic
             isHoliday = false;
 
+            // TODO: adjust this to conform to DB changes
             // If the date matches a holiday, set the flag
             dates.forEach(holiday => {
               if (date.getDate() == parseInt(holiday.substring(8,10)) && date.getMonth() == parseInt(holiday.substring(5,7)) - 1 && date.getFullYear() == parseInt(holiday.substring(0,4)))

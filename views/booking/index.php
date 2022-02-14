@@ -1,14 +1,14 @@
 <?php
 use app\assets\BookingAsset;
 use app\assets\JqueryuiAsset;
-use app\modules\booking\models\Booking;
+use app\models\Bookings;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 JqueryuiAsset::register($this);
 BookingAsset::register($this);
 
-$booking = new Booking();
+$booking = new Bookings();
 $this->title = 'Booking';
 ?>
 

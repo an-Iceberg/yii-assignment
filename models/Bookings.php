@@ -8,14 +8,13 @@ use Yii;
  * This is the model class for table "bookings".
  *
  * @property int|null $duration
- * @property string|null $role
+ * @property string $role
  * @property string|null $treatment
- * @property string|null $date2
- * @property string|null $time
- * @property string|null $date
+ * @property string $date
+ * @property string $time
  * @property string|null $patient_salutation
  * @property string|null $patient_firstName
- * @property string|null $patient_lastName
+ * @property string $patient_lastName
  * @property string|null $patient_birthdate
  * @property string|null $patient_street
  * @property int|null $patient_zipCode
@@ -35,7 +34,7 @@ class Bookings extends \yii\db\ActiveRecord
    */
   public static function tableName()
   {
-    return 'bookings';
+      return 'bookings';
   }
 
   /**
@@ -45,7 +44,8 @@ class Bookings extends \yii\db\ActiveRecord
   {
     return [
       [['duration', 'patient_zipCode'], 'integer'],
-      [['date2', 'time', 'date', 'patient_birthdate'], 'safe'],
+      [['role', 'date', 'time', 'patient_lastName'], 'required'],
+      [['date', 'time', 'patient_birthdate'], 'safe'],
       [['patient_comment'], 'string'],
       [['newPatient', 'callback', 'send_confirmation', 'status'], 'boolean'],
       [['role', 'patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
@@ -53,6 +53,18 @@ class Bookings extends \yii\db\ActiveRecord
       [['patient_salutation'], 'string', 'max' => 8],
       [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_email'], 'string', 'max' => 254],
+      [['role', 'date', 'time', 'patient_lastName'], 'unique', 'targetAttribute' => ['role', 'date', 'time', 'patient_lastName']],
+
+      // Input validation with regex
+      [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],
+      [['time'], 'match', 'pattern' => '/\d{2}:\d{2}:00/'],
+      [['patient_firstName', 'patient_lastName'], 'match', 'pattern' => '/^[a-zA-Z\-\s]{1,50}$/'],
+      [['patient_street'], 'match', 'pattern' => '/^[a-zA-Z0-9.\-\s]{1,50}$/'],
+      [['patient_zipCode'], 'match', 'pattern' => '/^\d{1,10}$/'],
+      [['patient_city'], 'match', 'pattern' => '/^[a-zA-Z0-9\-.\s]{1,50}$/'],
+      [['patient_phoneNumber'], 'match', 'pattern' => '/^[0-9\-\s+]{1,16}$/'],
+      [['patient_email'], 'match', 'pattern' => '/^[a-zA-Z.!#$%&\'*+\-\/=?^_`{|]{1,64}@[a-zA-Z0-9.\-]{1,255}\.[a-z]{1,255}$/'],
+      [['newPatient', 'callback', 'send_confirmation', 'status'], 'match', 'pattern' => '/[0,1]/'],
     ];
   }
 
@@ -65,9 +77,8 @@ class Bookings extends \yii\db\ActiveRecord
       'duration' => 'Duration',
       'role' => 'Role',
       'treatment' => 'Treatment',
-      'date2' => 'Date2',
-      'time' => 'Time',
       'date' => 'Date',
+      'time' => 'Time',
       'patient_salutation' => 'Patient Salutation',
       'patient_firstName' => 'Patient First Name',
       'patient_lastName' => 'Patient Last Name',
@@ -94,13 +105,14 @@ class Bookings extends \yii\db\ActiveRecord
   }
 
   // Returns the dates and times of the reserved bookings
-  public static function getBookings($role, $treatment, $date)
+  public static function getBookings($role, $treatment, $date, $time)
   {
     return Bookings::find()
     ->select('date')
     ->where('role=:role', [':role' => $role])
     ->andWhere('treatment=:treatment', [':treatment' => $treatment])
     ->andWhere('date LIKE :date', [':date' => '%'.$date.'%'])
+    ->andWhere('time LIKE :time', [':time' => '%'.$time.'%'])
     ->all();
   }
 }

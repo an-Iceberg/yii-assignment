@@ -7,9 +7,9 @@ use Yii;
 /**
  * This is the model class for table "work_times".
  *
- * @property string|null $role
+ * @property string $role
  * @property string|null $from
- * @property string|null $til
+ * @property string|null $until
  * @property bool|null $has_free
  */
 class WorkTimes extends \yii\db\ActiveRecord
@@ -28,9 +28,11 @@ class WorkTimes extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['from', 'til'], 'safe'],
+      [['role'], 'required'],
+      [['from', 'until'], 'safe'],
       [['has_free'], 'boolean'],
       [['role'], 'string', 'max' => 50],
+      [['role'], 'unique'],
     ];
   }
 
@@ -42,7 +44,7 @@ class WorkTimes extends \yii\db\ActiveRecord
     return [
       'role' => 'Role',
       'from' => 'From',
-      'til' => 'Untill',
+      'until' => 'Until',
       'has_free' => 'Has Free',
     ];
   }

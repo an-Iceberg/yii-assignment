@@ -5,7 +5,7 @@ $this->params['currentPage'] = 'bookings';
 ?>
 
 <div class="top-row">
-  <a href="/backend/backend/bookings">
+  <a href="/backend/bookings">
     <i class="nf nf-fa-chevron_left"></i>
   </a>
 
@@ -14,7 +14,7 @@ $this->params['currentPage'] = 'bookings';
 
 <?php // Language switcher ?>
 <div class="language-switcher">
-  <a href="#" class="language">Deutsch</a>
+  <a href="#" class="language active-language">Deutsch</a>
   <a href="#" class="language">English</a>
   <a href="#" class="language">Français</a>
 </div>

@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "who_has_holidays".
  *
- * @property string|null $role
- * @property string|null $holiday_name
+ * @property string $role
+ * @property string $holiday_name
  * @property string|null $holiday_date
  */
 class WhoHasHolidays extends \yii\db\ActiveRecord
@@ -27,8 +27,10 @@ class WhoHasHolidays extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
+      [['role', 'holiday_name'], 'required'],
       [['holiday_date'], 'safe'],
       [['role', 'holiday_name'], 'string', 'max' => 50],
+      [['role', 'holiday_name'], 'unique', 'targetAttribute' => ['role', 'holiday_name']],
     ];
   }
 

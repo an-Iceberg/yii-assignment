@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "treatments".
  *
- * @property string|null $role
- * @property string|null $treatment
+ * @property string $role
+ * @property string $treatment
  * @property int|null $sort_order
  */
 class Treatments extends \yii\db\ActiveRecord
@@ -27,8 +27,10 @@ class Treatments extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
+      [['role', 'treatment'], 'required'],
       [['sort_order'], 'integer'],
       [['role', 'treatment'], 'string', 'max' => 100],
+      [['role', 'treatment'], 'unique', 'targetAttribute' => ['role', 'treatment']],
     ];
   }
 

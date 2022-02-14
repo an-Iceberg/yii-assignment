@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "backend_users".
  *
- * @property string|null $username
+ * @property string $username
  * @property string|null $password
  */
 class BackendUsers extends \yii\db\ActiveRecord
@@ -26,8 +26,10 @@ class BackendUsers extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
+      [['username'], 'required'],
       [['username'], 'string', 'max' => 50],
       [['password'], 'string', 'max' => 255],
+      [['username'], 'unique'],
     ];
   }
 

@@ -7,10 +7,10 @@ use Yii;
 /**
  * This is the model class for table "holidays".
  *
- * @property string|null $name
- * @property string|null $date
- * @property string|null $beginning time
- * @property string|null $end time
+ * @property string $name
+ * @property string $date
+ * @property string|null $beginning_time
+ * @property string|null $end_time
  */
 class Holidays extends \yii\db\ActiveRecord
 {
@@ -28,8 +28,10 @@ class Holidays extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['date', 'beginning time', 'end time'], 'safe'],
+      [['name', 'date'], 'required'],
+      [['date', 'beginning_time', 'end_time'], 'safe'],
       [['name'], 'string', 'max' => 50],
+      [['name', 'date'], 'unique', 'targetAttribute' => ['name', 'date']],
     ];
   }
 
@@ -41,8 +43,8 @@ class Holidays extends \yii\db\ActiveRecord
     return [
       'name' => 'Name',
       'date' => 'Date',
-      'beginning time' => 'Beginning Time',
-      'end time' => 'End Time',
+      'beginning_time' => 'Beginning Time',
+      'end_time' => 'End Time',
     ];
   }
 

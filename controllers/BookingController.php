@@ -1,13 +1,13 @@
 <?php
 
-namespace app\modules\booking\controllers;
+namespace app\controllers;
 
+use app\models\Bookings;
+use app\models\Roles;
+use app\models\Treatments;
+use app\models\Holidays;
 use Yii;
 use yii\web\Controller;
-use app\modules\Booking\models\Holidays;
-use app\modules\Booking\models\Role;
-use app\modules\Booking\models\Treatment;
-use app\modules\Booking\models\Booking;
 
 class BookingController extends Controller
 {
@@ -19,7 +19,7 @@ class BookingController extends Controller
   public function actionIndex()
   {
     // Retrieving all available roles from the database
-    $role = Role::getAllRoles();
+    $role = Roles::getAllRoles();
 
     return $this->render('index', [
       'data' => $role
@@ -44,7 +44,7 @@ class BookingController extends Controller
     $booking = Yii::$app->request->bodyParams['booking'];
 
     // Retrieving treatments from database
-    $queryResults = Treatment::getTreatments($booking['role']);
+    $queryResults = Treatments::getTreatments($booking['role']);
 
     // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be injected into the correct place without any additional editing
     $treatments = '';
@@ -112,7 +112,7 @@ class BookingController extends Controller
     $booking = Yii::$app->request->bodyParams['booking'];
 
     // Retrieving all existing bookings in the relevant categories
-    $queryResults = Booking::getBookings($booking['role'], $booking['treatment'], $booking['date']);
+    $queryResults = Bookings::getBookings($booking['role'], $booking['treatment'], $booking['date'], $booking['time']);
 
     $responseData = [];
 
@@ -139,14 +139,15 @@ class BookingController extends Controller
       return $this->redirect('/booking/booking');
     }
 
-    $booking = new Booking();
+    $booking = new Bookings();
 
     $requestData = Yii::$app->request->bodyParams['booking'];
 
     // Assigning the request data to the Booking object
     $booking->role = $requestData['role'];
     $booking->treatment = $requestData['treatment'];
-    $booking->date = $requestData['date'].' '.$requestData['time'].':00';
+    $booking->date = $requestData['date'];
+    $booking->time = $requestData['time'].':00';
     $booking->patient_salutation = $requestData['patient_salutation'];
     $booking->patient_firstName = $requestData['patient_firstName'];
     $booking->patient_lastName = $requestData['patient_lastName'];
@@ -168,6 +169,7 @@ class BookingController extends Controller
         :role,
         :treatment,
         :date,
+        :time,
         :patient_salutation,
         :patient_firstName,
         :patient_lastName,

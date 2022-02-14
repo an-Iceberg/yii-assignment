@@ -1,6 +1,6 @@
 <?php
 
-use app\modules\backend\models\BackendUsers;
+use app\models\BackendUsers;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
