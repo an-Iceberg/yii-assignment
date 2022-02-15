@@ -15,10 +15,7 @@ function createUrl($viewName, $model)
   (
     [
       $viewName,
-      'role' => $model['role'],
-      'patient_lastName' => $model['patient_lastName'],
-      'date' => $model['date'],
-      'time' => $model['time']
+      'id' => $model['id']
     ]
   );
 }
@@ -31,7 +28,7 @@ function createUrl($viewName, $model)
       'dataProvider' => $dataProvider,
       'columns' =>
       [
-        'role',
+        'role.role_name',
         'patient_salutation',
         'patient_lastName',
         'date',
@@ -45,16 +42,14 @@ function createUrl($viewName, $model)
           [
             'edit' => function ($url, $model, $key)
             {
-              return Html::a
-              (
+              return Html::a(
                 '<i class="nf nf-fa-pencil action-icon"></i>',
                 createUrl('edit-booking', $model)
               );
             },
             'delete' => function ($url, $model, $key)
             {
-              return Html::a
-              (
+              return Html::a(
                 '<i class="nf nf-fa-trash action-icon"></i>',
                 createUrl('delete-booking', $model)
               );

@@ -14,7 +14,7 @@ function createUrl($viewName, $model)
   (
     [
       $viewName,
-      'role' => $model['role']
+      'id' => $model['id']
     ]
   );
 }
@@ -27,7 +27,7 @@ function createUrl($viewName, $model)
       'dataProvider' => $dataProvider,
       'columns' =>
       [
-        'role',
+        'role_name',
         'email',
         'status',
         'sort_order',
@@ -39,16 +39,14 @@ function createUrl($viewName, $model)
           [
             'edit' => function ($url, $model, $key)
             {
-              return Html::a
-              (
+              return Html::a(
                 '<i class="nf nf-fa-pencil action-icon"></i>',
                 createUrl('edit-role', $model)
               );
             },
             'delete' => function ($url, $model, $key)
             {
-              return Html::a
-              (
+              return Html::a(
                 '<i class="nf nf-fa-trash action-icon"></i>',
                 createUrl('delete-role', $model)
               );

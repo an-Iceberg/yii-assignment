@@ -7,8 +7,9 @@ use Yii;
 /**
  * This is the model class for table "roles".
  *
- * @property string $role
- * @property string $email
+ * @property int $id
+ * @property string|null $role_name
+ * @property string|null $email
  * @property string|null $description
  * @property int|null $sort_order
  * @property int|null $work_duration
@@ -30,13 +31,11 @@ class Roles extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['role', 'email'], 'required'],
       [['description'], 'string'],
       [['sort_order', 'work_duration'], 'integer'],
       [['status'], 'boolean'],
-      [['role'], 'string', 'max' => 50],
+      [['role_name'], 'string', 'max' => 50],
       [['email'], 'string', 'max' => 255],
-      [['role', 'email'], 'unique', 'targetAttribute' => ['role', 'email']],
     ];
   }
 
@@ -46,13 +45,20 @@ class Roles extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
-      'role' => 'Role',
-      'email' => 'Email',
+      'id' => 'Role ID',
+      'role_name' => 'Role Name',
+      'email' => 'E-Mail',
       'description' => 'Description',
       'sort_order' => 'Sort Order',
       'work_duration' => 'Work Duration',
       'status' => 'Status',
     ];
+  }
+
+  // One role can be used by many bookings
+  public function getBooking()
+  {
+    return $this->hasMany(Bookings::class, ['role_id', 'id']);
   }
 
   // Retrieves all the different professions available from the db

@@ -1,6 +1,8 @@
 <?php
 
-$this->title = 'Role Name';
+use yii\helpers\VarDumper;
+
+$this->title = $role->role_name;
 $this->params['currentPage'] = 'roles';
 ?>
 
@@ -9,7 +11,7 @@ $this->params['currentPage'] = 'roles';
     <i class="nf nf-fa-chevron_left"></i>
   </a>
 
-  <h1 class="h3">&nbsp;/ Role Name</h1>
+  <h1 class="h3">&nbsp;/ <?= $role->role_name ?></h1>
 </div>
 
 <?php // Language switcher ?>
@@ -20,20 +22,44 @@ $this->params['currentPage'] = 'roles';
 </div>
 
 <div class="grid-container">
+<!-- <?= VarDumper::dump($role, 10, true) ?> -->
   <label class="input-label"><span>Designation</span>
-    <input type="text">
+    <input type="text" value="<?= $role->role_name ?>">
   </label>
   <label class="input-label"><span>E-Mail</span>
-    <input type="email">
+    <input type="email" value="<?= $role->email ?>">
   </label>
   <label class="input-label description"><span>Description</span>
-    <textarea rows="4"></textarea>
+    <textarea rows="4"><?= $role->description ?></textarea>
   </label>
   <label class="input-label"><span>Sort Order</span>
-    <input type="text">
+    <input type="text" value="<?= $role->sort_order ?>">
   </label>
 
   <div class="break"></div>
+
+  <label class="input-label"><span>Duration (min)</span>
+    <select name="">
+      <option value="15">15</option>
+      <option value="30">30</option>
+      <option value="60">60</option>
+      <option value="90">90</option>
+      <option value="120">120</option>
+      <option value="150">150</option>
+      <option value="180">180</option>
+      <option value="210">210</option>
+      <option value="240">240</option>
+      <option value="270">270</option>
+      <option value="300">300</option>
+      <option value="330">330</option>
+      <option value="360">360</option>
+      <option value="390">390</option>
+      <option value="420">420</option>
+      <option value="450">450</option>
+      <option value="480">480</option>
+      <option value="510">510</option>
+    </select>
+  </label>
 
   <label class="input-label"><span>Treatments</span>
     <input type="text">
@@ -55,7 +81,7 @@ $this->params['currentPage'] = 'roles';
 
   <div class="break"></div>
 
-  <label class="input-label"><span>Status</span>
+  <label class="input-label last-input-element"><span>Status</span>
     <input type="text">
   </label>
 </div>

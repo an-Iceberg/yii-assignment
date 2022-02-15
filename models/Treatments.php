@@ -7,8 +7,9 @@ use Yii;
 /**
  * This is the model class for table "treatments".
  *
- * @property string $role
- * @property string $treatment
+ * @property int $id
+ * @property int|null $role_id
+ * @property string|null $treatment_name
  * @property int|null $sort_order
  */
 class Treatments extends \yii\db\ActiveRecord
@@ -27,10 +28,8 @@ class Treatments extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['role', 'treatment'], 'required'],
-      [['sort_order'], 'integer'],
-      [['role', 'treatment'], 'string', 'max' => 100],
-      [['role', 'treatment'], 'unique', 'targetAttribute' => ['role', 'treatment']],
+      [['role_id', 'sort_order'], 'integer'],
+      [['treatment_name'], 'string', 'max' => 100]
     ];
   }
 
@@ -40,10 +39,17 @@ class Treatments extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
-      'role' => 'Role',
-      'treatment' => 'Treatment',
+      'id' => 'Treatment ID',
+      'role_id' => 'Role ID',
+      'treatment_name' => 'Treatment Name',
       'sort_order' => 'Sort Order',
     ];
+  }
+
+  // One treatment can be used by many bookings
+  public function getBooking()
+  {
+    return $this->hasMany(Bookings::class, ['treatment_id', 'id']);
   }
 
   // Retrieves all available treatments for the selected type

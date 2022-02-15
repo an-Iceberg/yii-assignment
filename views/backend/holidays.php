@@ -14,7 +14,7 @@ function createUrl($viewName, $model)
   (
     [
       $viewName,
-      'name' => $model['name']
+      'id' => $model['id']
     ]
   );
 }
@@ -27,7 +27,7 @@ function createUrl($viewName, $model)
       'dataProvider' => $dataProvider,
       'columns' =>
       [
-        'name',
+        'holiday_name',
         'date',
         [
           'class' => 'yii\grid\ActionColumn',
@@ -37,16 +37,14 @@ function createUrl($viewName, $model)
           [
             'edit' => function ($url, $model, $key)
             {
-              return Html::a
-              (
+              return Html::a(
                 '<i class="nf nf-fa-pencil action-icon"></i>',
                 createUrl('edit-holiday', $model)
               );
             },
             'delete' => function ($url, $model, $key)
             {
-              return Html::a
-              (
+              return Html::a(
                 '<i class="nf nf-fa-trash action-icon"></i>',
                 createUrl('delete-holiday', $model)
               );

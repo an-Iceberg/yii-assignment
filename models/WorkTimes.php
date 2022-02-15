@@ -7,7 +7,8 @@ use Yii;
 /**
  * This is the model class for table "work_times".
  *
- * @property string $role
+ * @property int $role_id
+ * @property int $weekday
  * @property string|null $from
  * @property string|null $until
  * @property bool|null $has_free
@@ -28,11 +29,11 @@ class WorkTimes extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['role'], 'required'],
+      [['role_id', 'weekday'], 'required'],
+      [['role_id', 'weekday'], 'integer'],
       [['from', 'until'], 'safe'],
       [['has_free'], 'boolean'],
-      [['role'], 'string', 'max' => 50],
-      [['role'], 'unique'],
+      [['role_id', 'weekday'], 'unique', 'targetAttribute' => ['role_id', 'weekday']],
     ];
   }
 
@@ -42,7 +43,7 @@ class WorkTimes extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
-      'role' => 'Role',
+      'role_id' => 'Role ID',
       'from' => 'From',
       'until' => 'Until',
       'has_free' => 'Has Free',

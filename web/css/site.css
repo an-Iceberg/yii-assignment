@@ -122,6 +122,15 @@ a:hover {
   width: calc(100% - 150px);
   overflow-y: auto;
   overflow-x: hidden;
+  background: linear-gradient(135deg, salmon, blueviolet);
+}
+
+table {
+  background: #fff;
+}
+
+select {
+  padding: 1px 2px !important;
 }
 
 .backend-login {
@@ -130,17 +139,17 @@ a:hover {
 
 .backend-nav {
   width: 150px;
-  background: linear-gradient(#190035, #020030);
+  background: linear-gradient(#2a004a, #03004a);
 }
 
 .backend-nav-link,
 .backend-nav-link li {
   text-decoration: none !important;
-  color: #818181;
+  color: #898cb0;
 }
 
 .backend-nav-link li:hover {
-  color: #d4d4d4;
+  color: #fff;
 }
 
 .backend-nav-link li {
@@ -153,7 +162,7 @@ a:hover {
 
 .backend-nav > ul > a > .selected-nav {
   text-decoration: underline !important;
-  color: #d4d4d4;
+  color: #fff;
 }
 
 .pagination > li {
@@ -194,18 +203,19 @@ a:hover {
   border-left: 1px solid #dee2e6;
   border-top: 1px solid #dee2e6;
   border-right: 1px solid #dee2e6;
-  background: #dee2e6;
+  background: #d8cde3;
 }
 
 .active-language {
-  background: #fff;
+  background: #fdfbff;
+  box-shadow: none;
 }
 
 .grid-container {
   border: 1px solid #dee2e6;
-  background: #fff;
+  background: #fdfbff;
   border-radius: 5px;
-  padding: 5px 0;
+  padding: .5rem 0;
   border-top-left-radius: 0;
   margin-top: -1px;
 }
@@ -217,6 +227,10 @@ a:hover {
 .grid-container input {
   border: 1px solid gray;
   border-radius: 5px;
+}
+
+.last-input-element {
+  margin-bottom: 0;
 }
 
 .grid-booking-layout {
@@ -328,8 +342,8 @@ a:hover {
   background: #e2e9ef;
   color: #495057;
   display: flex;
-  margin-left: 5px;
-  margin-right: 5px;
+  margin-left: .5rem;
+  margin-right: .5rem;
 }
 
 .input-label span {
@@ -358,7 +372,6 @@ a:hover {
   flex-grow: 1;
   border: none;
   border-radius: 4px;
-  margin-left: 5px;
 }
 
 .break {
@@ -371,4 +384,8 @@ a:hover {
   flex-direction: row;
   justify-content: end;
   margin-top: 10px;
+}
+
+input[type="text"] {
+  padding-left: revert !important;
 }

@@ -8,6 +8,7 @@ use app\models\Roles;
 use Yii;
 use yii\base\Controller;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use yii\helpers\VarDumper;
 
 class BackendController extends Controller
@@ -38,9 +39,14 @@ class BackendController extends Controller
     // Decrementing page by one since the dataprovider has 0-based index
     (isset($getParams['page'])) ? $getParams['page'] -= 1 : '';
 
+    $query = Bookings::find()
+    ->select(['role_name', 'role_id', 'bookings.id', 'patient_salutation', 'patient_lastName', 'date', 'time', 'bookings.status'])
+    ->innerJoinWith('role');
+
     $dataProvider = new ActiveDataProvider([
-      'query' => Bookings::find()->select(['role', 'patient_salutation', 'patient_lastName', 'date', 'time', 'status']),
-      'pagination' => [
+      'query' => $query,
+      'pagination' =>
+      [
         'totalCount' => Bookings::find()->count(),
         'pageSize' => 10,
         'page' => $getParams['page'] ?? 0
@@ -59,15 +65,17 @@ class BackendController extends Controller
     $getParams = Yii::$app->request->get();
 
     $booking = Bookings::find()
-    ->where('role=:role', [':role' => $getParams['role']])
-    ->andWhere('patient_lastName=:patient_lastName', ['patient_lastName' => $getParams['patient_lastName']])
-    ->andWhere('date=:date', [':date' => $getParams['date']])
-    ->andWhere('time=:time', [':time' => $getParams['time']])
+    ->where('bookings.id=:id', [':id' => $getParams['id']])
+    ->innerJoinWith('role')
+    ->innerJoinWith('treatment')
     ->one();
 
-    return $this->render('editBooking', [
-      'booking' => $booking
-    ]);
+    return $this->render(
+      'editBooking',
+      [
+        'booking' => $booking
+      ]
+    );
   }
 
   public function actionCalendar()
@@ -87,7 +95,7 @@ class BackendController extends Controller
     }
 
     $dataProvider = new ActiveDataProvider([
-      'query' => Roles::find()->select(['role', 'email', 'status', 'sort_order']),
+      'query' => Roles::find()->select(['id', 'role_name', 'email', 'status', 'sort_order']),
       'pagination' => [
         'totalCount' => Roles::find()->count(),
         'pageSize' => 10,
@@ -106,8 +114,9 @@ class BackendController extends Controller
     // TODO: only query DB if method is GET
     $getParams = Yii::$app->request->get();
 
+    // TODO: join to treatments and work_times
     $role = Roles::find()
-    ->where('role=:role', [':role' => $getParams['role']])
+    ->where('id=:id', [':id' => $getParams['id']])
     ->one();
 
     return $this->render('editRole', [
@@ -115,6 +124,7 @@ class BackendController extends Controller
     ]);
   }
 
+  // Displays all created holidays
   public function actionHolidays()
   {
     $getParams = Yii::$app->request->get();
@@ -126,7 +136,7 @@ class BackendController extends Controller
     }
 
     $dataProvider = new ActiveDataProvider([
-      'query' => Holidays::find()->select(['name', 'date']),
+      'query' => Holidays::find()->select(['id', 'holiday_name', 'date']),
       'pagination' => [
         'totalCount' => Holidays::find()->count(),
         'pageSize' => 10,
@@ -149,7 +159,7 @@ class BackendController extends Controller
 
       // Querying the DB for the specified name
       $holiday = Holidays::find()
-      ->where('name=:name', [':name' => $getParams['name']])
+      ->where('id=:id', [':id' => $getParams['id']])
       ->one();
 
       return $this->render('editHoliday', [
@@ -163,12 +173,12 @@ class BackendController extends Controller
 
       // Retrieving the entry to be changed
       $holiday = Holidays::find()
-      ->where('name=:old_name', [':old_name' => $getInput['old_name']])
+      ->where('id=:id', [':id' => $getInput['id']])
       ->limit(1)
       ->one();
 
       // Binding values
-      $holiday->name = $getInput['name'];
+      $holiday->holiday_name = $getInput['holiday_name'];
       $holiday->date = $getInput['date'];
       $holiday->beginning_time = $getInput['beginning_time'];
       $holiday->end_time = $getInput['end_time'];
@@ -180,17 +190,17 @@ class BackendController extends Controller
         $updateQuery = Yii::$app->db->createCommand
         (
           'UPDATE holidays
-          SET name = :name, date = :date, beginning_time = :beginning_time, end_time = :end_time
-          WHERE name = :old_name;'
+          SET holiday_name = :holiday_name, date = :date, beginning_time = :beginning_time, end_time = :end_time
+          WHERE id = :id;'
         );
 
         // Binding parameters (to prevent SQL-Injection)
         $updateQuery->bindValues([
-          ':name' => $holiday->name,
+          ':holiday_name' => $holiday->holiday_name,
           ':date' => $holiday->date,
           ':beginning_time' => $holiday->beginning_time,
           ':end_time' => $holiday->end_time,
-          ':old_name' => $getInput['old_name']
+          ':id' => $getInput['id']
         ]);
 
         // Executing query

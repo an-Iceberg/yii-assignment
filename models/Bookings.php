@@ -3,18 +3,20 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "bookings".
  *
+ * @property int $id
  * @property int|null $duration
- * @property string $role
- * @property string|null $treatment
- * @property string $date
- * @property string $time
+ * @property int|null $role_id
+ * @property int|null $treatment_id
+ * @property string|null $date
+ * @property string|null $time
  * @property string|null $patient_salutation
  * @property string|null $patient_firstName
- * @property string $patient_lastName
+ * @property string|null $patient_lastName
  * @property string|null $patient_birthdate
  * @property string|null $patient_street
  * @property int|null $patient_zipCode
@@ -43,17 +45,15 @@ class Bookings extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['duration', 'patient_zipCode'], 'integer'],
-      [['role', 'date', 'time', 'patient_lastName'], 'required'],
+      [['duration', 'role_id', 'treatment_id', 'patient_zipCode'], 'integer'],
       [['date', 'time', 'patient_birthdate'], 'safe'],
       [['patient_comment'], 'string'],
       [['newPatient', 'callback', 'send_confirmation', 'status'], 'boolean'],
-      [['role', 'patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
-      [['treatment'], 'string', 'max' => 100],
       [['patient_salutation'], 'string', 'max' => 8],
+      [['patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
       [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_email'], 'string', 'max' => 254],
-      [['role', 'date', 'time', 'patient_lastName'], 'unique', 'targetAttribute' => ['role', 'date', 'time', 'patient_lastName']],
+      [['role_id', 'date', 'time', 'patient_lastName'], 'unique', 'targetAttribute' => ['role_id', 'date', 'time', 'patient_lastName']],
 
       // Input validation with regex
       [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],
@@ -74,21 +74,22 @@ class Bookings extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
+      'id' => 'ID',
       'duration' => 'Duration',
-      'role' => 'Role',
-      'treatment' => 'Treatment',
+      'role_id' => 'Role ID',
+      'treatment_id' => 'Treatment ID',
       'date' => 'Date',
       'time' => 'Time',
-      'patient_salutation' => 'Patient Salutation',
-      'patient_firstName' => 'Patient First Name',
-      'patient_lastName' => 'Patient Last Name',
-      'patient_birthdate' => 'Patient Birthdate',
-      'patient_street' => 'Patient Street',
-      'patient_zipCode' => 'Patient Zip Code',
-      'patient_city' => 'Patient City',
-      'patient_phoneNumber' => 'Patient Phone Number',
-      'patient_email' => 'Patient Email',
-      'patient_comment' => 'Patient Comment',
+      'patient_salutation' => 'Salutation',
+      'patient_firstName' => 'First Name',
+      'patient_lastName' => 'Last Name',
+      'patient_birthdate' => 'Birthdate',
+      'patient_street' => 'Street',
+      'patient_zipCode' => 'Zip Code',
+      'patient_city' => 'City',
+      'patient_phoneNumber' => 'Phone Number',
+      'patient_email' => 'Email',
+      'patient_comment' => 'Comment',
       'newPatient' => 'New Patient',
       'callback' => 'Callback',
       'send_confirmation' => 'Send Confirmation',
@@ -96,20 +97,31 @@ class Bookings extends \yii\db\ActiveRecord
     ];
   }
 
-  // Returns all data for all bookings
+  // Returns the name of the treatment
+  public function getTreatment()
+  {
+    return $this->hasOne(Treatments::class, ['id' => 'treatment_id']);
+  }
+
+  // Returns the name of the role
+  public function getRole()
+  {
+    return $this->hasOne(Roles::class, ['id' => 'role_id']);
+  }
+
+  // Returns all bookings present in the DB
   public static function getAllBookings()
   {
-    return Bookings::find()
-    ->select(['role', 'patient_salutation', 'patient_lastName', 'date'])
-    ->all();
+    // ! Relations don't seem to work
+    return;
   }
 
   // Returns the dates and times of the reserved bookings
-  public static function getBookings($role, $treatment, $date, $time)
+  public static function getBookings($role_id, $treatment, $date, $time)
   {
     return Bookings::find()
     ->select('date')
-    ->where('role=:role', [':role' => $role])
+    ->where('role_id=:role_id', [':role_id' => $role_id])
     ->andWhere('treatment=:treatment', [':treatment' => $treatment])
     ->andWhere('date LIKE :date', [':date' => '%'.$date.'%'])
     ->andWhere('time LIKE :time', [':time' => '%'.$time.'%'])
