@@ -12,7 +12,7 @@ use Yii;
  * @property string|null $email
  * @property string|null $description
  * @property int|null $sort_order
- * @property int|null $work_duration
+ * @property int|null $duration
  * @property bool|null $status
  */
 class Roles extends \yii\db\ActiveRecord
@@ -32,7 +32,7 @@ class Roles extends \yii\db\ActiveRecord
   {
     return [
       [['description'], 'string'],
-      [['sort_order', 'work_duration'], 'integer'],
+      [['sort_order', 'duration'], 'integer'],
       [['status'], 'boolean'],
       [['role_name'], 'string', 'max' => 50],
       [['email'], 'string', 'max' => 255],
@@ -50,15 +50,27 @@ class Roles extends \yii\db\ActiveRecord
       'email' => 'E-Mail',
       'description' => 'Description',
       'sort_order' => 'Sort Order',
-      'work_duration' => 'Work Duration',
+      'duration' => 'Duration',
       'status' => 'Status',
     ];
   }
 
   // One role can be used by many bookings
-  public function getBooking()
+  // public function getBooking()
+  // {
+  //   return $this->hasMany(Bookings::class, ['role_id', 'id']);
+  // }
+
+  // One role has many treatments
+  public function getTreatments()
   {
-    return $this->hasMany(Bookings::class, ['role_id', 'id']);
+    return $this->hasMany(Treatments::class, ['role_id' => 'id']);
+  }
+
+  // One role hase work times
+  public function getWorkTimes()
+  {
+    return $this->hasMany(WorkTimes::class, ['role_id' => 'id']);
   }
 
   // Retrieves all the different professions available from the db

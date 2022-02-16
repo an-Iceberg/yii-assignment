@@ -49,7 +49,13 @@ class Treatments extends \yii\db\ActiveRecord
   // One treatment can be used by many bookings
   public function getBooking()
   {
-    return $this->hasMany(Bookings::class, ['treatment_id', 'id']);
+    return $this->hasMany(Bookings::class, ['treatment_id' => 'id']);
+  }
+
+  // One treatment can be used by one role
+  public function getRole()
+  {
+    return $this->hasOne(Roles::class, ['treatment_id' => 'id']);
   }
 
   // Retrieves all available treatments for the selected type

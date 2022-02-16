@@ -34,6 +34,9 @@ class WorkTimes extends \yii\db\ActiveRecord
       [['from', 'until'], 'safe'],
       [['has_free'], 'boolean'],
       [['role_id', 'weekday'], 'unique', 'targetAttribute' => ['role_id', 'weekday']],
+
+      // Input validation with regex
+      [['from', 'until'], 'match', 'pattern' => '/(\d{2}:\d{2}:00)|/'],
     ];
   }
 
@@ -48,5 +51,10 @@ class WorkTimes extends \yii\db\ActiveRecord
       'until' => 'Until',
       'has_free' => 'Has Free',
     ];
+  }
+
+  public function getRole()
+  {
+    return $this->hasOne(Roles::class, ['id' => 'role_id']);
   }
 }

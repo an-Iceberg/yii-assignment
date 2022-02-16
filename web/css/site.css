@@ -361,9 +361,17 @@ select {
   margin-right: 5px;
 }
 
+.checkbox-row {
+  display: flex;
+}
+
 .input-label input,
-.input-label select {
+.input-label > select {
+  border: none;
   flex-grow: 1;
+}
+
+.input-label select {
   border: none;
   border-radius: 4px;
 }
@@ -388,4 +396,37 @@ select {
 
 input[type="text"] {
   padding-left: revert !important;
+}
+
+.time-input {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  background: #e2e9ef;
+}
+
+/* TODO: turn this into flex */
+.working-hours {
+  background: #fff;
+  border-radius: 5px;
+  /* TODO: align with other items, this is not a solution */
+  width: 93.7%;
+  padding-left: 5px;
+}
+
+.treatments {
+  background: #fff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.treatments > label {
+  margin: 5px;
+}
+
+.time-checkbox {
+  padding-right: 5px;
 }

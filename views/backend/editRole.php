@@ -1,6 +1,21 @@
 <?php
 
+use yii\helpers\Html;
 use yii\helpers\VarDumper;
+use yii\widgets\ActiveForm;
+
+// echo VarDumper::dump($role, 10, true);
+// exit;
+
+// if (isset($role) && isset($workTimes) && isset($postParams))
+// {
+//   // echo VarDumper::dump($postParams, 10, true);
+//   echo '<hr>';
+//   echo VarDumper::dump($role, 10, true);
+//   echo '<hr>';
+//   echo VarDumper::dump($workTimes, 10, true);
+//   exit;
+// }
 
 $this->title = $role->role_name;
 $this->params['currentPage'] = 'roles';
@@ -14,6 +29,13 @@ $this->params['currentPage'] = 'roles';
   <h1 class="h3">&nbsp;/ <?= $role->role_name ?></h1>
 </div>
 
+<?php
+  $form = ActiveForm::begin([
+    'action' => '/backend/edit-role',
+    'method' => 'post'
+  ])
+?>
+
 <?php // Language switcher ?>
 <div class="language-switcher">
   <a href="#" class="language active-language">Deutsch</a>
@@ -22,70 +44,76 @@ $this->params['currentPage'] = 'roles';
 </div>
 
 <div class="grid-container">
-<!-- <?= VarDumper::dump($role, 10, true) ?> -->
   <label class="input-label"><span>Designation</span>
-    <input type="text" value="<?= $role->role_name ?>">
+    <input type="text" value="<?= $role->role_name ?>" name="role_name">
   </label>
   <label class="input-label"><span>E-Mail</span>
-    <input type="email" value="<?= $role->email ?>">
+    <input type="email" value="<?= $role->email ?>" name="email">
   </label>
   <label class="input-label description"><span>Description</span>
-    <textarea rows="4"><?= $role->description ?></textarea>
+    <textarea rows="4" name="description"><?= $role->description ?></textarea>
   </label>
   <label class="input-label"><span>Sort Order</span>
-    <input type="text" value="<?= $role->sort_order ?>">
+    <input type="number" value="<?= $role->sort_order ?>" name="sort_order">
   </label>
 
   <div class="break"></div>
 
   <label class="input-label"><span>Duration (min)</span>
-    <select name="">
-      <option value="15">15</option>
-      <option value="30">30</option>
-      <option value="60">60</option>
-      <option value="90">90</option>
-      <option value="120">120</option>
-      <option value="150">150</option>
-      <option value="180">180</option>
-      <option value="210">210</option>
-      <option value="240">240</option>
-      <option value="270">270</option>
-      <option value="300">300</option>
-      <option value="330">330</option>
-      <option value="360">360</option>
-      <option value="390">390</option>
-      <option value="420">420</option>
-      <option value="450">450</option>
-      <option value="480">480</option>
-      <option value="510">510</option>
-    </select>
+    <?= $this->render('partials/duration-select', [
+      'model' => $role
+    ]) ?>
   </label>
 
   <label class="input-label"><span>Treatments</span>
     <input type="text">
   </label>
 
-<!-- Here, the working hours can be filled in statically -->
+  <?php // 0-based index for weekends (coincides with array indices) ?>
   <div class="input-label"><span>Working Hours</span>
-    <div>
-      <div>Monday</div>
-        <label>From</label><label>Until</label><label>Has Free</label>
-      <div>Tuesday</div>
-      <div>Wednesday</div>
-      <div>Thursday</div>
-      <div>Friday</div>
-      <div>Saturday</div>
-      <div>Sunday</div>
+    <div class="working-hours">
+      <?php // Renders 3 input fields for each day of the week
+        foreach ($role->workTimes as $index => $day)
+        {
+          $name;
+          // Assigning a name based on the number stored in the DB
+          switch ($day->weekday) {
+            case 0: $name = 'monday'; break;
+            case 1: $name = 'tuesday'; break;
+            case 2: $name = 'wednesday'; break;
+            case 3: $name = 'thursday'; break;
+            case 4: $name = 'friday'; break;
+            case 5: $name = 'saturday'; break;
+            case 6: $name = 'sunday'; break;
+            default: $name = 'weekday name'; break;
+          }
+
+          echo $this->render('partials/weekday-times', [
+            'workTimes' => $role->workTimes,
+            'name' => $name,
+            'weekday' => $index
+          ]);
+        }
+      ?>
     </div>
   </div>
 
   <div class="break"></div>
 
+  <?php // Status ?>
   <label class="input-label last-input-element"><span>Status</span>
-    <input type="text">
+    <select name="status">
+      <option <?= ($role->status == 1) ? 'selected' : '' ?> value="1">Active</option>
+      <option <?= ($role->status == 0) ? 'selected' : '' ?> value="0">Inactive</option>
+    </select>
   </label>
+
+  <input type="hidden" name="role_id" value="<?= $role->id ?>">
+
 </div>
 
 <div class="save">
-  <a href="#" class="btn btn-warning">save</a>
+  <?= Html::submitButton('Save Changes', ['class' => 'btn btn-warning']) ?>
 </div>
+
+<?php ActiveForm::end() ?>
