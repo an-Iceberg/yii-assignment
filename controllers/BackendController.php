@@ -146,7 +146,7 @@ class BackendController extends Controller
     {
       $postParams = Yii::$app->request->post();
 
-      // Retrieving the role and the weekdays to be changed
+      // Retrieving the the data to be changed from the DB
       $role = Roles::find()
       ->where('id=:id', [':id' => $postParams['role_id']])
       ->one();
@@ -155,7 +155,11 @@ class BackendController extends Controller
       ->where('role_id=:id', [':id' => $postParams['role_id']])
       ->all();
 
-      // Assigning new values
+      $treatments = Treatments::find()
+      ->where('role_id=:id', [':id' => $postParams['role_id']])
+      ->all();
+
+      // Assigning new role values
       $role->role_name = $postParams['role_name'];
       $role->email = $postParams['email'];
       $role->description = $postParams['description'];
@@ -163,6 +167,7 @@ class BackendController extends Controller
       $role->duration = $postParams['duration'] ?? null;
       $role->status = $postParams['status'];
 
+      // Assigning new work time values and performing input validation on them
       $allWorkTimesAreValid = true;
       for ($i = 0; $i < 7; $i++)
       {
@@ -176,6 +181,66 @@ class BackendController extends Controller
         }
       }
 
+echo '<div style="display:flex; flex-direction:row;">';
+echo '<div>';
+echo 'Before modification:';
+VarDumper::dump($treatments, 10, true);
+echo '<hr>';
+VarDumper::dump($postParams['treatments'], 10, true);
+echo '</div>';
+
+      // Modifying all existing treatment entries
+      // Looping over all old entries present in the DB
+      foreach ($treatments as $old_treatment)
+      {
+        $oldEntryHasBeenModified = false;
+
+        // Finding the respective new entires with matching IDs
+        foreach ($postParams['treatments'] as $new_treatment)
+        {
+          // Only modify an existing old entry, if the new entry has an ID
+          if (isset($new_treatment['treatment_id']) && $new_treatment['treatment_id'] == $old_treatment->id)
+          {
+            $old_treatment->treatment_name = $new_treatment['treatment_name'];
+            $old_treatment->sort_order = intval($new_treatment['sort_order']);
+
+            $oldEntryHasBeenModified = true;
+
+            break;
+          }
+        }
+
+        // Delete the old entry from the DB
+        if (!$oldEntryHasBeenModified)
+        {
+          // * The code is being executed, but unset seemingly doesn't affect the array element
+          unset($old_treatment);
+        }
+      }
+
+      // Adding all the entries that are new to the $treatments
+      foreach ($postParams['treatments'] as $new_treatment)
+      {
+        // A newly created entry doesn't have an ID but it does have a name (in case the new entry only has sort order set it gets ignored)
+        if (!isset($new_treatment['treatment_id']) && isset($new_treatment['treatment_name']))
+        {
+          array_push($treatments, [
+            'id' => null,
+            'role_id' => $postParams['role_id'],
+            'treatment_name' => $new_treatment['treatment_name'],
+            'sort_order' => intval($new_treatment['sort_order'])
+          ]);
+        }
+      }
+
+      // TODO: delete old entries
+
+echo '<div>';
+echo 'After modification:';
+VarDumper::dump($treatments, 10, true);
+echo '</div>';
+echo '</div>';
+exit;
       // Input is valid
       if ($role->validate() && $allWorkTimesAreValid)
       {

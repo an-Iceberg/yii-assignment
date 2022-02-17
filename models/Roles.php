@@ -58,7 +58,7 @@ class Roles extends \yii\db\ActiveRecord
   // One role can be used by many bookings
   // public function getBooking()
   // {
-  //   return $this->hasMany(Bookings::class, ['role_id', 'id']);
+  //   return $this->hasMany(Bookings::class, ['role_id' => 'id']);
   // }
 
   // One role has many treatments

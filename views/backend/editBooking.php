@@ -30,6 +30,7 @@ $this->params['currentPage'] = 'bookings';
 
 <?php // Booking data ?>
 <div class="grid-container">
+<!-- <?= VarDumper::dump($treatments, 10, true) ?> -->
   <label class="input-label"><span>Duration (min)</span>
     <?= $this->render('partials/duration-select', [
       'model' => $booking
@@ -61,17 +62,28 @@ $this->params['currentPage'] = 'bookings';
   </label>
 
   <?php // TODO: Ajax injection ?>
-  <label class="input-label"><span>Treatment(s)</span>
+  <div class="input-label"><span>Treatment(s)</span>
     <div class="treatments">
 
-      <?php foreach ($treatments as $key => $treatment) { ?>
-        <label class="time-input time-checkbox">&nbsp;<?= $treatment->treatment_name ?>
-          <input type="checkbox" name="" >
+      <?php // Shows all treatments
+      foreach ($treatments as $treatment)
+      {
+        $mark_treatment = false;
+
+        // Determines whether the current treatment needs to be checked or not
+        foreach ($booking->treatment_id as $treatment_id) {
+          if ($treatment_id == $treatment->id)
+          {
+            $mark_treatment = true;
+          }
+        } ?>
+        <label class="sub-input time-checkbox">&nbsp;<?= $treatment->treatment_name ?>
+          <input type="checkbox" name="" <?= ($mark_treatment) ? 'checked' : '' ?>>
         </label>
       <?php } ?>
 
     </div>
-  </label>
+  </div>
 
   <div class="break"></div>
 
@@ -122,13 +134,13 @@ $this->params['currentPage'] = 'bookings';
 
   <div class="checkbox-row">
     <label class="input-label input-checkbox"><span>Reminder</span>
-      <input type="checkbox">
+      <input type="checkbox" <?= ($booking->callback) ? 'checked' : '' ?>>
     </label>
     <label class="input-label input-checkbox"><span>New Patient</span>
-      <input type="checkbox">
+      <input type="checkbox" <?= ($booking->newPatient) ? 'checked' : '' ?>>
     </label>
     <label class="input-label input-checkbox"><span>Send Confirmation E-Mail</span>
-      <input type="checkbox">
+      <input type="checkbox" <?= ($booking->send_confirmation) ? 'checked' : '' ?>>
     </label>
   </div>
 

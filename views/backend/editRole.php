@@ -1,5 +1,6 @@
 <?php
 
+use app\assets\EditRoleAsset;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
@@ -16,6 +17,7 @@ use yii\widgets\ActiveForm;
 //   echo VarDumper::dump($workTimes, 10, true);
 //   exit;
 // }
+EditRoleAsset::register($this);
 
 $this->title = $role->role_name;
 $this->params['currentPage'] = 'roles';
@@ -65,9 +67,32 @@ $this->params['currentPage'] = 'roles';
     ]) ?>
   </label>
 
-  <label class="input-label"><span>Treatments</span>
-    <input type="text">
-  </label>
+  <div class="input-label"><span>Treatments</span>
+    <div class="role-treatments">
+
+      <div id="treatments">
+        <?php foreach ($role->treatments as $key => $treatment) { ?>
+          <div id="treatment-<?= $key ?>">
+            <input type="hidden" name="treatments[<?= $key ?>][treatment_id]" value="<?= $treatment->id ?>">
+            <label class="sub-input"><span>Treatment</span>
+              <input type="text" name="treatments[<?= $key ?>][treatment_name]" value="<?= $treatment->treatment_name ?>">
+            </label>
+            <label class="sub-input"><span>Sort Order</span>
+              <input type="number" name="treatments[<?= $key ?>][sort_order]" value="<?= $treatment->sort_order ?>">
+            </label>
+            <button type="button" class="sub-input treatment-delete-button" id="delete-button-<?= $key ?>">
+              <i class="nf nf-fa-times"></i>
+            </button>
+          </div>
+        <?php } ?>
+      </div>
+
+      <button type="button" class="create-treatment" id="create-button">
+        Create New Treatment
+      </button>
+
+    </div>
+  </div>
 
   <?php // 0-based index for weekends (coincides with array indices) ?>
   <div class="input-label"><span>Working Hours</span>
