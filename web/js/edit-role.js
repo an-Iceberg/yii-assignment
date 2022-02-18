@@ -1,3 +1,5 @@
+// TODO: rework this using HTML data attributes
+
 // Delete buttons event listeners
 $('#treatments').click(function (e) {
   e.preventDefault();

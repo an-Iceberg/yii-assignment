@@ -70,6 +70,7 @@ $this->params['currentPage'] = 'roles';
   <div class="input-label"><span>Treatments</span>
     <div class="role-treatments">
 
+      <?php // TODO: rework this using HTML data attributes ?>
       <div id="treatments">
         <?php foreach ($role->treatments as $key => $treatment) { ?>
           <div id="treatment-<?= $key ?>">

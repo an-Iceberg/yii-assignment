@@ -59,6 +59,10 @@ $this->params['currentPage'] = 'holidays';
 
   <input type="hidden" name="id" value="<?= $holiday->id ?>" readonly>
 
+  <?= Html::hiddenInput('newEntry', $newEntry, [
+    'readonly' => true
+  ]) ?>
+
 </div>
 
 <div class="save">

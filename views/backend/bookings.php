@@ -1,5 +1,6 @@
 <?php
 
+use app\assets\BookingsAsset;
 use app\modules\backend\models\Booking;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -20,6 +21,15 @@ function createUrl($viewName, $model)
   );
 }
 ?>
+
+<div class="create-button">
+  <?= Html::a('+ Create new Booking', Url::to([
+    'edit-booking',
+    'createNew' => true
+  ]), [
+    'class' => 'btn btn-create'
+  ]) ?>
+</div>
 
 <?=
   GridView::widget
@@ -49,10 +59,16 @@ function createUrl($viewName, $model)
             },
             'delete' => function ($url, $model, $key)
             {
-              return Html::a(
-                '<i class="nf nf-fa-trash action-icon"></i>',
-                createUrl('delete-booking', $model)
-              );
+              $form = Html::beginForm('delete-booking', 'post', [
+                'class' => 'delete-form'
+              ]);
+              $form .= Html::hiddenInput('id', $key);
+              $form .= Html::submitButton('<i class="nf nf-fa-trash action-icon"></i>', [
+                'class' => 'delete-form-icon',
+                'data-confirm' => 'Are you certain you want to delete this?'
+              ]);
+              $form .= Html::endForm();
+              return $form;
             }
           ]
         ]

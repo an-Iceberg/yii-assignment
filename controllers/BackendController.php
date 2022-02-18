@@ -66,6 +66,12 @@ class BackendController extends Controller
     // TODO: only query DB if method is GET
     $getParams = Yii::$app->request->get();
 
+    if ($getParams['createNew'])
+    {
+      echo 'Creating new booking';
+      return;
+    }
+
     // Retrieving the one selected booking entry
     $booking = Bookings::find()
     ->where('id=:id', [':id' => $getParams['id']])
@@ -88,6 +94,13 @@ class BackendController extends Controller
         'treatments' => $treatments
       ]
     );
+  }
+
+  // Deletes the specified booking from the DB
+  public function actionDeleteBooking()
+  {
+    $getParams = Yii::$app->request->post();
+    echo 'Booking #'.$getParams['id'].' needs to be deleted.';
   }
 
   // The Calendar to be displayed
@@ -130,6 +143,12 @@ class BackendController extends Controller
     if (Yii::$app->request->method == 'GET')
     {
       $getParams = Yii::$app->request->get();
+
+      if ($getParams['createNew'])
+      {
+        echo 'Creating new role';
+        return;
+      }
 
       // Retrieving the data for the selected role
       $role = Roles::find()
@@ -356,6 +375,13 @@ class BackendController extends Controller
     return Yii::$app->getResponse()->redirect('/backend/roles');
   }
 
+  // Deletes the specified role from the DB
+  public function actionDeleteRole()
+  {
+    $getParams = Yii::$app->request->post();
+    echo 'Role #'.$getParams['id'].' needs to be deleted.';
+  }
+
   // Displays all created holidays
   public function actionHolidays()
   {
@@ -389,13 +415,24 @@ class BackendController extends Controller
     {
       $getParams = Yii::$app->request->get();
 
+      if (isset($getParams['createNew']))
+      {
+        $holiday = new Holidays();
+
+        return $this->render('editHoliday', [
+          'holiday' => $holiday,
+          'newEntry' => true
+        ]);
+      }
+
       // Querying the DB for the specified name
       $holiday = Holidays::find()
       ->where('id=:id', [':id' => $getParams['id']])
       ->one();
 
       return $this->render('editHoliday', [
-        'holiday' => $holiday
+        'holiday' => $holiday,
+        'newEntry' => false
       ]);
     }
     // Saving changes made to the holiday
@@ -403,38 +440,39 @@ class BackendController extends Controller
     {
       $getInput = Yii::$app->request->post();
 
+      // Adding the new entry to the DB
+      if ($getInput['newEntry'])
+      {
+        $newHoliday = new Holidays();
+
+        $newHoliday->attributes = $getInput;
+
+        // Input is valid
+        if ($newHoliday->validate())
+        {
+          $newHoliday->save();
+        }
+        // TODO: what to do on invalid input
+        else
+        {
+        }
+
+        return Yii::$app->getResponse()->redirect('/backend/holidays');
+      }
+
       // Retrieving the entry to be changed
       $holiday = Holidays::find()
       ->where('id=:id', [':id' => $getInput['id']])
       ->limit(1)
       ->one();
 
-      // Assigning new values
-      $holiday->holiday_name = $getInput['holiday_name'];
-      $holiday->date = $getInput['date'];
-      $holiday->beginning_time = $getInput['beginning_time'];
-      $holiday->end_time = $getInput['end_time'];
+      // Modifying the selected entry
+      $holiday->attributes = $getInput;
 
       // Input is valid
       if ($holiday->validate())
       {
-        // Creating the UPDATE query
-        $updateQuery = Yii::$app->db->createCommand(
-          'UPDATE holidays
-          SET holiday_name = :holiday_name, date = :date, beginning_time = :beginning_time, end_time = :end_time
-          WHERE id = :id;'
-        );
-
-        // Binding parameters (to prevent SQL-Injection)
-        $updateQuery->bindValues([
-          ':holiday_name' => $holiday->holiday_name,
-          ':date' => $holiday->date,
-          ':beginning_time' => $holiday->beginning_time,
-          ':end_time' => $holiday->end_time,
-          ':id' => $getInput['id']
-        ]);
-
-        $updateQuery->execute();
+        $holiday->save();
 
         return Yii::$app->getResponse()->redirect('/backend/holidays');
       }
@@ -443,6 +481,21 @@ class BackendController extends Controller
       {
       }
     }
+
+    return Yii::$app->getResponse()->redirect('/backend/holidays');
+  }
+
+  // Deletes the specified holiday from the DB
+  public function actionDeleteHoliday()
+  {
+    $getParams = Yii::$app->request->post();
+
+    $holiday = Holidays::find()
+    ->where('id=:id', [':id' => $getParams['id']])
+    ->limit(1)
+    ->one();
+
+    $holiday->delete();
 
     return Yii::$app->getResponse()->redirect('/backend/holidays');
   }

@@ -1,5 +1,6 @@
 <?php
 
+use app\assets\RolesAsset;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -19,6 +20,15 @@ function createUrl($viewName, $model)
   );
 }
 ?>
+
+<div class="create-button">
+  <?= Html::a('+ Create new Role', Url::to([
+    'edit-role',
+    'createNew' => true
+  ]), [
+    'class' => 'btn btn-create'
+  ]) ?>
+</div>
 
 <?=
   GridView::widget
@@ -46,10 +56,16 @@ function createUrl($viewName, $model)
             },
             'delete' => function ($url, $model, $key)
             {
-              return Html::a(
-                '<i class="nf nf-fa-trash action-icon"></i>',
-                createUrl('delete-role', $model)
-              );
+              $form = Html::beginForm('delete-role', 'post', [
+                'class' => 'delete-form'
+              ]);
+              $form .= Html::hiddenInput('id', $key);
+              $form .= Html::submitButton('<i class="nf nf-fa-trash action-icon"></i>', [
+                'class' => 'delete-form-icon',
+                'data-confirm' => 'Are you certain you want to delete this?'
+              ]);
+              $form .= Html::endForm();
+              return $form;
             }
           ]
         ]
