@@ -122,6 +122,7 @@ class BackendController extends Controller
   }
 
   // TODO: fix 'cat' not loading
+  // TODO: prevent treatments with empty names from entering the DB
   // Displays the data of the selected role
   public function actionEditRole()
   {
@@ -181,30 +182,33 @@ class BackendController extends Controller
         }
       }
 
-echo '<div style="display:flex; flex-direction:row;">';
-echo '<div>';
-echo 'Before modification:';
-VarDumper::dump($treatments, 10, true);
-echo '<hr>';
-VarDumper::dump($postParams['treatments'], 10, true);
-echo '</div>';
+      $deleteThese = [];
+      $allTreatmentsAreValid = true;
 
+      // * Alternative method: delete all entries with the current role_id from the DB and insert all new values into it
+      // * That has to be done using a transaction though
       // Modifying all existing treatment entries
       // Looping over all old entries present in the DB
-      foreach ($treatments as $old_treatment)
+      foreach ($treatments as $key => $oldTreatment)
       {
         $oldEntryHasBeenModified = false;
 
         // Finding the respective new entires with matching IDs
-        foreach ($postParams['treatments'] as $new_treatment)
+        foreach ($postParams['treatments'] as $newTreatment)
         {
           // Only modify an existing old entry, if the new entry has an ID
-          if (isset($new_treatment['treatment_id']) && $new_treatment['treatment_id'] == $old_treatment->id)
+          if (isset($newTreatment['treatment_id']) && $newTreatment['treatment_id'] == $oldTreatment->id)
           {
-            $old_treatment->treatment_name = $new_treatment['treatment_name'];
-            $old_treatment->sort_order = intval($new_treatment['sort_order']);
+            $oldTreatment->treatment_name = $newTreatment['treatment_name'];
+            $oldTreatment->sort_order = intval($newTreatment['sort_order']);
 
             $oldEntryHasBeenModified = true;
+
+            // Validating input
+            if (!$oldTreatment->validate())
+            {
+              $allTreatmentsAreValid = false;
+            }
 
             break;
           }
@@ -213,77 +217,132 @@ echo '</div>';
         // Delete the old entry from the DB
         if (!$oldEntryHasBeenModified)
         {
-          // * The code is being executed, but unset seemingly doesn't affect the array element
-          unset($old_treatment);
+          array_push($deleteThese, $treatments[$key]->id);
+          // Apparently, calling unset() on the array element has no effect on it, this however works
+          unset($treatments[$key]);
         }
       }
 
       // Adding all the entries that are new to the $treatments
-      foreach ($postParams['treatments'] as $new_treatment)
+      foreach ($postParams['treatments'] as $newTreatment)
       {
         // A newly created entry doesn't have an ID but it does have a name (in case the new entry only has sort order set it gets ignored)
-        if (!isset($new_treatment['treatment_id']) && isset($new_treatment['treatment_name']))
+        if (!isset($newTreatment['treatment_id']) && isset($newTreatment['treatment_name']))
         {
-          array_push($treatments, [
-            'id' => null,
-            'role_id' => $postParams['role_id'],
-            'treatment_name' => $new_treatment['treatment_name'],
-            'sort_order' => intval($new_treatment['sort_order'])
+          // Creating the new entry
+          $newTreatmentElement = new Treatments([
+            'role_id' => intval($postParams['role_id']),
+            'treatment_name' => $newTreatment['treatment_name'],
+            'sort_order' => intval($newTreatment['sort_order'])
           ]);
+
+          array_push($treatments, $newTreatmentElement);
+
+          // Since the newly added array element is the last one we can validate it by simply validating the last array element
+          if (!end($treatments)->validate())
+          {
+            $allTreatmentsAreValid = false;
+          }
+
+          // Since end() sets the internal pointer to the end of the array, we set it back to the beginning of the array here
+          reset($treatments);
         }
       }
 
-      // TODO: delete old entries
-
-echo '<div>';
-echo 'After modification:';
-VarDumper::dump($treatments, 10, true);
-echo '</div>';
-echo '</div>';
-exit;
       // Input is valid
-      if ($role->validate() && $allWorkTimesAreValid)
+      if ($role->validate() && $allWorkTimesAreValid && $allTreatmentsAreValid)
       {
+        // * createCommand calls bindValues internally
         // Update query for the role
         $updateRole = Yii::$app->db->createCommand(
           'UPDATE roles
           SET role_name = :role_name, email = :email, description = :description, sort_order = :sort_order, duration = :duration, status = :status
-          WHERE id = :id;'
+          WHERE id = :id;', [
+            ':role_name' => $role->role_name,
+            ':email' => $role->email,
+            ':description' => $role->description,
+            ':sort_order' => $role->sort_order,
+            ':duration' => $role->duration,
+            ':status' => ($role->status) ? true : false,
+            ':id' => $postParams['role_id']
+          ]
         );
-
-        // Binding role parameters
-        $updateRole->bindValues([
-          ':role_name' => $role->role_name,
-          ':email' => $role->email,
-          ':description' => $role->description,
-          ':sort_order' => $role->sort_order,
-          ':duration' => $role->duration,
-          ':status' => ($role->status) ? true : false,
-          ':id' => $postParams['role_id']
-        ]);
 
         $updateRole->execute();
 
         // Updating all working hours
-        for ($i = 0; $i < 7; $i++)
+        foreach ($workTimes as $key => $workTime)
         {
+          $hasFree = $workTime->has_free;
+
           // Update query for a workday
-          $updateWorkTime = Yii::$app->db->createCommand(
+          $query = Yii::$app->db->createCommand(
             "UPDATE work_times
             SET work_times.from = :from, until = :until, has_free = :has_free
-            WHERE role_id = :role_id AND weekday = $i;"
+            WHERE role_id = :role_id AND weekday = $key;",
+            [
+              ':from' => ($hasFree) ? '00:00:00': $workTime->from.':00',
+              ':until' => ($hasFree) ? '00:00:00' : $workTime->until.':00',
+              ':has_free' => $hasFree,
+              ':role_id' => $postParams['role_id']
+            ]
           );
 
-          // Binding workTime parameters
-          // Only setting time values, if the day is not set to 'free'
-          $updateWorkTime->bindValues([
-            ':from' => ($workTimes[$i]->has_free) ? '00:00:00': $workTimes[$i]->from.':00',
-            ':until' => ($workTimes[$i]->has_free) ? '00:00:00' : $workTimes[$i]->until.':00',
-            ':has_free' => $workTimes[$i]->has_free,
-            ':role_id' => $postParams['role_id']
-          ]);
+          $query->execute();
+        }
 
-          $updateWorkTime->execute();
+        // Updating all treatments
+        foreach ($treatments as $treatment)
+        {
+          $query = null;
+
+          // If the ID is not set, create a new entry
+          if (!isset($treatment->id))
+          {
+            $query = Yii::$app->db->createCommand(
+              'INSERT INTO treatments (role_id, treatment_name, sort_order)
+              VALUES(:role_id, :treatment_name, :sort_order);',
+              [
+                ':role_id' => intval($postParams['role_id']),
+                ':treatment_name' => $treatment->treatment_name,
+                ':sort_order' => intval($treatment->sort_order)
+              ]
+            );
+
+            $query->execute();
+          }
+          // Update an existing entry
+          else
+          {
+            $query = Yii::$app->db->createCommand(
+              'UPDATE treatments
+              SET treatment_name = :treatment_name, sort_order = :sort_order
+              WHERE id = :id AND role_id = :role_id;',
+              [
+                ':treatment_name' => $treatment->treatment_name,
+                ':sort_order' => $treatment->sort_order,
+                ':id' => $treatment->id,
+                ':role_id' => $postParams['role_id']
+              ]
+            );
+
+            $query->execute();
+          }
+        }
+
+        // Deleting all old entries that are marked for deletion
+        foreach ($deleteThese as $oldEntry)
+        {
+          $query = Yii::$app->db->createCommand(
+            'DELETE FROM treatments
+            WHERE role_id = :role_id AND id = :id;',
+            [
+              ':role_id' => $postParams['role_id'],
+              ':id' => $oldEntry
+            ]
+          );
+
+          $query->execute();
         }
 
         return Yii::$app->getResponse()->redirect('/backend/roles');
@@ -292,13 +351,9 @@ exit;
       else
       {
       }
-
-      return $this->render('editRole', [
-        'role' => $role,
-        // 'workTimes' => $workTimes,
-        // 'postParams' => $postParams
-      ]);
     }
+
+    return Yii::$app->getResponse()->redirect('/backend/roles');
   }
 
   // Displays all created holidays
@@ -387,13 +442,8 @@ exit;
       else
       {
       }
-
-      $holiday->name = 'something went wrong';
-
-      return $this->render('editHoliday', [
-        'holiday' => $holiday,
-        'getInput' => $getInput
-      ]);
     }
+
+    return Yii::$app->getResponse()->redirect('/backend/holidays');
   }
 }
