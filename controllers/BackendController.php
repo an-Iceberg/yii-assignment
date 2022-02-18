@@ -63,37 +63,55 @@ class BackendController extends Controller
   // Displays the data of the selected booking
   public function actionEditBooking()
   {
-    // TODO: only query DB if method is GET
-    $getParams = Yii::$app->request->get();
-
-    if ($getParams['createNew'])
+    if (Yii::$app->request->method == 'GET')
     {
-      echo 'Creating new booking';
-      return;
+      $getParams = Yii::$app->request->get();
+
+      if (isset($getParams['createNew']))
+      {
+        echo 'Creating new booking';
+        return;
+      }
+
+      // Retrieving the one selected booking entry
+      $booking = Bookings::find()
+      ->where('id=:id', [':id' => $getParams['id']])
+      ->one();
+
+      // Retrieving all roles
+      $roles = Roles::find()
+      ->select('id, role_name')
+      ->all();
+
+      // Retrieving all treatments
+      $treatments = Treatments::find()
+      ->select('id, treatment_name')
+      ->where('role_id=:role_id', [':role_id' => $booking->role_id])
+      ->all();
+
+      return $this->render('editBooking', [
+          'booking' => $booking,
+          'roles' => $roles,
+          'treatments' => $treatments
+        ]
+      );
     }
+    elseif (Yii::$app->request->method == 'POST')
+    {
+      $postParams = Yii::$app->request->post();
 
-    // Retrieving the one selected booking entry
-    $booking = Bookings::find()
-    ->where('id=:id', [':id' => $getParams['id']])
-    ->one();
+      if (isset($postParams['createNew']))
+      {
+        // TODO: creating a new booking
+        return;
+      }
 
-    // Retrieving all roles
-    $roles = Roles::find()
-    ->select('id, role_name')
-    ->all();
+      $booking = Bookings::find()
+      ->where('id=:id', [':id' => $postParams['']])
+      ->one();
 
-    // Retrieving all treatments
-    $treatments = Treatments::find()
-    ->select('id, treatment_name')
-    ->where('role_id=:role_id', [':role_id' => $booking->role_id])
-    ->all();
-
-    return $this->render('editBooking', [
-        'booking' => $booking,
-        'roles' => $roles,
-        'treatments' => $treatments
-      ]
-    );
+      // TODO: modify existing booking and write it back into the DB
+    }
   }
 
   // Deletes the specified booking from the DB
@@ -144,7 +162,7 @@ class BackendController extends Controller
     {
       $getParams = Yii::$app->request->get();
 
-      if ($getParams['createNew'])
+      if (isset($getParams['createNew']))
       {
         echo 'Creating new role';
         return;
@@ -152,7 +170,7 @@ class BackendController extends Controller
 
       // Retrieving the data for the selected role
       $role = Roles::find()
-      ->where('roles.id=:id', [':id' => $getParams['id']])
+      ->where('roles.id=:id', [':id' => intval($getParams['id'])])
       ->innerJoinWith('treatments')
       ->innerJoinWith('workTimes')
       ->one();
@@ -239,6 +257,7 @@ class BackendController extends Controller
           array_push($deleteThese, $treatments[$key]->id);
           // Apparently, calling unset() on the array element has no effect on it, this however works
           unset($treatments[$key]);
+          unset($oldTreatment);
         }
       }
 
@@ -271,27 +290,31 @@ class BackendController extends Controller
       // Input is valid
       if ($role->validate() && $allWorkTimesAreValid && $allTreatmentsAreValid)
       {
+        $role->save();
+
         // * createCommand calls bindValues internally
         // Update query for the role
-        $updateRole = Yii::$app->db->createCommand(
-          'UPDATE roles
-          SET role_name = :role_name, email = :email, description = :description, sort_order = :sort_order, duration = :duration, status = :status
-          WHERE id = :id;', [
-            ':role_name' => $role->role_name,
-            ':email' => $role->email,
-            ':description' => $role->description,
-            ':sort_order' => $role->sort_order,
-            ':duration' => $role->duration,
-            ':status' => ($role->status) ? true : false,
-            ':id' => $postParams['role_id']
-          ]
-        );
+        // $updateRole = Yii::$app->db->createCommand(
+        //   'UPDATE roles
+        //   SET role_name = :role_name, email = :email, description = :description, sort_order = :sort_order, duration = :duration, status = :status
+        //   WHERE id = :id;', [
+        //     ':role_name' => $role->role_name,
+        //     ':email' => $role->email,
+        //     ':description' => $role->description,
+        //     ':sort_order' => $role->sort_order,
+        //     ':duration' => $role->duration,
+        //     ':status' => ($role->status) ? true : false,
+        //     ':id' => $postParams['role_id']
+        //   ]
+        // );
 
-        $updateRole->execute();
+        // $updateRole->execute();
 
         // Updating all working hours
         foreach ($workTimes as $key => $workTime)
         {
+          // TODO: make this work with $workTime->save();
+
           $hasFree = $workTime->has_free;
 
           // Update query for a workday
@@ -313,43 +336,45 @@ class BackendController extends Controller
         // Updating all treatments
         foreach ($treatments as $treatment)
         {
-          $query = null;
+          $treatment->save();
+          // $query = null;
 
-          // If the ID is not set, create a new entry
-          if (!isset($treatment->id))
-          {
-            $query = Yii::$app->db->createCommand(
-              'INSERT INTO treatments (role_id, treatment_name, sort_order)
-              VALUES(:role_id, :treatment_name, :sort_order);',
-              [
-                ':role_id' => intval($postParams['role_id']),
-                ':treatment_name' => $treatment->treatment_name,
-                ':sort_order' => intval($treatment->sort_order)
-              ]
-            );
+          // // If the ID is not set, create a new entry
+          // if (!isset($treatment->id))
+          // {
+          //   $query = Yii::$app->db->createCommand(
+          //     'INSERT INTO treatments (role_id, treatment_name, sort_order)
+          //     VALUES(:role_id, :treatment_name, :sort_order);',
+          //     [
+          //       ':role_id' => intval($postParams['role_id']),
+          //       ':treatment_name' => $treatment->treatment_name,
+          //       ':sort_order' => intval($treatment->sort_order)
+          //     ]
+          //   );
 
-            $query->execute();
-          }
-          // Update an existing entry
-          else
-          {
-            $query = Yii::$app->db->createCommand(
-              'UPDATE treatments
-              SET treatment_name = :treatment_name, sort_order = :sort_order
-              WHERE id = :id AND role_id = :role_id;',
-              [
-                ':treatment_name' => $treatment->treatment_name,
-                ':sort_order' => $treatment->sort_order,
-                ':id' => $treatment->id,
-                ':role_id' => $postParams['role_id']
-              ]
-            );
+          //   $query->execute();
+          // }
+          // // Update an existing entry
+          // else
+          // {
+          //   $query = Yii::$app->db->createCommand(
+          //     'UPDATE treatments
+          //     SET treatment_name = :treatment_name, sort_order = :sort_order
+          //     WHERE id = :id AND role_id = :role_id;',
+          //     [
+          //       ':treatment_name' => $treatment->treatment_name,
+          //       ':sort_order' => $treatment->sort_order,
+          //       ':id' => $treatment->id,
+          //       ':role_id' => $postParams['role_id']
+          //     ]
+          //   );
 
-            $query->execute();
-          }
+          //   $query->execute();
+          // }
         }
 
         // Deleting all old entries that are marked for deletion
+        // TODO: make deletions work with only ->save()
         foreach ($deleteThese as $oldEntry)
         {
           $query = Yii::$app->db->createCommand(

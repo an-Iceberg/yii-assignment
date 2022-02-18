@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Html;
 use yii\helpers\VarDumper;
 
 // VarDumper::dump($booking, 10, true);
@@ -148,6 +149,10 @@ $this->params['currentPage'] = 'bookings';
     <input type="text">
   </label>
 </div>
+
+<?= Html::hiddenInput('newEntry', $newEntry, [
+  'readonly' => true
+]) ?>
 
 <div class="save">
   <a href="#" class="btn btn-warning">save</a>
