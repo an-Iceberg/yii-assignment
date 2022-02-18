@@ -256,6 +256,7 @@ class BackendController extends Controller
         {
           array_push($deleteThese, $treatments[$key]->id);
           // Apparently, calling unset() on the array element has no effect on it, this however works
+          // Try $oldTreatment->delete()
           unset($treatments[$key]);
           unset($oldTreatment);
         }
