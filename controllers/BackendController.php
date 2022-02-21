@@ -92,7 +92,9 @@ class BackendController extends Controller
       return $this->render('editBooking', [
           'booking' => $booking,
           'roles' => $roles,
-          'treatments' => $treatments
+          'treatments' => $treatments,
+          'newEntry' => false,
+          'id' => $getParams['id']
         ]
       );
     }
@@ -106,12 +108,75 @@ class BackendController extends Controller
         return;
       }
 
+      // Retrieving the selected booking from the DB
       $booking = Bookings::find()
-      ->where('id=:id', [':id' => $postParams['']])
+      ->where('id=:id', [':id' => $postParams['id']])
       ->one();
 
-      // TODO: modify existing booking and write it back into the DB
+      // This is a workaround, but writing the values directly into $bookings throws an error
+      // Building the treatments array
+      $treatments[] = [];
+      foreach ($postParams['treatment'] as $key => $value)
+      {
+        $treatments[] = $key;
+      }
+      unset($treatments[0]);
+
+      $booking->duration = $postParams['duration'] ?? null;
+      $booking->role_id = $postParams['role'];
+      $booking->treatment_id = $treatments;
+      $booking->date = $postParams['date'];
+      $booking->time = $postParams['bookingTime'].':00';
+      $booking->patient_salutation = $postParams['salutation'];
+      $booking->patient_firstName = $postParams['firstName'];
+      $booking->patient_lastName = $postParams['lastName'];
+      $booking->patient_birthdate = $postParams['birthdate'];
+      $booking->patient_street = $postParams['street'];
+      $booking->patient_city = $postParams['city'];
+      $booking->patient_zipCode = $postParams['zipCode'];
+      $booking->patient_email = $postParams['email'];
+      $booking->patient_phoneNumber = $postParams['telephone'];
+      $booking->patient_comment = $postParams['comment'];
+      $booking->callback = isset($postParams['reminder']) ? 1 : 0;
+      $booking->newPatient = isset($postParams['newPatient']) ? 1 : 0;
+      $booking->send_confirmation = isset($postParams['sendConfirmation']) ? 1 : 0;
+      $booking->status = $postParams['status'];
+
+      if ($booking->validate())
+      {
+        $booking->save();
+echo 'booking changes saved';
+        return Yii::$app->getResponse()->redirect('/backend/bookings');
+      }
+      // TODO: what to do on invalid input
+      else
+      {
+echo VarDumper::dump($booking->errors, 10, true);
+      }
     }
+  }
+
+  // Target for Ajax call for the selection of treatments
+  public function actionGetTreatments()
+  {
+    // Data being sent in format ['role' => '<role_id>']
+    $data = Yii::$app->request->get();
+
+    $treatments = Treatments::find()
+    ->where('role_id = :role_id', [':role_id' => $data['role']])
+    ->all();
+
+    // Creating all the HTML here so that the Ajax function can just inject it into the right place
+    $HTMLsnippet = '';
+    foreach ($treatments as $treatment) {
+      $HTMLsnippet .= "
+      <label class=\"sub-input time-checkbox\">&nbsp;$treatment->treatment_name
+        <input type=\"checkbox\" name=\"treatment[$treatment->id]\">
+      </label>
+      ";
+    }
+
+    return $HTMLsnippet;
   }
 
   // Deletes the specified booking from the DB
@@ -152,7 +217,7 @@ class BackendController extends Controller
     ]);
   }
 
-  // TODO: fix 'cat' not loading
+  // TODO: roles with no treatments and no working hours should still be able to show
   // TODO: prevent treatments with empty names from entering the DB
   // Displays the data of the selected role
   public function actionEditRole()
@@ -176,7 +241,8 @@ class BackendController extends Controller
       ->one();
 
       return $this->render('editRole', [
-        'role' => $role
+        'role' => $role,
+        'newEntry' => false
       ]);
     }
     // Saving changes made to the viewed role
@@ -222,11 +288,9 @@ class BackendController extends Controller
       $deleteThese = [];
       $allTreatmentsAreValid = true;
 
-      // * Alternative method: delete all entries with the current role_id from the DB and insert all new values into it
-      // * That has to be done using a transaction though
       // Modifying all existing treatment entries
       // Looping over all old entries present in the DB
-      foreach ($treatments as $key => $oldTreatment)
+      foreach ($treatments as $oldTreatment)
       {
         $oldEntryHasBeenModified = false;
 
@@ -250,23 +314,24 @@ class BackendController extends Controller
             break;
           }
         }
+        unset($newTreatment);
 
-        // Delete the old entry from the DB
+        // Delete the old entry from the DB and mark it for deletion
         if (!$oldEntryHasBeenModified)
         {
-          array_push($deleteThese, $treatments[$key]->id);
-          // Apparently, calling unset() on the array element has no effect on it, this however works
-          // Try $oldTreatment->delete()
-          unset($treatments[$key]);
-          unset($oldTreatment);
+          array_push($deleteThese, $oldTreatment->id);
+          $oldTreatment->delete();
         }
       }
+      unset($oldTreatment);
 
       // Adding all the entries that are new to the $treatments
       foreach ($postParams['treatments'] as $newTreatment)
       {
-        // A newly created entry doesn't have an ID but it does have a name (in case the new entry only has sort order set it gets ignored)
-        if (!isset($newTreatment['treatment_id']) && isset($newTreatment['treatment_name']))
+        // A newly created entry doesn't have an ID but it does have a name
+        // If the name is the empty string, it doesn't get created
+        // If only the sort order is set, it doesn't get created
+        if (!isset($newTreatment['treatment_id']) && isset($newTreatment['treatment_name']) && $newTreatment['treatment_name'] != '')
         {
           // Creating the new entry
           $newTreatmentElement = new Treatments([
@@ -287,34 +352,17 @@ class BackendController extends Controller
           reset($treatments);
         }
       }
+      unset($newTreatment);
 
       // Input is valid
       if ($role->validate() && $allWorkTimesAreValid && $allTreatmentsAreValid)
       {
         $role->save();
 
-        // * createCommand calls bindValues internally
-        // Update query for the role
-        // $updateRole = Yii::$app->db->createCommand(
-        //   'UPDATE roles
-        //   SET role_name = :role_name, email = :email, description = :description, sort_order = :sort_order, duration = :duration, status = :status
-        //   WHERE id = :id;', [
-        //     ':role_name' => $role->role_name,
-        //     ':email' => $role->email,
-        //     ':description' => $role->description,
-        //     ':sort_order' => $role->sort_order,
-        //     ':duration' => $role->duration,
-        //     ':status' => ($role->status) ? true : false,
-        //     ':id' => $postParams['role_id']
-        //   ]
-        // );
-
-        // $updateRole->execute();
-
+        // TODO: make this work without createCommand()
         // Updating all working hours
         foreach ($workTimes as $key => $workTime)
         {
-          // TODO: make this work with $workTime->save();
 
           $hasFree = $workTime->has_free;
 
@@ -333,62 +381,30 @@ class BackendController extends Controller
 
           $query->execute();
         }
+        unset($workTime);
 
         // Updating all treatments
         foreach ($treatments as $treatment)
         {
-          $treatment->save();
-          // $query = null;
+          // Checks, if the current element is marked for deletion
+          $deleted = false;
+          foreach ($deleteThese as $deleteThis)
+          {
+            // Element has been found, deleting
+            if ($treatment->id == $deleteThis)
+            {
+              $deleted = true;
+              break;
+            }
+          }
 
-          // // If the ID is not set, create a new entry
-          // if (!isset($treatment->id))
-          // {
-          //   $query = Yii::$app->db->createCommand(
-          //     'INSERT INTO treatments (role_id, treatment_name, sort_order)
-          //     VALUES(:role_id, :treatment_name, :sort_order);',
-          //     [
-          //       ':role_id' => intval($postParams['role_id']),
-          //       ':treatment_name' => $treatment->treatment_name,
-          //       ':sort_order' => intval($treatment->sort_order)
-          //     ]
-          //   );
-
-          //   $query->execute();
-          // }
-          // // Update an existing entry
-          // else
-          // {
-          //   $query = Yii::$app->db->createCommand(
-          //     'UPDATE treatments
-          //     SET treatment_name = :treatment_name, sort_order = :sort_order
-          //     WHERE id = :id AND role_id = :role_id;',
-          //     [
-          //       ':treatment_name' => $treatment->treatment_name,
-          //       ':sort_order' => $treatment->sort_order,
-          //       ':id' => $treatment->id,
-          //       ':role_id' => $postParams['role_id']
-          //     ]
-          //   );
-
-          //   $query->execute();
-          // }
+          // Element is not marked for deletion, saving to DB
+          if (!$deleted)
+          {
+            $treatment->save();
+          }
         }
-
-        // Deleting all old entries that are marked for deletion
-        // TODO: make deletions work with only ->save()
-        foreach ($deleteThese as $oldEntry)
-        {
-          $query = Yii::$app->db->createCommand(
-            'DELETE FROM treatments
-            WHERE role_id = :role_id AND id = :id;',
-            [
-              ':role_id' => $postParams['role_id'],
-              ':id' => $oldEntry
-            ]
-          );
-
-          $query->execute();
-        }
+        unset($treatment);
 
         return Yii::$app->getResponse()->redirect('/backend/roles');
       }

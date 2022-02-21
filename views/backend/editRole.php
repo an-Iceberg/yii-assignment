@@ -136,6 +136,10 @@ $this->params['currentPage'] = 'roles';
 
   <input type="hidden" name="role_id" value="<?= $role->id ?>">
 
+  <?= Html::hiddenInput('newEntry', $newEntry, [
+    'readonly' => true
+  ]) ?>
+
 </div>
 
 <div class="save">

@@ -1,7 +1,9 @@
 <?php
 
+use app\assets\TreatmentsAsset;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
+use yii\widgets\ActiveForm;
 
 // VarDumper::dump($booking, 10, true);
 // echo '<hr>';
@@ -9,6 +11,8 @@ use yii\helpers\VarDumper;
 // echo '<hr>';
 // VarDumper::dump($treatments, 10, true);
 // exit;
+
+TreatmentsAsset::register($this);
 
 $this->title = $booking->patient_lastName;
 $this->params['currentPage'] = 'bookings';
@@ -29,6 +33,13 @@ $this->params['currentPage'] = 'bookings';
   <a href="#" class="language">Français</a>
 </div>
 
+<?php
+  $form = ActiveForm::begin([
+    'action' => '/backend/edit-booking',
+    'method' => 'post'
+  ])
+?>
+
 <?php // Booking data ?>
 <div class="grid-container">
 <!-- <?= VarDumper::dump($treatments, 10, true) ?> -->
@@ -45,18 +56,18 @@ $this->params['currentPage'] = 'bookings';
     ]) ?>
   </label>
   <label class="input-label"><span>Date</span>
-    <input type="date" value="<?= $booking->date ?>" min="<?= date('Y-m-d') ?>">
+    <input type="date" value="<?= $booking->date ?>" name="date"><!-- min="?= date('Y-m-d') ?" -->
   </label>
 
   <div class="break"></div>
 
   <?php // These two have ids for the Ajax calls ?>
   <label class="input-label"><span>Role</span>
-    <select name="" id="roles">
+    <select name="role" id="roles">
 
       <?php foreach ($roles as $key => $role) { ?>
-        <?php // Shows the one as selected which is present in $booking ?>
-        <option <?= ($role->id == $booking->role->id) ? 'selected' : '' ?> value="<?= $role->role_name ?>"><?= $role->role_name ?></option>
+        <?php // Shows the role as selected which is present in $booking ?>
+        <option class="role" <?= ($role->id == $booking->role->id) ? 'selected' : '' ?> value="<?= $role->id ?>"><?= $role->role_name ?></option>
       <?php } ?>
 
     </select>
@@ -64,7 +75,7 @@ $this->params['currentPage'] = 'bookings';
 
   <?php // TODO: Ajax injection ?>
   <div class="input-label"><span>Treatment(s)</span>
-    <div class="treatments">
+    <div class="treatments" id="treatments">
 
       <?php // Shows all treatments
       foreach ($treatments as $treatment)
@@ -79,7 +90,7 @@ $this->params['currentPage'] = 'bookings';
           }
         } ?>
         <label class="sub-input time-checkbox">&nbsp;<?= $treatment->treatment_name ?>
-          <input type="checkbox" name="" <?= ($mark_treatment) ? 'checked' : '' ?>>
+          <input type="checkbox" name="treatment[<?= $treatment->id ?>]" <?= ($mark_treatment) ? 'checked' : '' ?>>
         </label>
       <?php } ?>
 
@@ -89,7 +100,7 @@ $this->params['currentPage'] = 'bookings';
   <div class="break"></div>
 
   <label class="input-label"><span>Salutation</span>
-    <select name="">
+    <select name="salutation">
       <option <?= ($booking->patient_salutation == 'mr') ? 'selected' : '' ?> value="mr">Mr.</option>
       <option <?= ($booking->patient_salutation == 'mrs') ? 'selected' : '' ?> value="mrs">Mrs.</option>
       <option <?= ($booking->patient_salutation == 'mystery') ? 'selected' : '' ?> value="mystery">Mystery</option>
@@ -97,56 +108,60 @@ $this->params['currentPage'] = 'bookings';
     </select>
   </label>
   <label class="input-label"><span>First Name</span>
-    <input type="text" value="<?= $booking->patient_firstName ?>">
+    <input type="text" value="<?= $booking->patient_firstName ?>" name="firstName">
   </label>
   <label class="input-label"><span>Last Name</span>
-    <input type="text" value="<?= $booking->patient_lastName ?>">
+    <input type="text" value="<?= $booking->patient_lastName ?>" name="lastName">
   </label>
   <label class="input-label"><span>Birth Date</span>
-    <input type="date" value="<?= $booking->patient_birthdate ?>" max="<?= date('Y-m-d') ?>">
+    <input type="date" value="<?= $booking->patient_birthdate ?>" max="<?= date('Y-m-d') ?>" name="birthdate">
   </label>
 
   <div class="break"></div>
 
   <label class="input-label"><span>Street</span>
-    <input type="text" value="<?= $booking->patient_street ?>">
+    <input type="text" value="<?= $booking->patient_street ?>" name="street">
   </label>
   <label class="input-label"><span>City</span>
-    <input type="text" value="<?= $booking->patient_city ?>">
+    <input type="text" value="<?= $booking->patient_city ?>" name="city">
   </label>
   <label class="input-label"><span>Zip Code</span>
-    <input type="number" value="<?= $booking->patient_zipCode ?>">
+    <input type="number" value="<?= $booking->patient_zipCode ?>" name="zipCode">
   </label>
 
   <div class="break"></div>
 
   <label class="input-label"><span>E-Mail</span>
-    <input type="email" value="<?= $booking->patient_email ?>">
+    <input type="email" value="<?= $booking->patient_email ?>" name="email">
   </label>
   <label class="input-label"><span>Telephone</span>
-    <input type="tel" value="<?= $booking->patient_phoneNumber ?>">
+    <input type="tel" value="<?= $booking->patient_phoneNumber ?>" name="telephone">
   </label>
 
   <div class="break"></div>
 
-  <label class="input-label description"><span>Description</span>
-    <textarea rows="4"><?= $booking->patient_comment ?></textarea>
+  <label class="input-label description"><span>Comment</span>
+    <textarea rows="4" name="comment"><?= $booking->patient_comment ?></textarea>
   </label>
 
   <div class="checkbox-row">
     <label class="input-label input-checkbox"><span>Reminder</span>
-      <input type="checkbox" <?= ($booking->callback) ? 'checked' : '' ?>>
+      <input type="checkbox" <?= ($booking->callback) ? 'checked' : '' ?> name="reminder">
     </label>
     <label class="input-label input-checkbox"><span>New Patient</span>
-      <input type="checkbox" <?= ($booking->newPatient) ? 'checked' : '' ?>>
+      <input type="checkbox" <?= ($booking->newPatient) ? 'checked' : '' ?> name="newPatient">
     </label>
     <label class="input-label input-checkbox"><span>Send Confirmation E-Mail</span>
-      <input type="checkbox" <?= ($booking->send_confirmation) ? 'checked' : '' ?>>
+      <input type="checkbox" <?= ($booking->send_confirmation) ? 'checked' : '' ?> name="sendConfirmation">
     </label>
   </div>
 
   <label class="input-label last-input-element"><span>Status</span>
-    <input type="text">
+    <select name="status">
+      <option <?= ($booking->status == 1) ? 'selected' : '' ?> value="1">Open</option>
+      <option value="">Booking is being processed</option>
+      <option <?= ($booking->status == 0) ? 'selected' : '' ?> value="0">Booking has been processed</option>
+    </select>
   </label>
 </div>
 
@@ -154,6 +169,12 @@ $this->params['currentPage'] = 'bookings';
   'readonly' => true
 ]) ?>
 
+<?= Html::hiddenInput('id', $id, [
+  'readonly' => true
+]) ?>
+
 <div class="save">
-  <a href="#" class="btn btn-warning">save</a>
+  <?= Html::submitButton('Save Changes', ['class' => 'btn btn-warning']) ?>
 </div>
+
+<?php ActiveForm::end() ?>

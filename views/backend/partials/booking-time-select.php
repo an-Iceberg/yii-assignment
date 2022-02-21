@@ -1,4 +1,4 @@
-<select>
+<select name="bookingTime">
   <?php if ($model->time == '') { ?>
     <option selected disabled>Please select</option>
   <?php } ?>
