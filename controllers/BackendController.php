@@ -247,8 +247,7 @@ class BackendController extends Controller
     ]);
   }
 
-  // TODO: roles with no treatments and no working hours should still be able to show
-  // TODO: prevent treatments with empty names from entering the DB
+  // TODO: refactor and clean this mess up! C'est un sacré bordel
   // Displays the data of the selected role
   public function actionEditRole()
   {
@@ -257,28 +256,142 @@ class BackendController extends Controller
     {
       $getParams = Yii::$app->request->get();
 
-      if (isset($getParams['createNew']))
-      {
-        echo 'Creating new role';
-        return;
-      }
+      $newEntry = null;
+      $role = null;
+      $treatments = null;
+      $workTimes = null;
 
-      // Retrieving the data for the selected role
-      $role = Roles::find()
-      ->where('roles.id=:id', [':id' => intval($getParams['id'])])
-      ->innerJoinWith('treatments')
-      ->innerJoinWith('workTimes')
-      ->one();
+      if (isset($getParams['createNew']) && $getParams['createNew'] == 1)
+      {
+        $newEntry = true;
+
+        $role = new Roles();
+        $treatments = [
+          new Treatments(),
+          new Treatments(),
+          new Treatments()
+        ];
+
+        // Generating an array of empty work times
+        $workTimes = [];
+        for ($i = 0; $i < 7; $i++) {
+          $workTimes[$i] = new WorkTimes();
+          $workTimes[$i]->weekday = $i;
+          $workTimes[$i]->from = '08:00:00';
+          $workTimes[$i]->until = '17:00:00';
+          $workTimes[$i]->has_free = false;
+        }
+
+        $role->status = 1;
+
+        return $this->render('editRole', [
+          'role' => $role,
+          'treatments' => $treatments,
+          'workTimes' => $workTimes,
+          'newEntry' => true
+        ]);
+      }
+      else
+      {
+        $newEntry = false;
+
+        // Useing separate queries to retrieve additional info for roles
+        // Because joins return null if they don't find any data
+        $role = Roles::find()
+        ->where('roles.id=:id', [':id' => intval($getParams['id'])])
+        // ->innerJoinWith('treatments')
+        // ->innerJoinWith('workTimes')
+        ->one();
+
+        $treatments = Treatments::find()
+        ->where('role_id = :role_id', [':role_id' => intval($getParams['id'])])
+        ->all();
+
+        $workTimes = WorkTimes::find()
+        ->where('role_id = :role_id', [':role_id' => intval($getParams['id'])])
+        ->all();
+      }
 
       return $this->render('editRole', [
         'role' => $role,
-        'newEntry' => false
+        'treatments' => $treatments,
+        'workTimes' => $workTimes,
+        'newEntry' => $newEntry
       ]);
     }
     // Saving changes made to the viewed role
     elseif (Yii::$app->request->method == 'POST')
     {
       $postParams = Yii::$app->request->post();
+
+      $role = null;
+      $treatments = null;
+      $workTimes = null;
+
+      // Saving a new entry
+      if (isset($postParams['createNew']) && $postParams['createNew'] == 1)
+      {
+        // Creating new Active Record objects
+        $role = new Roles();
+        $treatments = [];
+        $workTimes = null;
+        for ($i = 0; $i < 7; $i++) {
+          $workTimes[$i] = new WorkTimes();
+        }
+
+        // Assigning new role values
+        $role->role_name = $postParams['role_name'];
+        $role->email = $postParams['email'];
+        $role->description = $postParams['description'];
+        $role->sort_order = $postParams['sort_order'];
+        $role->duration = $postParams['duration'] ?? null;
+        $role->status = $postParams['status'];
+
+        // Now the new role has an ID with which we can save all the other data as well
+        if ($role->validate())
+        {
+          $role->save();
+        }
+        else
+        {
+          echo 'input invalid';
+          return;
+        }
+
+        // Creating new treatments for the new role and saving them
+        foreach ($postParams['treatments'] as $treatment) {
+          $newTreatment = new Treatments();
+          $newTreatment->role_id = $role->id;
+          $newTreatment->treatment_name = $treatment['treatment_name'];
+          $newTreatment->sort_order = $treatment['sort_order'];
+
+          // Only save if the input is valid and not the empty string
+          if ($newTreatment->validate() && $newTreatment->treatment_name != '')
+          {
+            $newTreatment->save();
+          }
+        }
+        unset($treatment);
+
+        // Assigning new work time values and performing input validation on them
+        foreach ($postParams['week'] as $key => $weekday) {
+          $hasFree = isset($weekday['has_free']) ? true : false;
+
+          $newWorkTime = new WorkTimes();
+          $newWorkTime->role_id = $role->id;
+          $newWorkTime->weekday = $key;
+          $newWorkTime->from = (!$hasFree) ? $weekday['from'].':00' : null;
+          $newWorkTime->until = (!$hasFree) ? $weekday['until'].':00' : null;
+          $newWorkTime->has_free = $hasFree;
+          if ($newWorkTime->validate())
+          {
+            $newWorkTime->save();
+          }
+        }
+        unset($weekday);
+
+        return Yii::$app->getResponse()->redirect('/backend/roles');
+      }
 
       // Retrieving the the data to be changed from the DB
       $role = Roles::find()
@@ -393,7 +506,6 @@ class BackendController extends Controller
         // Updating all working hours
         foreach ($workTimes as $key => $workTime)
         {
-
           $hasFree = $workTime->has_free;
 
           // Update query for a workday
@@ -446,12 +558,36 @@ class BackendController extends Controller
 
     return Yii::$app->getResponse()->redirect('/backend/roles');
   }
-
   // Deletes the specified role from the DB
   public function actionDeleteRole()
   {
+    // Extracting the id of the role
     $getParams = Yii::$app->request->post();
-    echo 'Role #'.$getParams['id'].' needs to be deleted.';
+    $roleId = $getParams['id'];
+
+    // Deleting the role
+    $role = Roles::find()
+    ->where('id = :id', [':id' => $roleId])
+    ->one();
+    $role->delete();
+
+    // Deleting all treatments of said role
+    $treatments = Treatments::find()
+    ->where('role_id = :role_id', [':role_id' => $roleId])
+    ->all();
+    foreach ($treatments as $treatment) {
+      $treatment->delete();
+    }
+
+    // Deleting all work times of said role
+    $workTimes = WorkTimes::find()
+    ->where('role_id = :role_id', [':role_id' => $roleId])
+    ->all();
+    foreach ($workTimes as $workTime) {
+      $workTime->delete();
+    }
+
+    return Yii::$app->getResponse()->redirect('/backend/roles');
   }
 
   // Displays all created holidays
@@ -487,7 +623,7 @@ class BackendController extends Controller
     {
       $getParams = Yii::$app->request->get();
 
-      if (isset($getParams['createNew']))
+      if (isset($getParams['createNew']) && $getParams['createNew'] == 1)
       {
         $holiday = new Holidays();
 
@@ -512,8 +648,8 @@ class BackendController extends Controller
     {
       $getInput = Yii::$app->request->post();
 
-      // Adding the new entry to the DB
-      if ($getInput['newEntry'])
+      // Creating a new holiday
+      if (isset($getInput['createNew']) && $getInput['createNew'] == 1)
       {
         $newHoliday = new Holidays();
 
@@ -532,7 +668,7 @@ class BackendController extends Controller
         return Yii::$app->getResponse()->redirect('/backend/holidays');
       }
 
-      // Retrieving the entry to be changed
+      // Reading the holiday
       $holiday = Holidays::find()
       ->where('id=:id', [':id' => $getInput['id']])
       ->limit(1)
@@ -544,6 +680,7 @@ class BackendController extends Controller
       // Input is valid
       if ($holiday->validate())
       {
+        // Updating the holiday
         $holiday->save();
 
         return Yii::$app->getResponse()->redirect('/backend/holidays');

@@ -122,7 +122,7 @@ a:hover {
   width: calc(100% - 150px);
   overflow-y: auto;
   overflow-x: hidden;
-  background: linear-gradient(135deg, salmon, blueviolet);
+  background: linear-gradient(135deg, coral, blueviolet);
 }
 
 table {
@@ -204,11 +204,13 @@ select {
   border-top: 1px solid #dee2e6;
   border-right: 1px solid #dee2e6;
   background: #d8cde3;
+  /* z-index: 1; */
 }
 
 .active-language {
   background: #fdfbff;
   box-shadow: none;
+  /* z-index: 3; */
 }
 
 .grid-container {
@@ -218,6 +220,7 @@ select {
   padding: .5rem 0;
   border-top-left-radius: 0;
   margin-top: -1px;
+  /* z-index: 2; */
 }
 
 .grid {
@@ -330,10 +333,17 @@ select {
   margin-right: 10px;
 }
 
-.top-row a {
+.top-row .back-button {
   border: 1px solid gray;
   border-radius: 5px;
   background: white;
+}
+
+.top-row .flex-filler {
+  flex-grow: 1;
+}
+
+.top-row .delete-button {
 }
 
 .input-label {

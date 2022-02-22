@@ -9,11 +9,23 @@ $this->params['currentPage'] = 'holidays';
 ?>
 
 <div class="top-row">
-  <a href="/backend/holidays">
+  <a href="/backend/holidays" class="back-button">
     <i class="nf nf-fa-chevron_left"></i>
   </a>
 
   <h1 class="h3">&nbsp;/ <?= $holiday->holiday_name ?></h1>
+
+  <div class="flex-filler"></div>
+
+  <?= Html::beginForm('delete-holiday', 'post', [
+    'class' => 'delete-form'
+  ]) ?>
+  <?= Html::hiddenInput('id', $holiday->id) ?>
+  <?= Html::submitButton('<i class="nf nf-fa-trash delete-button"></i>&nbsp;Delete this Holiday', [
+    'class' => 'btn btn-danger',
+    'data-confirm' => 'Are you sure you want to delete this holiday?'
+  ]) ?>
+  <?= Html::endForm() ?>
 </div>
 
 <?php // Language switcher ?>
@@ -61,7 +73,7 @@ $this->params['currentPage'] = 'holidays';
     'readonly' => true
   ]) ?>
 
-  <?= Html::hiddenInput('newEntry', $newEntry, [
+  <?= Html::hiddenInput('createNew', $newEntry, [
     'readonly' => true
   ]) ?>
 

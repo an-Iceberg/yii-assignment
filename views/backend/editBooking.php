@@ -19,11 +19,23 @@ $this->params['currentPage'] = 'bookings';
 ?>
 
 <div class="top-row">
-  <a href="/backend/bookings">
+  <a href="/backend/bookings" class="back-button">
     <i class="nf nf-fa-chevron_left"></i>
   </a>
 
   <h1 class="h3">&nbsp;/ <?= $booking->patient_lastName ?></h1>
+
+  <div class="flex-filler"></div>
+
+  <?= Html::beginForm('delete-booking', 'post', [
+    'class' => 'delete-form'
+  ]) ?>
+  <?= Html::hiddenInput('id', $booking->id) ?>
+  <?= Html::submitButton('<i class="nf nf-fa-trash delete-button"></i>&nbsp;Delete this Booking', [
+    'class' => 'btn btn-danger',
+    'data-confirm' => 'Are you sure you want to delete this booking?'
+  ]) ?>
+  <?= Html::endForm() ?>
 </div>
 
 <?php // Language switcher ?>
@@ -72,7 +84,7 @@ $this->params['currentPage'] = 'bookings';
     </select>
   </label>
 
-  <?php // TODO: Ajax injection ?>
+  <?php // Shows all the treatments that are available for the selected role ?>
   <div class="input-label"><span>Treatment(s)</span>
     <div class="treatments" id="treatments">
 

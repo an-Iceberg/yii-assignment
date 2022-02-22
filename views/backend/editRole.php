@@ -24,11 +24,23 @@ $this->params['currentPage'] = 'roles';
 ?>
 
 <div class="top-row">
-  <a href="/backend/roles">
+  <a href="/backend/roles" class="back-button">
     <i class="nf nf-fa-chevron_left"></i>
   </a>
 
   <h1 class="h3">&nbsp;/ <?= $role->role_name ?></h1>
+
+  <div class="flex-filler"></div>
+
+  <?= Html::beginForm('delete-role', 'post', [
+    'class' => 'delete-form'
+  ]) ?>
+  <?= Html::hiddenInput('id', $role->id) ?>
+  <?= Html::submitButton('<i class="nf nf-fa-trash delete-button"></i>&nbsp;Delete this Role', [
+    'class' => 'btn btn-danger',
+    'data-confirm' => 'Are you sure you want to delete this role?'
+  ]) ?>
+  <?= Html::endForm() ?>
 </div>
 
 <?php
@@ -72,14 +84,14 @@ $this->params['currentPage'] = 'roles';
 
       <?php // TODO: rework this using HTML data attributes ?>
       <div id="treatments">
-        <?php foreach ($role->treatments as $key => $treatment) { ?>
+        <?php foreach ($treatments as $key => $treatment) { ?>
           <div id="treatment-<?= $key ?>">
-            <input type="hidden" name="treatments[<?= $key ?>][treatment_id]" value="<?= $treatment->id ?>">
+            <input type="hidden" name="treatments[<?= $key ?>][treatment_id]" value="<?= ($treatment->id ?? null) ?>">
             <label class="sub-input"><span>Treatment</span>
-              <input type="text" name="treatments[<?= $key ?>][treatment_name]" value="<?= $treatment->treatment_name ?>">
+              <input type="text" name="treatments[<?= $key ?>][treatment_name]" value="<?= ($treatment->treatment_name ?? null) ?>">
             </label>
             <label class="sub-input"><span>Sort Order</span>
-              <input type="number" name="treatments[<?= $key ?>][sort_order]" value="<?= $treatment->sort_order ?>">
+              <input type="number" name="treatments[<?= $key ?>][sort_order]" value="<?= ($treatment->sort_order ?? null) ?>">
             </label>
             <button type="button" class="sub-input treatment-delete-button" id="delete-button-<?= $key ?>">
               <i class="nf nf-fa-times"></i>
@@ -99,7 +111,7 @@ $this->params['currentPage'] = 'roles';
   <div class="input-label"><span>Working Hours</span>
     <div class="working-hours">
       <?php // Renders 3 input fields for each day of the week
-        foreach ($role->workTimes as $index => $day)
+        foreach ($workTimes as $index => $day)
         {
           $name;
           // Assigning a name based on the number stored in the DB
@@ -115,7 +127,7 @@ $this->params['currentPage'] = 'roles';
           }
 
           echo $this->render('partials/weekday-times', [
-            'workTimes' => $role->workTimes,
+            'workTimes' => $workTimes,
             'name' => $name,
             'weekday' => $index
           ]);
@@ -136,7 +148,7 @@ $this->params['currentPage'] = 'roles';
 
   <input type="hidden" name="role_id" value="<?= $role->id ?>">
 
-  <?= Html::hiddenInput('newEntry', $newEntry, [
+  <?= Html::hiddenInput('createNew', $newEntry, [
     'readonly' => true
   ]) ?>
 
