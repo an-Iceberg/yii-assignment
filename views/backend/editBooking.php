@@ -42,7 +42,6 @@ $this->params['currentPage'] = 'bookings';
 
 <?php // Booking data ?>
 <div class="grid-container">
-<!-- <?= VarDumper::dump($treatments, 10, true) ?> -->
   <label class="input-label"><span>Duration (min)</span>
     <?= $this->render('partials/duration-select', [
       'model' => $booking
@@ -66,8 +65,8 @@ $this->params['currentPage'] = 'bookings';
     <select name="role" id="roles">
 
       <?php foreach ($roles as $key => $role) { ?>
-        <?php // Shows the role as selected which is present in $booking ?>
-        <option class="role" <?= ($role->id == $booking->role->id) ? 'selected' : '' ?> value="<?= $role->id ?>"><?= $role->role_name ?></option>
+        <?php // Shows the roles and marks the ones that are selected ?>
+        <option class="role" <?= ($role->id == ($booking->role->id ?? null)) ? 'selected' : '' ?> value="<?= $role->id ?>"><?= $role->role_name ?></option>
       <?php } ?>
 
     </select>
@@ -83,10 +82,13 @@ $this->params['currentPage'] = 'bookings';
         $mark_treatment = false;
 
         // Determines whether the current treatment needs to be checked or not
-        foreach ($booking->treatment_id as $treatment_id) {
-          if ($treatment_id == $treatment->id)
-          {
-            $mark_treatment = true;
+        if (isset($booking->treatment_id))
+        {
+          foreach ($booking->treatment_id as $treatment_id) {
+            if ($treatment_id == $treatment->id)
+            {
+              $mark_treatment = true;
+            }
           }
         } ?>
         <label class="sub-input time-checkbox">&nbsp;<?= $treatment->treatment_name ?>
@@ -165,7 +167,7 @@ $this->params['currentPage'] = 'bookings';
   </label>
 </div>
 
-<?= Html::hiddenInput('newEntry', $newEntry, [
+<?= Html::hiddenInput('createNew', $newEntry, [
   'readonly' => true
 ]) ?>
 

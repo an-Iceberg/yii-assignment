@@ -27,7 +27,7 @@ function createUrl($viewName, $model)
     'edit-booking',
     'createNew' => true
   ]), [
-    'class' => 'btn btn-create'
+    'class' => 'btn btn-primary'
   ]) ?>
 </div>
 

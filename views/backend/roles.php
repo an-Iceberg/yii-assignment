@@ -26,7 +26,7 @@ function createUrl($viewName, $model)
     'edit-role',
     'createNew' => true
   ]), [
-    'class' => 'btn btn-create'
+    'class' => 'btn btn-primary'
   ]) ?>
 </div>
 

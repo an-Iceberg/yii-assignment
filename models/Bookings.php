@@ -54,7 +54,7 @@ class Bookings extends \yii\db\ActiveRecord
       [['patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
       [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_email'], 'string', 'max' => 254],
-      [['role_id', 'date', 'time', 'patient_lastName'], 'unique', 'targetAttribute' => ['role_id', 'date', 'time', 'patient_lastName']],
+      // [['role_id', 'date', 'time', 'patient_lastName'], 'unique', 'targetAttribute' => ['role_id', 'date', 'time', 'patient_lastName']],
 
       // Input validation with regex
       [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],

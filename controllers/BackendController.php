@@ -67,51 +67,74 @@ class BackendController extends Controller
     {
       $getParams = Yii::$app->request->get();
 
-      if (isset($getParams['createNew']))
-      {
-        echo 'Creating new booking';
-        return;
-      }
-
-      // Retrieving the one selected booking entry
-      $booking = Bookings::find()
-      ->where('id=:id', [':id' => $getParams['id']])
-      ->one();
+      $booking = null;
+      $treatments = null;
+      $newEntry = null;
 
       // Retrieving all roles
       $roles = Roles::find()
       ->select('id, role_name')
       ->all();
 
-      // Retrieving all treatments
-      $treatments = Treatments::find()
-      ->select('id, treatment_name')
-      ->where('role_id=:role_id', [':role_id' => $booking->role_id])
-      ->all();
+      // Creating a new booking
+      if (isset($getParams['createNew']) && $getParams['createNew'] == 1)
+      {
+        $booking = new Bookings();
+
+        $booking->status = 1;
+
+        // For a new booking the first role will be displayed, thus we're getting the first roles treatments
+        $treatments = Treatments::find()
+        ->select('id, treatment_name')
+        ->where('role_id = :role_id', ['role_id' => $roles[0]->id])
+        ->all();
+
+        $newEntry = true;
+      }
+      // Reading an existing booking
+      else
+      {
+        // Retrieving the one selected booking entry
+        $booking = Bookings::find()
+        ->where('id=:id', [':id' => $getParams['id']])
+        ->one();
+
+        // Retrieving all treatments
+        $treatments = Treatments::find()
+        ->select('id, treatment_name')
+        ->where('role_id=:role_id', [':role_id' => $booking->role_id])
+        ->all();
+
+        $newEntry = false;
+      }
 
       return $this->render('editBooking', [
           'booking' => $booking,
           'roles' => $roles,
           'treatments' => $treatments,
-          'newEntry' => false,
-          'id' => $getParams['id']
+          'newEntry' => $newEntry,
+          'id' => $getParams['id'] ?? null
         ]
       );
     }
+    // Updating an existing booking/Saving a new booking
     elseif (Yii::$app->request->method == 'POST')
     {
       $postParams = Yii::$app->request->post();
 
-      if (isset($postParams['createNew']))
+      // Creating new booking if the flag is set
+      $booking = null;
+      if (isset($postParams['createNew']) && $postParams['createNew'] == 1)
       {
-        // TODO: creating a new booking
-        return;
+        $booking = new Bookings();
       }
-
-      // Retrieving the selected booking from the DB
-      $booking = Bookings::find()
-      ->where('id=:id', [':id' => $postParams['id']])
-      ->one();
+      else
+      {
+        // Retrieving the selected booking from the DB
+        $booking = Bookings::find()
+        ->where('id=:id', [':id' => $postParams['id']])
+        ->one();
+      }
 
       // This is a workaround, but writing the values directly into $bookings throws an error
       // Building the treatments array
@@ -145,15 +168,29 @@ class BackendController extends Controller
       if ($booking->validate())
       {
         $booking->save();
-echo 'booking changes saved';
+
         return Yii::$app->getResponse()->redirect('/backend/bookings');
       }
       // TODO: what to do on invalid input
       else
       {
-echo VarDumper::dump($booking->errors, 10, true);
+        echo VarDumper::dump($booking->errors, 10, true);
       }
     }
+  }
+
+  // Deleting an existing booking
+  public function actionDeleteBooking()
+  {
+    $getParams = Yii::$app->request->post();
+
+    $booking = Bookings::find()
+    ->where('id=:id', [':id' => $getParams['id']])
+    ->one();
+
+    $booking->delete();
+
+    return Yii::$app->getResponse()->redirect('/backend/bookings');
   }
 
   // Target for Ajax call for the selection of treatments
@@ -177,13 +214,6 @@ echo VarDumper::dump($booking->errors, 10, true);
     }
 
     return $HTMLsnippet;
-  }
-
-  // Deletes the specified booking from the DB
-  public function actionDeleteBooking()
-  {
-    $getParams = Yii::$app->request->post();
-    echo 'Booking #'.$getParams['id'].' needs to be deleted.';
   }
 
   // The Calendar to be displayed
