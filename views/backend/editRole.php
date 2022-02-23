@@ -1,22 +1,21 @@
 <?php
 
+/**
+ * @var role
+ * @var treatments
+ * @var workTimes
+ * @var newEntry
+ * @var holidayData
+ * @var selectedHolidays
+ */
+
 use app\assets\EditRoleAsset;
+use app\models\Holidays;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
+use yii\widgets\ListView;
 
-// echo VarDumper::dump($role, 10, true);
-// exit;
-
-// if (isset($role) && isset($workTimes) && isset($postParams))
-// {
-//   // echo VarDumper::dump($postParams, 10, true);
-//   echo '<hr>';
-//   echo VarDumper::dump($role, 10, true);
-//   echo '<hr>';
-//   echo VarDumper::dump($workTimes, 10, true);
-//   exit;
-// }
 EditRoleAsset::register($this);
 
 $this->title = $role->role_name;
@@ -36,8 +35,8 @@ $this->params['currentPage'] = 'roles';
     'class' => 'delete-form'
   ]) ?>
   <?= Html::hiddenInput('id', $role->id) ?>
-  <?= Html::submitButton('<i class="nf nf-fa-trash delete-button"></i>&nbsp;Delete this Role', [
-    'class' => 'btn btn-danger',
+  <?= Html::submitButton('<i class="nf nf-fa-trash"></i>&nbsp;Delete this Role', [
+    'class' => 'btn delete-button',
     'data-confirm' => 'Are you sure you want to delete this role?'
   ]) ?>
   <?= Html::endForm() ?>
@@ -139,11 +138,33 @@ $this->params['currentPage'] = 'roles';
   <div class="break"></div>
 
   <?php // Status ?>
-  <label class="input-label last-input-element"><span>Status</span>
+  <label class="input-label"><span>Status</span>
     <select name="status">
       <option <?= ($role->status == 1) ? 'selected' : '' ?> value="1">Active</option>
       <option <?= ($role->status == 0) ? 'selected' : '' ?> value="0">Inactive</option>
     </select>
+  </label>
+
+<?php // TODO: fix hover issue on checkbox ?>
+  <label class="input-label last-input-element"><span>Holidays</span>
+    <div class="working-hours">
+      <?php foreach ($holidayData as $holiday) {
+        $isSelected = false;
+        foreach ($selectedHolidays as $item) {
+          if ($item->holiday_id == $holiday->id)
+          {
+            $isSelected = true;
+          }
+        }
+      ?>
+        <label class="sub-input holiday-checkbox">
+          <input type="checkbox" name="holiday[<?= $holiday->id ?>]" <?= $isSelected ? 'checked' : '' ?>>&nbsp;<?= $holiday->holiday_name ?>
+        </label>
+        <div></div>
+      <?php } ?>
+    </div>
+  </span>
+
   </label>
 
   <input type="hidden" name="role_id" value="<?= $role->id ?>">
@@ -155,7 +176,7 @@ $this->params['currentPage'] = 'roles';
 </div>
 
 <div class="save">
-  <?= Html::submitButton('Save Changes', ['class' => 'btn btn-warning']) ?>
+  <?= Html::submitButton('Save Changes', ['class' => 'btn save-button']) ?>
 </div>
 
 <?php ActiveForm::end() ?>

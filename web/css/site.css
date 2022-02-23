@@ -122,7 +122,7 @@ a:hover {
   width: calc(100% - 150px);
   overflow-y: auto;
   overflow-x: hidden;
-  background: linear-gradient(135deg, coral, blueviolet);
+  background: linear-gradient(to bottom, #2a004a 60%, coral 115%);
 }
 
 table {
@@ -139,30 +139,53 @@ select {
 
 .backend-nav {
   width: 150px;
-  background: linear-gradient(#2a004a, #03004a);
+  background: linear-gradient(to bottom, #03004a 60%, blueviolet 115%);
+}
+
+.backend-nav-link {
+  margin-top: 8px;
+  padding: 1px;
 }
 
 .backend-nav-link,
 .backend-nav-link li {
   text-decoration: none !important;
-  color: #898cb0;
-}
-
-.backend-nav-link li:hover {
-  color: #fff;
+  text-align: center;
 }
 
 .backend-nav-link li {
-  padding-top: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-radius: 0px 5px 50px 10px;
+  border: 1px solid magenta;
+  background: transparent;
+  color: magenta;
+  text-shadow:
+  magenta 0px 0px 40px,
+  magenta 0px 0px 30px,
+  magenta 0px 0px 20px,
+  magenta 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px magenta inset,
+  0px 0px 5px 2px magenta;
+  transition: all .3s;
+}
+
+.backend-nav-link li:hover {
+  background: magenta;
+  color: #2a004a;
+  transition: all .3s;
 }
 
 .backend-nav ul {
-  padding-left: 1rem;
+  padding-left: 0;
+  width: 100%;
 }
 
 .backend-nav > ul > a > .selected-nav {
-  text-decoration: underline !important;
-  color: #fff;
+  background: magenta;
+  color: #2a004a;
 }
 
 .pagination > li {
@@ -334,9 +357,29 @@ select {
 }
 
 .top-row .back-button {
-  border: 1px solid gray;
+  border: 1px solid cyan;
   border-radius: 5px;
-  background: white;
+  background: transparent;
+  color: cyan;
+  text-shadow:
+  cyan 0px 0px 40px,
+  cyan 0px 0px 30px,
+  cyan 0px 0px 20px,
+  cyan 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px cyan inset,
+  0px 0px 5px 2px cyan;
+  transition: all .3s;
+}
+
+.top-row .back-button:hover {
+  background: cyan;
+  color: #2a004a ;
+  transition: all .3s;
+}
+
+.top-row .h3 {
+  color: cyan;
+  text-shadow: cyan 1px 0 10px;
 }
 
 .top-row .flex-filler {
@@ -344,6 +387,66 @@ select {
 }
 
 .top-row .delete-button {
+  border: 1px solid #f72119;
+  border-radius: 5px;
+  background: transparent;
+  color: #f72119;
+  text-shadow:
+  #f72119 0px 0px 40px,
+  #f72119 0px 0px 30px,
+  #f72119 0px 0px 20px,
+  #f72119 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px #f72119 inset,
+  0px 0px 5px 2px #f72119;
+  transition: all .3s;
+}
+
+.top-row .delete-button:hover {
+  background: #f72119;
+  color: #2a004a ;
+  transition: all .3s;
+}
+
+.save-button {
+  border: 1px solid #ffb81c;
+  border-radius: 5px;
+  background: transparent;
+  color: #ffb81c;
+  text-shadow:
+  #ffb81c 0px 0px 40px,
+  #ffb81c 0px 0px 30px,
+  #ffb81c 0px 0px 20px,
+  #ffb81c 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px #ffb81c inset,
+  0px 0px 5px 2px #ffb81c;
+  transition: all .3s;
+}
+
+.save-button:hover {
+  background: #ffb81c;
+  color: #2a004a ;
+  transition: all .3s;
+}
+
+.create-new-button {
+  border: 1px solid #39ff14;
+  border-radius: 5px;
+  background: transparent;
+  color: #39ff14;
+  text-shadow:
+  #39ff14 0px 0px 40px,
+  #39ff14 0px 0px 30px,
+  #39ff14 0px 0px 20px,
+  #39ff14 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px #39ff14 inset,
+  0px 0px 5px 2px #39ff14;
+  transition: all .3s;
+}
+
+.create-new-button:hover {
+  background: #39ff14;
+  color: #2a004a ;
+  transition: all .3s;
 }
 
 .input-label {
@@ -486,9 +589,11 @@ input[type="text"] {
 }
 
 .delete-form-icon {
-  border: none;
-  background: none;
-  color: #007bff;
+  border-radius: 5px;
+  border: 2px solid #d9534f;
+  background: #d9534f;
+  color: #fff;
+  width: 38px;
 }
 
 .delete-form {
@@ -496,13 +601,15 @@ input[type="text"] {
 }
 
 .delete-form-icon:hover {
-  color: #0056b3;
+  background: #c9302c;
+  border-color: #c9302c;
 }
 
 .create-button {
   display: flex;
   flex-direction: column;
   align-items: end;
+  margin-bottom: .5rem;
 }
 
 .btn-create {
@@ -515,4 +622,14 @@ input[type="text"] {
   color: gray;
   background-color: lightblue;
   border-color: lightblue;
+}
+
+.holiday-checkbox {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.edit-button {
+  padding-left: 5px;
+  padding-right: 5px;
 }

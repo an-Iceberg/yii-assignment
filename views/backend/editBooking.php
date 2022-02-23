@@ -1,16 +1,17 @@
 <?php
 
+/**
+ * @var booking
+ * @var roles
+ * @var treatments
+ * @var newEntry
+ * @var id
+ */
+
 use app\assets\TreatmentsAsset;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
-
-// VarDumper::dump($booking, 10, true);
-// echo '<hr>';
-// VarDumper::dump($roles, 10, true);
-// echo '<hr>';
-// VarDumper::dump($treatments, 10, true);
-// exit;
 
 TreatmentsAsset::register($this);
 
@@ -31,8 +32,8 @@ $this->params['currentPage'] = 'bookings';
     'class' => 'delete-form'
   ]) ?>
   <?= Html::hiddenInput('id', $booking->id) ?>
-  <?= Html::submitButton('<i class="nf nf-fa-trash delete-button"></i>&nbsp;Delete this Booking', [
-    'class' => 'btn btn-danger',
+  <?= Html::submitButton('<i class="nf nf-fa-trash"></i>&nbsp;Delete this Booking', [
+    'class' => 'btn delete-button',
     'data-confirm' => 'Are you sure you want to delete this booking?'
   ]) ?>
   <?= Html::endForm() ?>
@@ -78,7 +79,14 @@ $this->params['currentPage'] = 'bookings';
 
       <?php foreach ($roles as $key => $role) { ?>
         <?php // Shows the roles and marks the ones that are selected ?>
-        <option class="role" <?= ($role->id == ($booking->role->id ?? null)) ? 'selected' : '' ?> value="<?= $role->id ?>"><?= $role->role_name ?></option>
+        <option
+        class="role"
+        <?= ($role->id == ($booking->role->id ?? null)) ? 'selected' : '' ?>
+        <?= ($role->status == 0) ? 'disabled' : '' ?>
+        value="<?= $role->id ?>"
+        >
+          <?= $role->role_name ?>
+        </option>
       <?php } ?>
 
     </select>
@@ -173,7 +181,8 @@ $this->params['currentPage'] = 'bookings';
   <label class="input-label last-input-element"><span>Status</span>
     <select name="status">
       <option <?= ($booking->status == 1) ? 'selected' : '' ?> value="1">Open</option>
-      <option value="">Booking is being processed</option>
+      <option <?= ($booking->status == 2) ? 'selected' : '' ?> value="2">Cancelled</option>
+      <option <?= ($booking->status == 3) ? 'selected' : '' ?> value="3">Booking is being processed</option>
       <option <?= ($booking->status == 0) ? 'selected' : '' ?> value="0">Booking has been processed</option>
     </select>
   </label>
@@ -188,7 +197,7 @@ $this->params['currentPage'] = 'bookings';
 ]) ?>
 
 <div class="save">
-  <?= Html::submitButton('Save Changes', ['class' => 'btn btn-warning']) ?>
+  <?= Html::submitButton('Save Changes', ['class' => 'btn save-button']) ?>
 </div>
 
 <?php ActiveForm::end() ?>

@@ -25,10 +25,26 @@ AppAsset::register($this);
   <ul>
     <?php // Applying conditional formatting to the selected nav element
     // TODO: find a better solution, this is very janky ?>
-    <a class="backend-nav-link" href="/backend/bookings"><li class="<?= $this->params['currentPage'] == 'bookings' ? 'selected-nav' : '' ?>">Bookings</li></a>
-    <a class="backend-nav-link" href="/backend/calendar"><li class="<?= $this->params['currentPage'] == 'calendar' ? 'selected-nav' : '' ?>">Calendar</li></a>
-    <a class="backend-nav-link" href="/backend/roles"><li class="<?= $this->params['currentPage'] == 'roles' ? 'selected-nav' : '' ?>">Roles</li></a>
-    <a class="backend-nav-link" href="/backend/holidays"><li class="<?= $this->params['currentPage'] == 'holidays' ? 'selected-nav' : '' ?>">Holidays</li></a>
+    <a class="backend-nav-link" href="/backend/bookings">
+      <li class="<?= $this->params['currentPage'] == 'bookings' ? 'selected-nav' : '' ?>">
+        Bookings
+      </li>
+    </a>
+    <a class="backend-nav-link" href="/backend/calendar">
+      <li class="<?= $this->params['currentPage'] == 'calendar' ? 'selected-nav' : '' ?>">
+        Calendar
+      </li>
+    </a>
+    <a class="backend-nav-link" href="/backend/roles">
+      <li class="<?= $this->params['currentPage'] == 'roles' ? 'selected-nav' : '' ?>">
+        Roles
+      </li>
+    </a>
+    <a class="backend-nav-link" href="/backend/holidays">
+      <li class="<?= $this->params['currentPage'] == 'holidays' ? 'selected-nav' : '' ?>">
+        Holidays
+      </li>
+    </a>
   </ul>
 </div>
 

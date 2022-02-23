@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @var dataProvider
+ */
+
 use app\assets\HolidaysAsset;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -26,15 +30,16 @@ function createUrl($viewName, $model)
     'edit-holiday',
     'createNew' => true
   ]), [
-    'class' => 'btn btn-primary'
+    'class' => 'btn create-new-button'
   ]) ?>
 </div>
 
-<?=
+<?= // TODO: filtering
   GridView::widget
   (
     [
       'dataProvider' => $dataProvider,
+      'layout' => '{items}{pager}{summary}',
       'columns' =>
       [
         'holiday_name',
@@ -49,7 +54,9 @@ function createUrl($viewName, $model)
             {
               return Html::a(
                 '<i class="nf nf-fa-pencil action-icon"></i>',
-                createUrl('edit-holiday', $model)
+                createUrl('edit-holiday', $model), [
+                  'class' => 'edit-button'
+                ]
               );
             },
             'delete' => function ($url, $model, $key)

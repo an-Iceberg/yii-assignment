@@ -7,8 +7,8 @@ use Yii;
 /**
  * This is the model class for table "who_has_holidays".
  *
- * @property int|null $role_id
- * @property int|null $holiday_id
+ * @property int $role_id
+ * @property int $holiday_id
  */
 class WhoHasHolidays extends \yii\db\ActiveRecord
 {
@@ -26,7 +26,9 @@ class WhoHasHolidays extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['role_id', 'holiday_id'], 'integer']
+      [['role_id', 'holiday_id'], 'required'],
+      [['role_id', 'holiday_id'], 'integer'],
+      [['role_id', 'holiday_id'], 'unique', 'targetAttribute' => ['role_id', 'holiday_id']]
     ];
   }
 

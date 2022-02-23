@@ -27,7 +27,7 @@ use yii\helpers\VarDumper;
  * @property bool|null $newPatient
  * @property bool|null $callback
  * @property bool|null $send_confirmation
- * @property bool|null $status
+ * @property int|null $status
  */
 class Bookings extends \yii\db\ActiveRecord
 {
@@ -46,15 +46,14 @@ class Bookings extends \yii\db\ActiveRecord
   {
     return [
       // TODO: treatment_id needs custom input validation (JSON)
-      [['duration', 'role_id', 'patient_zipCode'], 'integer'],
+      [['duration', 'role_id', 'patient_zipCode', 'status'], 'integer'],
       [['date', 'time', 'patient_birthdate'], 'safe'],
       [['patient_comment'], 'string'],
-      [['newPatient', 'callback', 'send_confirmation', 'status'], 'boolean'],
+      [['newPatient', 'callback', 'send_confirmation'], 'boolean'],
       [['patient_salutation'], 'string', 'max' => 8],
       [['patient_firstName', 'patient_lastName', 'patient_street', 'patient_city'], 'string', 'max' => 50],
       [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_email'], 'string', 'max' => 254],
-      // [['role_id', 'date', 'time', 'patient_lastName'], 'unique', 'targetAttribute' => ['role_id', 'date', 'time', 'patient_lastName']],
 
       // Input validation with regex
       [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],
@@ -65,7 +64,7 @@ class Bookings extends \yii\db\ActiveRecord
       [['patient_city'], 'match', 'pattern' => '/^[a-zA-Z0-9\-.\s]{1,50}$/'],
       [['patient_phoneNumber'], 'match', 'pattern' => '/^[0-9\-\s+]{1,16}$/'],
       [['patient_email'], 'match', 'pattern' => '/^[a-zA-Z.!#$%&\'*+\-\/=?^_`{|]{1,64}@[a-zA-Z0-9.\-]{1,255}\.[a-z]{1,255}$/'],
-      [['newPatient', 'callback', 'send_confirmation', 'status'], 'match', 'pattern' => '/[0,1]/'],
+      [['newPatient', 'callback', 'send_confirmation'], 'match', 'pattern' => '/[0,1]/'],
     ];
   }
 

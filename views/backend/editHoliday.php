@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @var holiday
+ * @var newEntry
+ */
+
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
@@ -21,8 +26,8 @@ $this->params['currentPage'] = 'holidays';
     'class' => 'delete-form'
   ]) ?>
   <?= Html::hiddenInput('id', $holiday->id) ?>
-  <?= Html::submitButton('<i class="nf nf-fa-trash delete-button"></i>&nbsp;Delete this Holiday', [
-    'class' => 'btn btn-danger',
+  <?= Html::submitButton('<i class="nf nf-fa-trash"></i>&nbsp;Delete this Holiday', [
+    'class' => 'btn delete-button',
     'data-confirm' => 'Are you sure you want to delete this holiday?'
   ]) ?>
   <?= Html::endForm() ?>
@@ -80,7 +85,7 @@ $this->params['currentPage'] = 'holidays';
 </div>
 
 <div class="save">
-  <?= Html::submitButton('Save Changes', ['class' => 'btn btn-warning']) ?>
+  <?= Html::submitButton('Save Changes', ['class' => 'btn save-button']) ?>
 </div>
 
 <?php ActiveForm::end() ?>

@@ -12,13 +12,10 @@ $this->params['currentPage'] = 'bookings';
 
 function createUrl($viewName, $model)
 {
-  return Url::to
-  (
-    [
-      $viewName,
-      'id' => $model['id']
-    ]
-  );
+  return Url::to([
+    $viewName,
+    'id' => $model['id']
+  ]);
 }
 ?>
 
@@ -27,23 +24,62 @@ function createUrl($viewName, $model)
     'edit-booking',
     'createNew' => true
   ]), [
-    'class' => 'btn btn-primary'
+    'class' => 'btn create-new-button'
   ]) ?>
 </div>
 
-<?=
+<?= // TODO: filtering
   GridView::widget
   (
     [
       'dataProvider' => $dataProvider,
+      'layout' => '{items}{pager}{summary}',
       'columns' =>
       [
-        'role.role_name',
+        [
+          // TODO: make this column sortable
+          'label' => 'Role',
+          'attribute' => 'roles.role_name',
+          'enableSorting' => true,
+          'content' => function ($data){
+            return $data->role->role_name;
+          }
+        ],
         'patient_salutation',
         'patient_lastName',
         'date',
         'time',
-        'status',
+        [
+          'label' => 'Status',
+          'attribute' => 'status',
+          'enableSorting' => true,
+          'format' => 'text',
+          'value' => function ($data)
+          {
+            $message = null;
+            switch ($data->status) {
+              case 0:
+                $message = 'Booking has been processed';
+                break;
+
+              case 1:
+                $message = 'Open';
+                break;
+
+              case 2:
+                $message = 'Cancelled';
+                break;
+
+              case 3:
+                $message = 'Booking is being processed';
+                break;
+
+              default:
+                break;
+            }
+            return $message;
+          }
+        ],
         [
           'class' => 'yii\grid\ActionColumn',
           'header' => 'Actions',
@@ -54,7 +90,9 @@ function createUrl($viewName, $model)
             {
               return Html::a(
                 '<i class="nf nf-fa-pencil action-icon"></i>',
-                createUrl('edit-booking', $model)
+                createUrl('edit-booking', $model), [
+                  'class' => 'edit-button'
+                ]
               );
             },
             'delete' => function ($url, $model, $key)

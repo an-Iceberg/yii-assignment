@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @var dataProvider
+ */
+
 use app\assets\RolesAsset;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -26,20 +30,41 @@ function createUrl($viewName, $model)
     'edit-role',
     'createNew' => true
   ]), [
-    'class' => 'btn btn-primary'
+    'class' => 'btn create-new-button'
   ]) ?>
 </div>
 
-<?=
+<?= // TODO: filtering
   GridView::widget
   (
     [
       'dataProvider' => $dataProvider,
+      'layout' => '{items}{pager}{summary}',
       'columns' =>
       [
         'role_name',
         'email',
-        'status',
+        [
+          'label' => 'Status',
+          'attribute' => 'status',
+          'enableSorting' => true,
+          'format' => 'html',
+          'value' => function ($data) {
+            $label = null;
+            switch ($data->status) {
+              case 0:
+                $label = '<span class="badge badge-pill badge-secondary">Inactive</span>';
+                break;
+
+              case 1:
+                $label = '<span class="badge badge-pill badge-success">Active</span>';
+
+              default:
+                break;
+            }
+            return $label;
+          }
+        ],
         'sort_order',
         [
           'class' => 'yii\grid\ActionColumn',
@@ -51,7 +76,9 @@ function createUrl($viewName, $model)
             {
               return Html::a(
                 '<i class="nf nf-fa-pencil action-icon"></i>',
-                createUrl('edit-role', $model)
+                createUrl('edit-role', $model), [
+                  'class' => 'edit-button'
+                ]
               );
             },
             'delete' => function ($url, $model, $key)
