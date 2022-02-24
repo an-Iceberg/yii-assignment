@@ -525,30 +525,35 @@ class BackendController extends Controller
       }
       unset($newTreatment);
 
-      // A very rudimentary solution ngl, but it works
-      // All we do here is deleting all existing holiday relations and saving all the ones in the payload
-      // Deleting all DB entries
-      foreach ($holidays as $holiday) {
-        $holiday->delete();
-      }
-
-      // If any holiday relations are present, write them all into the DB
-      if (isset($postParams['holiday']))
+      WhoHasHolidays::getDb()->transaction(function($db) use ($holidays, $postParams)
       {
-        // Saving all entries supplied in the POST payload
-        foreach ($postParams['holiday'] as $key => $holiday)
+        // A very rudimentary solution ngl, but it works
+        // All we do here is deleting all existing holiday relations and saving all the ones in the payload
+        // This is a lot easier than detecting if an entry was changed, deleted or is new
+
+        // Deleting all DB entries
+        foreach ($holidays as $holiday) {
+          $holiday->delete();
+        }
+
+        // If any holiday relations are present, write them all into the DB
+        if (isset($postParams['holiday']))
         {
-          $newHoliday = new WhoHasHolidays();
-
-          $newHoliday->role_id = $postParams['role_id'];
-          $newHoliday->holiday_id = $key;
-
-          if ($newHoliday->validate())
+          // Saving all entries supplied in the POST payload
+          foreach ($postParams['holiday'] as $key => $holiday)
           {
-            $newHoliday->save();
+            $newHoliday = new WhoHasHolidays();
+
+            $newHoliday->role_id = $postParams['role_id'];
+            $newHoliday->holiday_id = $key;
+
+            if ($newHoliday->validate())
+            {
+              $newHoliday->save();
+            }
           }
         }
-      }
+      });
     }
 
     return Yii::$app->getResponse()->redirect('/backend/roles');

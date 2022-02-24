@@ -219,26 +219,29 @@ select {
 
 .language {
   padding: 5px 10px;
-  background: #fff;
+  color: #fff;
   margin-right: 3px;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
-  border-left: 1px solid #dee2e6;
-  border-top: 1px solid #dee2e6;
-  border-right: 1px solid #dee2e6;
-  background: #d8cde3;
+  border-left: 1px solid #fff;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+  background: #1f2042;
   /* z-index: 1; */
 }
 
+/* TODO: language hover effects */
+
 .active-language {
-  background: #fdfbff;
+  color: #000;
+  background: #ada8e0;
   box-shadow: none;
   /* z-index: 3; */
 }
 
 .grid-container {
-  border: 1px solid #dee2e6;
-  background: #fdfbff;
+  border: 1px solid #fff;
+  background: #ada8e0;
   border-radius: 5px;
   padding: .5rem 0;
   border-top-left-radius: 0;
@@ -257,24 +260,6 @@ select {
 
 .last-input-element {
   margin-bottom: 0 !important;
-}
-
-.grid-booking-layout {
-  grid-template-columns: 1fr 1fr 1fr 1fr 150px;
-}
-
-.grid-holiday-layout {
-  grid-template-columns: 1fr 1fr 150px;
-}
-
-.grid-role-layout {
-  grid-template-columns: 1fr 1fr 114px 1fr 150px;
-}
-
-.grid-edit-booking-layout {
-  padding: 10px;
-  grid-template-columns: repeat(3, 1fr);
-  row-gap: 30px;
 }
 
 .grid-edit-booking-layout textarea {

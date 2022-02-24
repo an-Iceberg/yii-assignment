@@ -51,14 +51,6 @@ $config = [
         ],
     ],
     'params' => $params,
-    // 'modules' => [
-    //     'booking' => [
-    //         'class' => 'app\modules\booking\Booking'
-    //     ],
-    //     'backend' => [
-    //         'class' => 'app\modules\backend\Backend'
-    //     ]
-    // ]
 ];
 
 if (YII_ENV_DEV) {
