@@ -27,11 +27,13 @@ AppAsset::register($this);
     <?= Alert::widget() ?>
     <?= $content ?>
 
+    <br>
+
     <?php
       if (Yii::$app->request->pathinfo != '' && Yii::$app->request->pathinfo != 'site/index')
       {
         echo Html::a('Back home', '/', [
-          'class' => 'btn btn-secondary'
+          'class' => 'btn btn-outline-secondary'
         ]);
       }
     ?>

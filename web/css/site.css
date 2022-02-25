@@ -618,3 +618,68 @@ input[type="text"] {
   padding-left: 5px;
   padding-right: 5px;
 }
+
+div.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+
+div.buttons > a,
+div.buttons > button {
+  flex-grow: 1;
+  position: relative;
+}
+
+div.buttons > a {
+  margin-right: 5px;
+}
+
+/* Animated arrows on the buttons :) */
+div.buttons > a::before {
+  content: '\27a4';
+  transform: rotate(180deg) translateX(0px);
+  position: absolute;
+  font-size: 32px;
+  left: 254px;
+  top: -3px;
+  display: inline-block;
+  opacity: 0;
+  transition: transform .9s, opacity .5s;
+}
+
+div.buttons > a:hover::before {
+  transition: transform .3s, opacity .3s;
+  transform: rotate(180deg) translateX(34px);
+  opacity: 1;
+}
+
+div.buttons > button::before {
+  content: '\27a4';
+  transform: translateX(0px);
+  position: absolute;
+  font-size: 32px;
+  left: 254px;
+  top: -6px;
+  display: inline-block;
+  opacity: 0;
+  transition: transform .9s, opacity .5s;
+}
+
+div.buttons > button:hover::before {
+  transition: transform .3s, opacity .3s;
+  transform: translateX(34px);
+  opacity: 1;
+}
+
+div.buttons > button {
+  margin-left: 5px;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary {
+  border-left-style: double;
+  border-right-style: double;
+  border-left-width: 4px;
+  border-right-width: 4px;
+}

@@ -7,6 +7,7 @@ use app\models\Roles;
 use app\models\Treatments;
 use app\models\Holidays;
 use Yii;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 
 class BookingController extends Controller
@@ -26,13 +27,71 @@ class BookingController extends Controller
     ]);
   }
 
+  // User chooses the role
+  public function actionRole()
+  {
+    $roles = Roles::find()
+    ->select('id, role_name')
+    ->where('status = true')
+    ->all();
+
+    return $this->render('role', [
+      'roles' => $roles
+    ]);
+  }
+
+  // User chooses the treatment available for the chosen role
+  public function actionTreatment()
+  {
+    // TODO: redirect on GET
+    $postParams = Yii::$app->request->post();
+
+    $role = $postParams['role'];
+
+    $treatments = Treatments::find()
+    ->select('id, treatment_name')
+    ->where('role_id = :role_id', [':role_id' => $postParams['role']])
+    ->all();
+
+    return $this->render('treatment', [
+      'treatments' => $treatments,
+      'role' => $role
+    ]);
+  }
+
+  // User chooses appropriate time and date
+  public function actionTimeAndDate()
+  {
+    // TODO: redirect on GET
+    $postParams = Yii::$app->request->post();
+
+    $role = $postParams['role'];
+    $treatments = [];
+    foreach ($postParams['treatment'] as $key => $value) {
+      $treatments[] = $key;
+    }
+
+    // TODO: retrieve date and time
+
+    return $this->render('time-and-date', [
+      'treatments' => $treatments,
+      'role' => $role
+    ]);
+  }
+
+  public function actionPersonalInfo()
+  {
+    // TODO: redirect on get
+    return $this->render('personal-info');
+  }
+
   /**
    * Target for Ajax call
    * Returns all treatments for the selected type
    *
    * @return void|string
    */
-  public function actionTreatment()
+  public function actionTreatments()
   {
     // If this site is not accessed via POST method, redirect to the index site
     if (Yii::$app->request->method != 'POST')

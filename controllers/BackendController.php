@@ -675,6 +675,7 @@ class BackendController extends Controller
         // TODO: what to do on invalid input
         else
         {
+          // Use $model->getErrors()
         }
 
         return Yii::$app->getResponse()->redirect('/backend/holidays');

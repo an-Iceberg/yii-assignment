@@ -10,6 +10,6 @@ $this->title = 'Dentist\'s Homepage';
 <h1>Dentist's Website</h1>
 <br>
 
-<?= Html::a('Create a booking', '/booking/index', [
-  'class' => 'btn btn-primary'
+<?= Html::a('Create a booking', '/booking/role', [
+  'class' => 'btn btn-outline-primary'
 ]) ?>
