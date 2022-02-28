@@ -58,12 +58,18 @@ class Treatments extends \yii\db\ActiveRecord
     return $this->hasOne(Roles::class, ['treatment_id' => 'id']);
   }
 
-  // Retrieves all available treatments for the selected type
-  public static function getTreatments($profession)
+  /**
+   * Retrieves all available treatments for the selected role
+   *
+   * @param int $role The selected role
+   * @return array\Treatments All available roles for said treatment
+   */
+  public static function getTreatments($role)
   {
+
     return Treatments::find()
-    ->select('treatment')
-    ->where('role=:role', [':role' => $profession])
+    ->select('id, treatment_name')
+    ->where('role_id = :role_id', [':role_id' => $role])
     ->all();
   }
 }

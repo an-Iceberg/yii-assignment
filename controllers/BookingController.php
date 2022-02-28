@@ -19,12 +19,97 @@ class BookingController extends Controller
    */
   public function actionIndex()
   {
-    // Retrieving all available roles from the database
-    $role = Roles::getAllRoles();
+    if (Yii::$app->request->getMethod() == 'POST')
+    {
+      $postParams = Yii::$app->request->post();
 
-    return $this->render('index', [
-      'data' => $role
-    ]);
+      // TODO: handle empty/no input with appropriate error messages
+      // Rendering the next view depending on which view the user has been on previously
+      switch ($postParams['view'])
+      {
+        // User has selected a role
+        case 'role':
+          // User moves on to select treatment
+          if ($postParams['button'] == 'next')
+          {
+            $role = $postParams['role'];
+            $treatments = Treatments::getTreatments($role);
+
+            return $this->render('treatment', [
+              'treatments' => $treatments,
+              'role' => $role,
+            ]);
+          }
+        break;
+
+        // User has selected a treatment
+        case 'treatment':
+          // User moves on to select date and time
+          if ($postParams['button'] == 'next')
+          {
+            $role = $postParams['role'];
+            $treatments = $postParams['treatments'];
+
+            $duration = Roles::getDuration($role);
+            $totalDuration = $duration * count($treatments);
+
+            return $this->render('time-and-date', [
+              'role' => $role,
+              'treatments' => $treatments
+            ]);
+          }
+          // User goes back to change the role
+          elseif ($postParams['button'] == 'back')
+          {
+            $roles = Roles::getAllActiveRoles();
+
+            $selectedRole = $postParams['role'];
+
+            return $this->render('role', [
+              'roles' => $roles,
+              'selectedRole' => $selectedRole
+            ]);
+          }
+        break;
+
+        case 'time-and-date':
+          if ($postParams['button'] == 'next')
+          {
+            # code ...
+          }
+          elseif ($postParams['button'] == 'back')
+          {
+            $role = $postParams['role'];
+            $treatments = Treatments::getTreatments($role);
+            $selectedTreatments = $postParams['treatments'];
+
+            return $this->render('treatment', [
+              'role' => $role,
+              'treatments' => $treatments,
+              'selectedTreatments' => $selectedTreatments
+            ]);
+          }
+        break;
+
+        default:
+          // Retrieving all available roles from the database
+          $role = Roles::getAllActiveRoles();
+
+          return $this->render('role', [
+            'roles' => $role
+          ]);
+        break;
+      }
+    }
+    else
+    {
+      // Retrieving all available roles from the database
+      $role = Roles::getAllActiveRoles();
+
+      return $this->render('role', [
+        'roles' => $role
+      ]);
+    }
   }
 
   // User chooses the role
@@ -44,19 +129,31 @@ class BookingController extends Controller
   public function actionTreatment()
   {
     // TODO: redirect on GET
-    $postParams = Yii::$app->request->post();
+    if (Yii::$app->request->getMethod() == 'POST')
+    {
+      $postParams = Yii::$app->request->post();
 
-    $role = $postParams['role'];
+      $role = $postParams['role'];
 
-    $treatments = Treatments::find()
-    ->select('id, treatment_name')
-    ->where('role_id = :role_id', [':role_id' => $postParams['role']])
-    ->all();
+      // If the back button was clicked, redirect there
+      // if ()
+      // {}
 
-    return $this->render('treatment', [
-      'treatments' => $treatments,
-      'role' => $role
-    ]);
+      $treatments = Treatments::find()
+      ->select('id, treatment_name')
+      ->where('role_id = :role_id', [':role_id' => $postParams['role']])
+      ->all();
+
+      return $this->render('treatment', [
+        'treatments' => $treatments,
+        'role' => $role
+      ]);
+    }
+    // Redirect on GET
+    else
+    {
+      return $this->redirect('/booking');
+    }
   }
 
   // User chooses appropriate time and date
@@ -83,47 +180,6 @@ class BookingController extends Controller
   {
     // TODO: redirect on get
     return $this->render('personal-info');
-  }
-
-  /**
-   * Target for Ajax call
-   * Returns all treatments for the selected type
-   *
-   * @return void|string
-   */
-  public function actionTreatments()
-  {
-    // If this site is not accessed via POST method, redirect to the index site
-    if (Yii::$app->request->method != 'POST')
-    {
-      return $this->redirect('/booking/booking');
-    }
-
-    // Extracting the relevant input data from the request
-    $booking = Yii::$app->request->bodyParams['booking'];
-
-    // Retrieving treatments from database
-    $queryResults = Treatments::getTreatments($booking['role']);
-
-    // Extracting the treatments from $queryResults and applying HTML formatting to it so it can just be injected into the correct place without any additional editing
-    $treatments = '';
-    for ($i = 0; $i < sizeof($queryResults); $i++)
-    {
-      $treatments .=
-      '<label>'.
-      '<input type="radio" name="booking[treatment]" value="'.
-      $queryResults[$i]->treatment.
-      '"> '.
-      $queryResults[$i]->treatment.
-      '</label>';
-
-      if ($i < sizeof($queryResults) - 1)
-      {
-        $treatments .= '<br>';
-      }
-    }
-
-    return $treatments;
   }
 
   /**

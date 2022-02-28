@@ -4,15 +4,15 @@ namespace app\assets;
 
 use yii\web\AssetBundle;
 
-class JqueryuiAsset extends AssetBundle
+class DateAndTimeCSSAsset extends AssetBundle
 {
   public $basePath = '@webroot';
   public $baseUrl = '@web';
   public $css = [
-    'css/jquery-ui-1.10.0.custom.css',
+    'css/date-and-time.css'
   ];
   public $js = [
-    'js/jquery-ui.min.js',
+    'js/date-and-time.js'
   ];
   public $depends = [
     'yii\web\YiiAsset'

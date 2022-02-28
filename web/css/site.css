@@ -623,20 +623,16 @@ div.buttons {
   display: flex;
   flex-direction: row;
   justify-content: end;
+  gap: 10px;
 }
 
-div.buttons > a,
 div.buttons > button {
   flex-grow: 1;
   position: relative;
 }
 
-div.buttons > a {
-  margin-right: 5px;
-}
-
-/* Animated arrows on the buttons :) */
-div.buttons > a::before {
+/* Animated back button :) */
+div.buttons > .form-back-btn::before {
   content: '\27a4';
   transform: rotate(180deg) translateX(0px);
   position: absolute;
@@ -647,14 +643,14 @@ div.buttons > a::before {
   opacity: 0;
   transition: transform .9s, opacity .5s;
 }
-
-div.buttons > a:hover::before {
+div.buttons > .form-back-btn:hover::before {
   transition: transform .3s, opacity .3s;
   transform: rotate(180deg) translateX(34px);
   opacity: 1;
 }
 
-div.buttons > button::before {
+/* Animated next button :) */
+div.buttons > .form-next-btn::before {
   content: '\27a4';
   transform: translateX(0px);
   position: absolute;
@@ -665,15 +661,10 @@ div.buttons > button::before {
   opacity: 0;
   transition: transform .9s, opacity .5s;
 }
-
-div.buttons > button:hover::before {
+div.buttons > .form-next-btn:hover::before {
   transition: transform .3s, opacity .3s;
   transform: translateX(34px);
   opacity: 1;
-}
-
-div.buttons > button {
-  margin-left: 5px;
 }
 
 .btn-outline-primary,
@@ -683,3 +674,4 @@ div.buttons > button {
   border-left-width: 4px;
   border-right-width: 4px;
 }
+/* TODO: this CSS is too big, split it inot multiple files */

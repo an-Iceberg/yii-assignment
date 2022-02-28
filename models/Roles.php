@@ -79,4 +79,34 @@ class Roles extends \yii\db\ActiveRecord
     return Roles::find()
     ->all();
   }
+
+  /**
+   * Retrieves all roles who's status is set to active
+   *
+   * @return array\Roles All roles with status set to 'active'
+   */
+  public static function getAllActiveRoles()
+  {
+    return Roles::find()
+    ->select('id, role_name')
+    ->where('status = true')
+    ->all();
+
+  }
+
+  /**
+   * Returns the duration of a selected role (in minutes)
+   *
+   * @param int $role The role we want to know the duration of
+   * @return int The duration of said role in minutes
+   */
+  public static function getDuration($role)
+  {
+    $duration = Roles::find()
+    ->select('duration')
+    ->where('id = :id', [':id' => $role])
+    ->one();
+
+    return $duration['duration'];
+  }
 }
