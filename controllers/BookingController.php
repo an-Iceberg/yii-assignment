@@ -47,6 +47,10 @@ class BookingController extends Controller
           // User moves on to select date and time
           if ($postParams['button'] == 'next')
           {
+            // * Alternative approach: send all present bookings of the selected role as a hidden input
+            // * That would avoid the constant Ajax calls upon selecting a date
+            // * But it would only work for a relatively small amount of clients
+
             $role = $postParams['role'];
             $treatments = $postParams['treatments'];
 
@@ -55,7 +59,8 @@ class BookingController extends Controller
 
             return $this->render('time-and-date', [
               'role' => $role,
-              'treatments' => $treatments
+              'treatments' => $treatments,
+              'totalDuration' => $totalDuration
             ]);
           }
           // User goes back to change the role
@@ -110,6 +115,26 @@ class BookingController extends Controller
         'roles' => $role
       ]);
     }
+  }
+
+  /**
+   * Target for Ajax call; getting all the times for a specified date from the DB
+   *
+   * @return string
+   */
+  public function actionGetTimes()
+  {
+    // Only processing the request if the method is POST
+    if (Yii::$app->request->method == 'POST')
+    {
+      $postParams = Yii::$app->request->post();
+
+      $times = Bookings::getTimes($postParams['role'], $postParams['date']);
+
+      return print_r($times);
+    }
+
+    return;
   }
 
   // User chooses the role

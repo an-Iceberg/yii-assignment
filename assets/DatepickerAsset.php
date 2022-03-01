@@ -4,7 +4,7 @@ namespace app\assets;
 
 use yii\web\AssetBundle;
 
-class DateAndTimeCSSAsset extends AssetBundle
+class DatepickerAsset extends AssetBundle
 {
   public $basePath = '@webroot';
   public $baseUrl = '@web';

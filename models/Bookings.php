@@ -109,11 +109,13 @@ class Bookings extends \yii\db\ActiveRecord
     return $this->hasOne(Roles::class, ['id' => 'role_id']);
   }
 
-  // Returns all bookings present in the DB
-  public static function getAllBookings()
+  // Returns all reserved times
+  public static function getTimes($role, $date)
   {
-    // ! Relations don't seem to work
-    return;
+    return Bookings::find()
+    ->select('time, duration')
+    ->where('role_id = :role_id AND date = :date', [':role_id' => $role, ':date' => $date])
+    ->all();
   }
 
   // Returns the dates and times of the reserved bookings
