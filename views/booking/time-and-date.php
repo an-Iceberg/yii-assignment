@@ -4,10 +4,12 @@
  * This view expects:
  * @var int $role
  * @var array $treatments
+ * @var int $totalDuration
  */
 
 use app\assets\DatepickerAsset;
 use app\assets\JQueryUIAsset;
+use app\assets\NextAndBackButtonsAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
@@ -17,6 +19,7 @@ $this->title = 'Date and Time';
 
 JQueryUIAsset::register($this);
 DatepickerAsset::register($this);
+NextAndBackButtonsAsset::register($this);
 ?>
 
 <?php ActiveForm::begin([
@@ -41,20 +44,10 @@ DatepickerAsset::register($this);
 
   <hr>
 
-<?php // This is possible ?>
-  <script>
-    let dates = [
-      '2022-03-06 13:30:00',
-      '2022-07-30 11:30:00',
-      '2022-05-21 13:15:00',
-      '2022-03-26 19:30:00',
-      '2022-08-09 11:15:00',
-      '2022-09-30 17:45:00'
-    ];
-  </script>
-
   <?= Html::hiddenInput('view', 'time-and-date') ?>
-  <?= Html::hiddenInput('role', $role) ?>
+  <?= Html::hiddenInput('role', $role, [
+    'id' => 'role'
+  ]) ?>
   <?php foreach ($treatments as $treatment) { ?>
     <?= Html::hiddenInput('treatments[]', $treatment) ?>
   <?php } ?>
@@ -63,9 +56,6 @@ DatepickerAsset::register($this);
   ]) ?>
   <?= Html::hiddenInput('date', '', [
     'id' => 'selectedDate'
-  ]) ?>
-  <?= Html::hiddenInput('time', '', [
-    'id' => 'selectedTime'
   ]) ?>
 
   <div class="buttons">

@@ -6,6 +6,7 @@
  * @var int $selectedRole
  */
 
+use app\assets\NextAndBackButtonsAsset;
 use app\models\Roles;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -13,6 +14,8 @@ use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Role';
+
+NextAndBackButtonsAsset::register($this);
 ?>
 
 <?php ActiveForm::begin([
@@ -45,6 +48,7 @@ $this->title = 'Role';
 
   <hr>
 
+  <?php // Conditionally hidden inputs for all the other input fields if they are required ?>
   <?= Html::hiddenInput('view', 'role') ?>
 
   <div class="buttons">

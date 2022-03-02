@@ -7,12 +7,15 @@
  * @var array $selectedTreatments
  */
 
+use app\assets\NextAndBackButtonsAsset;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Treatment';
+
+NextAndBackButtonsAsset::register($this);
 ?>
 
 <?php ActiveForm::begin([

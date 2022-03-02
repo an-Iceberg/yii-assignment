@@ -6,6 +6,10 @@ use app\models\Bookings;
 use app\models\Roles;
 use app\models\Treatments;
 use app\models\Holidays;
+use app\models\WhoHasHolidays;
+use app\models\WorkTimes;
+use DateInterval;
+use DateTime;
 use Yii;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
@@ -13,7 +17,8 @@ use yii\web\Controller;
 class BookingController extends Controller
 {
   /**
-   * Displays the page to book an appointment
+   * All booking views go through this action
+   * The information between them is shared via hidden inputs
    *
    * @return string
    */
@@ -47,6 +52,7 @@ class BookingController extends Controller
           // User moves on to select date and time
           if ($postParams['button'] == 'next')
           {
+            // TODO: days, that are completetly booked and/or completely 'consumed' by a holiday should be disabled in the date picker
             // * Alternative approach: send all present bookings of the selected role as a hidden input
             // * That would avoid the constant Ajax calls upon selecting a date
             // * But it would only work for a relatively small amount of clients
@@ -80,7 +86,13 @@ class BookingController extends Controller
         case 'time-and-date':
           if ($postParams['button'] == 'next')
           {
-            # code ...
+            return $this->render('personal-info', [
+              'role' => $postParams['role'],
+              'treatments' => $postParams['treatments'],
+              'totalDuration' => $postParams['totalDuration'],
+              'date' => $postParams['date'],
+              'time' => $postParams['time']
+            ]);
           }
           elseif ($postParams['button'] == 'back')
           {
@@ -91,8 +103,19 @@ class BookingController extends Controller
             return $this->render('treatment', [
               'role' => $role,
               'treatments' => $treatments,
-              'selectedTreatments' => $selectedTreatments
+              'selectedTreatments' => $selectedTreatments,
+              'date' => $postParams['date'],
+              'time' => $postParams['time']
             ]);
+          }
+        break;
+
+        case 'personal-info':
+          if ($postParams['button'] == 'next')
+          {
+          }
+          elseif ($postParams['button'] == 'back')
+          {
           }
         break;
 
@@ -119,6 +142,7 @@ class BookingController extends Controller
 
   /**
    * Target for Ajax call; getting all the times for a specified date from the DB
+   * Returns a HTML snippet to be inserted into #times so that the client machine can run as efficiently as possible
    *
    * @return string
    */
@@ -127,11 +151,111 @@ class BookingController extends Controller
     // Only processing the request if the method is POST
     if (Yii::$app->request->method == 'POST')
     {
+      /**
+       * The following values will come through the Ajax call:
+       * @var string ['date']
+       * @var string ['role']
+       * @var string ['totalDuration']
+       */
       $postParams = Yii::$app->request->post();
 
-      $times = Bookings::getTimes($postParams['role'], $postParams['date']);
+      // Retrieving the times if there's a holiday present for the current role
+      $query = Yii::$app->db->createCommand(
+        'SELECT holidays.beginning_time, holidays.end_time
+        FROM roles
+        JOIN who_has_holidays ON roles.id = who_has_holidays.role_id
+        JOIN holidays ON who_has_holidays.holiday_id = holidays.id
+        WHERE roles.id = :role_id AND holidays.date = :holiday_date;',
+        [
+          ':role_id' => intval($postParams['role']),
+          ':holiday_date' => $postParams['date']
+        ]
+      );
 
-      return print_r($times);
+      $holiday = $query->queryAll();
+      $bookedTimes = Bookings::getTimes($postParams['role'], $postParams['date']);
+
+      // Retrieving the work times of the current role for the selected weekday
+      $weekday = new DateTime($postParams['date']);
+      $workTimes = WorkTimes::getWorkTime(intval($postParams['role']), (intval($weekday->format('N')) - 1));
+      $workTimeFrom = new DateTime($workTimes['from']);
+      $workTimeUntil = new DateTime($workTimes['until']);
+
+      // TODO: {optional} build the array instead of subtracting from it
+      // ! Be careful about the array indices, they might change when deleting array elements
+      // * We can use that to our advantage
+      $times = [];
+
+      array_push($times, $workTimeFrom->format('H:i:00'));
+
+      // There are 96 15-minute intervals in a 24 hour day ((24 * 60) / 15)
+      // This variable prevents an infinite loop
+      $infiniteLoopSafeguard = 0;
+
+      // Generating the times from the working hours
+      while($workTimeFrom <= $workTimeUntil && $infiniteLoopSafeguard < 97)
+      {
+        $infiniteLoopSafeguard++;
+
+        // Adding 15 minutes to the date and appending it to the times array
+        $workTimeFrom->add(new DateInterval('PT15M'));
+        array_push($times, $workTimeFrom->format('H:i:00'));
+      }
+
+      $HTMLsnippet = '';
+
+      // Removing all holidays
+      foreach ($times as $key => &$time) {
+        // If the time falls withing the range of a holiday, it gets removed from the array
+        if (isset($holiday[0]['beginning_time']) && $holiday[0]['end_time'])
+        {
+          if ($time >= $holiday[0]['beginning_time'] && $time <= $holiday[0]['end_time'])
+          {
+            // TODO: {optional} make this work without the $key
+            unset($times[$key]);
+            unset($time); // ! This will be redundant in the future
+          }
+        }
+
+        // If the time falls within the range of a booking, it gets removed
+        foreach ($bookedTimes as $booking) {
+          // Creating the beginning time
+          $beginning = new DateTime($booking['time']);
+          $end = new DateTime($booking['time']);
+
+          // Modifying the end time by adding the amount of minutes to the beginning time
+          $timePeriod = 'PT'.$booking['duration'].'M';
+          $end->add(new DateInterval($timePeriod));
+
+          if ($time >= $beginning->format('H:i:00') && $time <= $end->format('H:i:00'))
+          {
+            unset($times[$key]);
+            unset($time); // ! This will be redundant in the future
+          }
+        }
+
+        // Only writing the remaining times into the HTML snippet
+        if (isset($time))
+        {
+          $HTMLsnippet .= '<label class="input-label times">'.substr($time, 0, 5).'<input type="radio" name="time" value="'.$time.'"></label>';
+        }
+      }
+      unset($time);
+
+      // TODO: Go through each time again and remove any times where the $totalDuration doesn't fit
+      // Removing any time slots that would not fit the $totalDuration
+      // foreach ($times as $key => &$time) {
+        // Calculate the destination time using DateTime object
+
+        // Calculate the number of 15 minute segments needed to reserve for said duration
+
+        // Retrieve the time at said offset
+
+        // If the time at the offset is smaller than the DateTime object, remove the time from the array
+      // }
+
+      // return json_encode($times);
+      return $HTMLsnippet;
     }
 
     return;

@@ -57,4 +57,14 @@ class WorkTimes extends \yii\db\ActiveRecord
   {
     return $this->hasOne(Roles::class, ['id' => 'role_id']);
   }
+
+  public static function getWorkTime($role, $weekday)
+  {
+    return WorkTimes::find()
+    ->select('from, until')
+    ->where('has_free = 0')
+    ->andWhere('role_id = :role_id', [':role_id' => $role])
+    ->andWhere('weekday = :weekday', [':weekday' => $weekday])
+    ->one();
+  }
 }

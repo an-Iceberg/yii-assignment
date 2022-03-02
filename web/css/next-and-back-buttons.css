@@ -1,0 +1,69 @@
+/* Animated back button :) */
+div.buttons > .form-back-btn::before {
+  content: '⮜';
+  transform: translateX(0px) scaleX(1.5);
+  position: absolute;
+  font-size: 32px;
+  right: 254px;
+  top: -6px;
+  display: inline-block;
+  opacity: 0;
+  transition: transform .9s, opacity .5s;
+}
+div.buttons > .form-back-btn:hover::before {
+  transition: transform .3s, opacity .3s;
+  transform: translateX(-42px) scaleX(1.5);
+  opacity: 1;
+}
+
+div.buttons > .form-back-btn::after {
+  content: '⮜';
+  transform: translateX(0px) scaleX(1.5);
+  position: absolute;
+  font-size: 32px;
+  right: 254px;
+  top: -6px;
+  display: inline-block;
+  opacity: 0;
+  transition: transform .9s, opacity .5s;
+}
+div.buttons > .form-back-btn:hover::after {
+  transition: transform .3s, opacity .3s;
+  transform: translateX(-72px) scaleX(1.5);
+  opacity: 1;
+}
+
+/* Animated next button :) */
+div.buttons > .form-next-btn::before {
+  content: '⮞';
+  transform: translateX(0px) scaleX(1.5);
+  position: absolute;
+  font-size: 32px;
+  left: 254px;
+  top: -6px;
+  display: inline-block;
+  opacity: 0;
+  transition: transform .9s, opacity .5s;
+}
+div.buttons > .form-next-btn:hover::before {
+  transition: transform .3s, opacity .3s;
+  transform: translateX(42px) scaleX(1.5);
+  opacity: 1;
+}
+
+div.buttons > .form-next-btn::after {
+  content: '⮞';
+  transform: translateX(0px) scaleX(1.5);
+  position: absolute;
+  font-size: 32px;
+  left: 254px;
+  top: -6px;
+  display: inline-block;
+  opacity: 0;
+  transition: transform .9s, opacity .5s;
+}
+div.buttons > .form-next-btn:hover::after {
+  transition: transform .3s, opacity .3s;
+  transform: translateX(72px) scaleX(1.5);
+  opacity: 1;
+}

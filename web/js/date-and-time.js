@@ -1,9 +1,21 @@
-// < > ≪ ≫ ≺ ≻ ⊲ ⊳ ➤ ➣ ➢ ᗒ ᗕ ⋙ ⋘ ▻ ◅ ❯ ❮ ❱ ❰ ⩤ ⩥ ⫷ ⫸ ⪡ ⪢
+// < >
+// ≪ ≫
+// ≺ ≻
+// ⊲ ⊳
+// ➤ ➣ ➢
+// ᗒ ᗕ
+// ⋙ ⋘
+// ▻ ◅
+// ❯ ❮
+// ❱ ❰
+// ⩤ ⩥
+// ⫷ ⫸
+// ⪡ ⪢
+// « »
 // ⮜⮝⮞⮟
 // ⮘⮙⮚⮛
 
 // TODO: most of these values will need to be injected with php somehow based on the language chosen
-// TODO: holidays for the selected role must also be accounted for
 
 let datepicker = $('#date').datepicker({
   dateFormat: 'dd-mm-yy',
@@ -31,7 +43,8 @@ let datepicker = $('#date').datepicker({
 
       let data = {
         "date": `${dateText.substr(6, 4)}-${dateText.substr(3, 2)}-${dateText.substr(0, 2)}`,
-        "role": $('input[type="hidden"][name="role"]').val()
+        "role": $('#role').val(),
+        "totalDuration": $('#totalDuration').val()
       }
 
       // Ajax call
@@ -44,6 +57,7 @@ let datepicker = $('#date').datepicker({
           console.log(response);
 
           $('h2.h4').html(`On ${dateText} the following times are open:`);
+          $('#times').html(response);
           $('#time-container').fadeIn(300);
         },
         error: function (error) {
@@ -59,7 +73,3 @@ let datepicker = $('#date').datepicker({
 
 $('.ui-datepicker-prev').attr('title', 'Previous Month');
 $('.ui-datepicker-next').attr('title', 'Next Month');
-
-// Sorts dates first by date and then by time
-dates.sort();
-console.log(dates);

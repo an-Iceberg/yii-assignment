@@ -251,6 +251,7 @@ class BackendController extends Controller
   }
 
   // TODO: refactor and clean this mess up! C'est un sacré bordel
+  // TODO: make sure, that only a valid range of working times can be selected, othewise an infinite loop may occur
   // Displays the data of the selected role
   public function actionEditRole()
   {

@@ -631,42 +631,6 @@ div.buttons > button {
   position: relative;
 }
 
-/* Animated back button :) */
-div.buttons > .form-back-btn::before {
-  content: '\27a4';
-  transform: rotate(180deg) translateX(0px);
-  position: absolute;
-  font-size: 32px;
-  left: 254px;
-  top: -3px;
-  display: inline-block;
-  opacity: 0;
-  transition: transform .9s, opacity .5s;
-}
-div.buttons > .form-back-btn:hover::before {
-  transition: transform .3s, opacity .3s;
-  transform: rotate(180deg) translateX(34px);
-  opacity: 1;
-}
-
-/* Animated next button :) */
-div.buttons > .form-next-btn::before {
-  content: '\27a4';
-  transform: translateX(0px);
-  position: absolute;
-  font-size: 32px;
-  left: 254px;
-  top: -6px;
-  display: inline-block;
-  opacity: 0;
-  transition: transform .9s, opacity .5s;
-}
-div.buttons > .form-next-btn:hover::before {
-  transition: transform .3s, opacity .3s;
-  transform: translateX(34px);
-  opacity: 1;
-}
-
 .btn-outline-primary,
 .btn-outline-secondary {
   border-left-style: double;
@@ -675,3 +639,7 @@ div.buttons > .form-next-btn:hover::before {
   border-right-width: 4px;
 }
 /* TODO: this CSS is too big, split it inot multiple files */
+
+:root {
+  accent-color: indigo;
+}
