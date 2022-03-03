@@ -1,19 +1,19 @@
 // < >
 // ≪ ≫
+// ⋘ ⋙
 // ≺ ≻
+// « »
 // ⊲ ⊳
 // ➤ ➣ ➢
-// ᗒ ᗕ
-// ⋙ ⋘
-// ▻ ◅
-// ❯ ❮
-// ❱ ❰
+// ᗕ ᗒ
+// ◅ ▻
+// ❮ ❯
+// ❰ ❱
 // ⩤ ⩥
 // ⫷ ⫸
 // ⪡ ⪢
-// « »
-// ⮜⮝⮞⮟
-// ⮘⮙⮚⮛
+// ⮜ ⮝ ⮞ ⮟
+// ⮘ ⮙ ⮚ ⮛
 
 // TODO: most of these values will need to be injected with php somehow based on the language chosen
 
@@ -61,12 +61,12 @@ let datepicker = $('#date').datepicker({
           $('#time-container').fadeIn(300);
         },
         error: function (error) {
-          console.log('Something went wrong :(');
+          console.log(':(');
+          console.log('Your Ajax call ran into a problem and needs to restart.');
           console.log(error);
           $('#time-container').fadeIn(300);
         }
       });
-
     });
   }
 });

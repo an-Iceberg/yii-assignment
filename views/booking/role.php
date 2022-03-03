@@ -48,7 +48,7 @@ NextAndBackButtonsAsset::register($this);
 
   <hr>
 
-  <?php // Conditionally hidden inputs for all the other input fields if they are required ?>
+  <?php // TODO: conditionally hidden inputs for all the other input fields if they are required ?>
   <?= Html::hiddenInput('view', 'role') ?>
 
   <div class="buttons">

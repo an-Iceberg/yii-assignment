@@ -12,7 +12,7 @@
       "address": "127.0.0.1",
       "hostname": "calendar.test",
       "stopOnEntry": true,
-      "log": true
+      "log": false
     },
     {
       "name": "Launch currently open script",
