@@ -53,6 +53,7 @@ class BookingController extends Controller
           if ($postParams['button'] == 'next')
           {
             // TODO: days, that are completetly booked and/or completely 'consumed' by a holiday should be disabled in the date picker
+            // Check, if the holiday exceeds working hours, if yes, mark it in the date picker, if not, not
             // * Alternative approach: send all present bookings of the selected role as a hidden input
             // * That would avoid the constant Ajax calls upon selecting a date
             // * But it would only work for a relatively small amount of clients
@@ -168,33 +169,24 @@ class BookingController extends Controller
         $endHours = $startHours;
         $endMinutes = $startMinutes;
 
-        // This fixes a bug, where values smaller than 60 would return negative dates
-        // It is also more efficient for small durations
-        if ($duration > 59)
-        {
-          // Getting the duration in hours
-          $duration /= 60;
+        // Getting the duration in hours
+        $duration /= 60;
 
-          // Extracting the number of hours from the durations
-          $durationHours = round($duration, 0);
+        // Extracting the number of hours from the durations
+        $durationHours = floor($duration);
 
-          // Extracting the nuber of remaining minutes
-          $durationMinutes = ($duration - $durationHours) * 60;
+        // Extracting the nuber of remaining minutes
+        $durationMinutes = ($duration - $durationHours) * 60;
 
-          // Adding the amount of time
-          $endHours = $startHours + $durationHours;
-          $endMinutes = $startMinutes + $durationMinutes;
-        }
-        else
-        {
-          $endMinutes = $startMinutes + $duration;
-        }
+        // Adding the amount of time
+        $endHours = $startHours + $durationHours;
+        $endMinutes = $startMinutes + $durationMinutes;
 
         // Account for overflow in minutes
         if ($endMinutes > 59)
         {
           // Calculating the amount of hours too much in $endMinutes
-          $hoursOverflow = round($endMinutes / 60, 0);
+          $hoursOverflow = floor($endMinutes / 60);
 
           // Adding the calculated number of hours to $endHours
           $endHours += $hoursOverflow;
@@ -241,29 +233,47 @@ class BookingController extends Controller
       // Retrieving the work times of the current role for the selected weekday
       $weekday = new DateTime($postParams['date']);
       $workTimes = WorkTimes::getWorkTime(intval($postParams['role']), (intval($weekday->format('N')) - 1));
-      $workTimeFrom = new DateTime($workTimes['from']);
-      $workTimeUntil = new DateTime($workTimes['until']);
+      $workTimeFrom = $workTimes['from'];
+      $workTimeUntil = $workTimes['until'];
 
       $times = [];
 
-      array_push($times, $workTimeFrom->format('H:i:00'));
+      // array_push($times, $workTimeFrom);
+
+      $fromHours = intval(substr($workTimeFrom, 0, 2));
+      $fromMinutes = intval(substr($workTimeFrom, 3, 2));
+      $untilHours = intval(substr($workTimeUntil, 0, 2));
+      $untilMinutes = intval(substr($workTimeUntil, 3, 2));
 
       // TODO: generate dates without using DateTime objects
       // There are 96 15-minute intervals in a 24 hour day ((24 * 60) / 15), that's the saveguard here
       // Generating the times from the given work time interval ends
+      // ! Don't generate the last time
       for ($loopSaveguard = 0; $loopSaveguard < 97 && $workTimeFrom < $workTimeUntil; $loopSaveguard++)
       {
-        // Adding 15 minutes to the date and appending it to the times array
-        $workTimeFrom->add(new DateInterval('PT15M'));
-        array_push($times, $workTimeFrom->format('H:i:00'));
+        // Pushing the time onto the array
+        array_push($times, strval(($fromHours < 10) ? '0'.$fromHours : $fromHours).':'.(($fromMinutes < 10) ? '0'.$fromMinutes : $fromMinutes).':00');
+
+        // Incrementing the time by 15 minutes
+        $fromMinutes += 15;
+
+        // Accounting for overflow
+        if ($fromMinutes > 45)
+        {
+          $fromHours++;
+          $fromMinutes = 0;
+        }
+
+        // Checking if the end time has been reached
+        if ($fromHours == $untilHours && $fromMinutes == $untilMinutes)
+        {
+          break;
+        }
       }
+// return json_encode($times);
 
       // Correcting an off-by-one error: the last time is when the shift ends and shouldn't be included in $times
       unset($times[count($times) - 1]);
-
-      $HTMLsnippet = '';
-
-      // TODO: create an array with the booking times so that in the for loop removing reserved times is a simple comparison
 
       // Since we are removing elements from the array, we need a number representing the initial size of the array
       $sizeOfTimes = count($times);
@@ -294,39 +304,48 @@ class BookingController extends Controller
           }
         }
       }
+// return json_encode($times);
 
-      // Restoring the indices of the array elements because deleting an array element does not change its index
-      $times = array_values($times);
-
-      // The max iteration count for the for loop
-      $sizeOfTimes = count($times);
-
-      // The offset to be used to calculate the array index where the time will be searched
-      $offset = intval($postParams['totalDuration']);
-      $offset /= 15;
-
-      // Removing all times that would not fit the duration of the selected treatment(s)
-      for ($key = 0; $key < $sizeOfTimes; $key++)
+      // Only removing times, if there are any present in the array
+      if (count($times) > 0)
       {
-        // Calculate the destination time using the getEndTime function
-        $destinationTime = getEndTime($times[$key], intval($postParams['totalDuration']));
+        // ! This seems to remove round times
+        // Restoring the indices of the array elements because deleting an array element does not change its index
+        $times = array_values($times);
 
-        // Calculating the key of the array element which shall be verified
-        $searchKey = $key + $offset;
+        // The max iteration count for the for loop
+        $sizeOfTimes = count($times);
 
-        // If the search key reaches beyond the end of the array, remove the current element
-        if ($searchKey > $sizeOfTimes - 1)
+        // The offset to be used to calculate the array index where the time will be searched
+        $offset = intval($postParams['totalDuration']);
+        $offset /= 15;
+
+        // Removing all times that would not fit the duration of the selected treatment(s)
+        for ($key = 0; $key < $sizeOfTimes; $key++)
         {
-          unset($times[$key]);
-          continue;
-        }
+          // Calculate the destination time using the getEndTime function
+          $destinationTime = getEndTime($times[$key], intval($postParams['totalDuration']));
 
-        // If the destination time isn't the one calculted before, remove the current element
-        if ($times[$searchKey] != $destinationTime)
-        {
-          unset($times[$key]);
+          // Calculating the key of the array element which shall be verified
+          $searchKey = $key + $offset;
+
+          // If the search key reaches beyond the end of the array, remove the current element
+          if ($searchKey > $sizeOfTimes - 1)
+          {
+            unset($times[$key]);
+            continue;
+          }
+
+          // If the destination time isn't the one calculted before, remove the current element
+          if ($times[$searchKey] != $destinationTime)
+          {
+            unset($times[$key]);
+          }
         }
       }
+// return json_encode($times);
+
+      $HTMLsnippet = '';
 
       // There are times available -> construct the HTML snippet
       if (count($times) > 0)
@@ -340,7 +359,7 @@ class BookingController extends Controller
       // Notify the user that there are no free time-slots available
       else
       {
-        $HTMLsnippet = 'Sorry, but all the available times have been booked for this day.';
+        $HTMLsnippet = 'Sorry, but there are no available times for this day.';
       }
 
       return $HTMLsnippet;
