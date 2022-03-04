@@ -148,7 +148,6 @@ class BookingController extends Controller
    */
   public function actionGetTimes()
   {
-
     // Only processing the request if the method is POST
     if (Yii::$app->request->method == 'POST')
     {
@@ -156,32 +155,43 @@ class BookingController extends Controller
        * Returns the time in hh:mm:ss calculated from the beginning time plus the duraion in minutes.
        * Wether or not this function is truly more efficient than a DateTime object remains to be seen.
        *
-       * @param string $beginnigTime A time in hh:mm:ss
-       * @param integer $duration A duration in minutes
+       * @param string $beginnigTime A time in hh:mm:ss that is larger than 00:00:00 and not negative
+       * @param integer $duration A duration in minutes that is a positive integer
        * @return string A time in hh:mm:ss that is the beginning time + duration
        */
-      // ! TODO: this needs debugging: '08:00:00', 45 => '09:0-15:00'
       function getEndTime($starTime, $duration)
       {
         // Extracting the hours and minutes from the start time
         $startHours = intval(substr($starTime, 0, 2));
-        $startMinutes = intval(substr($starTime, 2, 2));
+        $startMinutes = intval(substr($starTime, 3, 2));
 
-        // Getting the duration in hours
-        $duration /= 60;
+        $endHours = $startHours;
+        $endMinutes = $startMinutes;
 
-        // Extracting the number of hours from the durations
-        $durationHours = round($duration, 0);
+        // This fixes a bug, where values smaller than 60 would return negative dates
+        // It is also more efficient for small durations
+        if ($duration > 59)
+        {
+          // Getting the duration in hours
+          $duration /= 60;
 
-        // Extracting the nuber of remaining minutes
-        $durationMinutes = ($duration - $durationHours) * 60; // ! TODO: account for negative minute numbers
+          // Extracting the number of hours from the durations
+          $durationHours = round($duration, 0);
 
-        // Adding the amount of time
-        $endHours = $startHours + $durationHours;
-        $endMinutes = $startMinutes + $durationMinutes;
+          // Extracting the nuber of remaining minutes
+          $durationMinutes = ($duration - $durationHours) * 60;
+
+          // Adding the amount of time
+          $endHours = $startHours + $durationHours;
+          $endMinutes = $startMinutes + $durationMinutes;
+        }
+        else
+        {
+          $endMinutes = $startMinutes + $duration;
+        }
 
         // Account for overflow in minutes
-        if ($endMinutes > 60)
+        if ($endMinutes > 59)
         {
           // Calculating the amount of hours too much in $endMinutes
           $hoursOverflow = round($endMinutes / 60, 0);
@@ -285,32 +295,58 @@ class BookingController extends Controller
         }
       }
 
-      // TODO: Go through each time again and remove any times where the $totalDuration doesn't fit
-      // Removing any time slots that would not fit the $totalDuration
+      // Restoring the indices of the array elements because deleting an array element does not change its index
+      $times = array_values($times);
+
+      // The max iteration count for the for loop
       $sizeOfTimes = count($times);
-      for ($key = 0; $key < $sizeOfTimes; $key++) {
-        // Calculate the destination time using our own getEndTime function
-        $destinationTime = getEndTime($times[$key], intval($postParams['totalDuration']));
-return json_encode([$times[$key], $postParams['totalDuration'], $destinationTime]);
 
-        // Calculate the number of 15 minute segments needed to reserve for said duration
+      // The offset to be used to calculate the array index where the time will be searched
+      $offset = intval($postParams['totalDuration']);
+      $offset /= 15;
 
-        // Retrieve the time at said offset
-
-        // If the time at the offset is smaller than the DateTime object, remove the time from the array
-      }
-
-      // Creating the HTML snippet from the array of remaining open times
-      foreach ($times as $time)
+      // Removing all times that would not fit the duration of the selected treatment(s)
+      for ($key = 0; $key < $sizeOfTimes; $key++)
       {
-        $HTMLsnippet .= '<label class="input-label times">'.substr($time, 0, 5).'<input type="radio" name="time" value"'.$time.'"></label>';
+        // Calculate the destination time using the getEndTime function
+        $destinationTime = getEndTime($times[$key], intval($postParams['totalDuration']));
+
+        // Calculating the key of the array element which shall be verified
+        $searchKey = $key + $offset;
+
+        // If the search key reaches beyond the end of the array, remove the current element
+        if ($searchKey > $sizeOfTimes - 1)
+        {
+          unset($times[$key]);
+          continue;
+        }
+
+        // If the destination time isn't the one calculted before, remove the current element
+        if ($times[$searchKey] != $destinationTime)
+        {
+          unset($times[$key]);
+        }
       }
 
-      // return json_encode($times);
+      // There are times available -> construct the HTML snippet
+      if (count($times) > 0)
+      {
+        // Creating the HTML snippet from the array of remaining open times
+        foreach ($times as $time)
+        {
+          $HTMLsnippet .= '<label class="input-label times">'.substr($time, 0, 5).'<input type="radio" name="time" value"'.$time.'"></label>';
+        }
+      }
+      // Notify the user that there are no free time-slots available
+      else
+      {
+        $HTMLsnippet = 'Sorry, but all the available times have been booked for this day.';
+      }
+
       return $HTMLsnippet;
     }
 
-    return;
+    return 'You\'re not supposed to be here.<br>;)';
   }
 
   // User chooses the role

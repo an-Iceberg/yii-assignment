@@ -1,3 +1,22 @@
+/*
+< >
+≪ ≫
+⋘ ⋙
+≺ ≻
+« »
+⊲ ⊳
+➤ ➣ ➢
+ᗕ ᗒ
+◅ ▻
+❮ ❯
+❰ ❱
+⩤ ⩥
+⫷ ⫸
+⪡ ⪢
+⮜ ⮝ ⮞ ⮟
+⮘ ⮙ ⮚ ⮛
+*/
+
 /* Animated back button :) */
 div.buttons > .form-back-btn::before {
   content: '⮜';

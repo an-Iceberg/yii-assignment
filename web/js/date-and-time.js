@@ -1,20 +1,3 @@
-// < >
-// ≪ ≫
-// ⋘ ⋙
-// ≺ ≻
-// « »
-// ⊲ ⊳
-// ➤ ➣ ➢
-// ᗕ ᗒ
-// ◅ ▻
-// ❮ ❯
-// ❰ ❱
-// ⩤ ⩥
-// ⫷ ⫸
-// ⪡ ⪢
-// ⮜ ⮝ ⮞ ⮟
-// ⮘ ⮙ ⮚ ⮛
-
 // TODO: most of these values will need to be injected with php somehow based on the language chosen
 
 let datepicker = $('#date').datepicker({
