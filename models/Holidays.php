@@ -54,4 +54,20 @@ class Holidays extends \yii\db\ActiveRecord
     return Holidays::find()
     ->all();
   }
+
+  public static function getHolidaysForRole($role)
+  {
+      $query = Yii::$app->db->createCommand(
+        'SELECT holidays.date, holidays.beginning_time, holidays.end_time
+        FROM roles
+        JOIN who_has_holidays ON roles.id = who_has_holidays.role_id
+        JOIN holidays ON who_has_holidays.holiday_id = holidays.id
+        WHERE roles.id = :role_id;',
+        [
+          ':role_id' => intval($role)
+        ]
+      );
+
+      return $query->queryAll();
+  }
 }

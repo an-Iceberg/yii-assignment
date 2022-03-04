@@ -17,8 +17,8 @@ use yii\web\Controller;
 class BookingController extends Controller
 {
   /**
-   * All booking views go through this action
-   * The information between them is shared via hidden inputs
+   * All booking views go through this action.
+   * The information between them is shared via hidden inputs.
    *
    * @return string
    */
@@ -52,22 +52,90 @@ class BookingController extends Controller
           // User moves on to select date and time
           if ($postParams['button'] == 'next')
           {
-            // TODO: days, that are completetly booked and/or completely 'consumed' by a holiday should be disabled in the date picker
-            // Check, if the holiday exceeds working hours, if yes, mark it in the date picker, if not, not
-            // * Alternative approach: send all present bookings of the selected role as a hidden input
-            // * That would avoid the constant Ajax calls upon selecting a date
-            // * But it would only work for a relatively small amount of clients
+            /**
+             * Returns a number representing the day of the week given a date
+             *
+             * @param int $year Four digit positive integer representing the year
+             * @param int $month Two digit positive integer no larger than 12 representing the month
+             * @param int $day Two digit positive integer no larger than 31/30/29/28 (depending on the month) positive integer representing the day of the month
+             * @return int The day of the week with 0 = Monday and 6 = Sunday
+             */
+            function getDayOfWeek($year, $month, $day)
+            {
+              // Adjusting the input values for the formula
+              if ($month < 3)
+              {
+                $month += 12;
+                $year--;
+              }
+
+              // The formula is an alternative to Zeller's rule; it can be found here => https://www.themathdoctors.org/zellers-rule-what-day-of-the-week-is-it/
+              $weekday = ($day + (2*$month) + floor(3*($month+1)/5) + $year + floor($year/4) - floor($year/100) + floor($year/400) + 2) % 7;
+
+              // Adjusting output value to correspond to 0 = Monday and 6 = Sunday
+              $weekday -= 2;
+              if ($weekday < 0)
+              {
+                $weekday += 7;
+              }
+
+              return $weekday;
+            }
 
             $role = $postParams['role'];
             $treatments = $postParams['treatments'];
 
+            // Retrieving the duration of a single treatment
             $duration = Roles::getDuration($role);
+
+            // Calculating the total duration of all selected treatments
             $totalDuration = $duration * count($treatments);
+
+            // Retrieving all holidays for the selected role
+            $holidays = Holidays::getHolidaysForRole($postParams['role']);
+
+            $excludeTheseDates = [];
+
+            // Removing holidays from the array that are not required to be there
+            $today = date('Y-m-d');
+            $arraySize = count($holidays);
+            for ($key = 0; $key < $arraySize; $key++)
+            {
+              // If the holiday is in the past its no longer relevant thus can be removed
+              if ($holidays[$key]['date'] < $today)
+              {
+                unset($holidays[$key]);
+              }
+              // If the holiday doesn't cover 100% of the worktime it gets removed
+              else
+              {
+                // Find out, what day of the week the date is
+                $weekday = getDayOfWeek(
+                  intval(substr($holidays[$key]['date'], 0, 4)),
+                  intval(substr($holidays[$key]['date'], 5, 2)),
+                  intval(substr($holidays[$key]['date'], 8, 2))
+                );
+
+                // Retrieve said day of the work times for the role for said weekday
+                $workTimes = WorkTimes::find()
+                ->select('from, until')
+                ->where('role_id = :role_id', [':role_id' => $role])
+                ->andWhere('weekday = :weekday', [':weekday' => $weekday])
+                ->one();
+
+                // If the holiday covers the work times completely, add it to the array of exclusion dates
+                if ($holidays[$key]['beginning_time'] <= $workTimes['from'] && $workTimes['until'] <= $holidays[$key]['end_time'])
+                {
+                  array_push($excludeTheseDates, $holidays[$key]['date']);
+                }
+              }
+            }
 
             return $this->render('time-and-date', [
               'role' => $role,
               'treatments' => $treatments,
-              'totalDuration' => $totalDuration
+              'totalDuration' => $totalDuration,
+              'holidays' => $excludeTheseDates
             ]);
           }
           // User goes back to change the role
@@ -238,17 +306,14 @@ class BookingController extends Controller
 
       $times = [];
 
-      // array_push($times, $workTimeFrom);
-
+      // Extracting the hours and minutes from $workTimes
       $fromHours = intval(substr($workTimeFrom, 0, 2));
       $fromMinutes = intval(substr($workTimeFrom, 3, 2));
       $untilHours = intval(substr($workTimeUntil, 0, 2));
       $untilMinutes = intval(substr($workTimeUntil, 3, 2));
 
-      // TODO: generate dates without using DateTime objects
       // There are 96 15-minute intervals in a 24 hour day ((24 * 60) / 15), that's the saveguard here
       // Generating the times from the given work time interval ends
-      // ! Don't generate the last time
       for ($loopSaveguard = 0; $loopSaveguard < 97 && $workTimeFrom < $workTimeUntil; $loopSaveguard++)
       {
         // Pushing the time onto the array
@@ -270,7 +335,6 @@ class BookingController extends Controller
           break;
         }
       }
-// return json_encode($times);
 
       // Correcting an off-by-one error: the last time is when the shift ends and shouldn't be included in $times
       unset($times[count($times) - 1]);
@@ -295,21 +359,22 @@ class BookingController extends Controller
         // If the time falls within the range of a booking, it gets removed
         foreach ($bookedTimes as $booking)
         {
-          $beginning = $booking['time'];
-          $end = getEndTime($booking['time'], $booking['duration']);
-
-          if ($times[$key] >= $beginning && $times[$key] <= $end)
+          if (isset($times[$key]))
           {
-            unset($times[$key]);
+            $beginning = $booking['time'];
+            $end = getEndTime($booking['time'], $booking['duration']);
+
+            if ($times[$key] >= $beginning && $times[$key] <= $end)
+            {
+              unset($times[$key]);
+            }
           }
         }
       }
-// return json_encode($times);
 
       // Only removing times, if there are any present in the array
       if (count($times) > 0)
       {
-        // ! This seems to remove round times
         // Restoring the indices of the array elements because deleting an array element does not change its index
         $times = array_values($times);
 
@@ -343,7 +408,6 @@ class BookingController extends Controller
           }
         }
       }
-// return json_encode($times);
 
       $HTMLsnippet = '';
 

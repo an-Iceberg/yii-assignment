@@ -1,4 +1,20 @@
 <select name="<?= $label ?>">
+  <option value="00:00" <?= ($holiday[$label] == '00:00:00') ? 'selected' : '' ?>>0:00</option>
+  <option value="00:30" <?= ($holiday[$label] == '00:30:00') ? 'selected' : '' ?>>0:30</option>
+  <option value="01:00" <?= ($holiday[$label] == '01:00:00') ? 'selected' : '' ?>>1:00</option>
+  <option value="01:30" <?= ($holiday[$label] == '01:30:00') ? 'selected' : '' ?>>1:30</option>
+  <option value="02:00" <?= ($holiday[$label] == '02:00:00') ? 'selected' : '' ?>>2:00</option>
+  <option value="02:30" <?= ($holiday[$label] == '02:30:00') ? 'selected' : '' ?>>2:30</option>
+  <option value="03:00" <?= ($holiday[$label] == '03:00:00') ? 'selected' : '' ?>>3:00</option>
+  <option value="03:30" <?= ($holiday[$label] == '03:30:00') ? 'selected' : '' ?>>3:30</option>
+  <option value="04:00" <?= ($holiday[$label] == '04:00:00') ? 'selected' : '' ?>>4:00</option>
+  <option value="04:30" <?= ($holiday[$label] == '04:30:00') ? 'selected' : '' ?>>4:30</option>
+  <option value="05:00" <?= ($holiday[$label] == '05:00:00') ? 'selected' : '' ?>>5:00</option>
+  <option value="05:30" <?= ($holiday[$label] == '05:30:00') ? 'selected' : '' ?>>5:30</option>
+  <option value="06:00" <?= ($holiday[$label] == '06:00:00') ? 'selected' : '' ?>>6:00</option>
+  <option value="06:30" <?= ($holiday[$label] == '06:30:00') ? 'selected' : '' ?>>6:30</option>
+  <option value="07:00" <?= ($holiday[$label] == '07:00:00') ? 'selected' : '' ?>>7:00</option>
+  <option value="07:30" <?= ($holiday[$label] == '07:30:00') ? 'selected' : '' ?>>7:30</option>
   <option value="08:00" <?= ($holiday[$label] == '08:00:00') ? 'selected' : '' ?>>8:00</option>
   <option value="08:30" <?= ($holiday[$label] == '08:30:00') ? 'selected' : '' ?>>8:30</option>
   <option value="09:00" <?= ($holiday[$label] == '09:00:00') ? 'selected' : '' ?>>9:00</option>
@@ -24,4 +40,12 @@
   <option value="19:00" <?= ($holiday[$label] == '19:00:00') ? 'selected' : '' ?>>19:00</option>
   <option value="19:30" <?= ($holiday[$label] == '19:30:00') ? 'selected' : '' ?>>19:30</option>
   <option value="20:00" <?= ($holiday[$label] == '20:00:00') ? 'selected' : '' ?>>20:00</option>
+  <option value="20:30" <?= ($holiday[$label] == '20:30:00') ? 'selected' : '' ?>>20:30</option>
+  <option value="21:00" <?= ($holiday[$label] == '21:00:00') ? 'selected' : '' ?>>21:00</option>
+  <option value="21:30" <?= ($holiday[$label] == '21:30:00') ? 'selected' : '' ?>>21:30</option>
+  <option value="22:00" <?= ($holiday[$label] == '22:00:00') ? 'selected' : '' ?>>22:00</option>
+  <option value="22:30" <?= ($holiday[$label] == '22:30:00') ? 'selected' : '' ?>>22:30</option>
+  <option value="23:00" <?= ($holiday[$label] == '23:00:00') ? 'selected' : '' ?>>23:00</option>
+  <option value="23:30" <?= ($holiday[$label] == '23:30:00') ? 'selected' : '' ?>>23:30</option>
+  <option value="24:00" <?= ($holiday[$label] == '24:00:00') ? 'selected' : '' ?>>24:00</option>
 </select>

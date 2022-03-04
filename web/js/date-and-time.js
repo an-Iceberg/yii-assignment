@@ -1,4 +1,5 @@
 // TODO: most of these values will need to be injected with php somehow based on the language chosen
+// console.log(holidays);
 
 let datepicker = $('#date').datepicker({
   dateFormat: 'dd-mm-yy',
@@ -8,7 +9,18 @@ let datepicker = $('#date').datepicker({
   changeYear: true,
   firstDay: 1,
   beforeShowDay: function(date) {
+  // TODO: disable holidays
     let day = date.getDay();
+    console.log(date);
+
+    holidays.forEach(holiday => {
+      if (date == holiday)
+      {
+        return [false, '', 'This day is a holiday'];
+      }
+    });
+
+    // Disables all Sundays
     return [(day != 0), ''];
   },
   minDate: 0,

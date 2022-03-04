@@ -72,3 +72,13 @@ NextAndBackButtonsAsset::register($this);
   </div>
 
 <?php ActiveForm::end() ?>
+
+<script>
+  let holidays = [
+    <?php
+      foreach ($holidays as $holiday) {
+        echo '\''.$holiday.'\',';
+      }
+    ?>
+  ];
+</script>
