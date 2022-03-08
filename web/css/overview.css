@@ -1,0 +1,7 @@
+div.buttons > .form-next-btn:hover::after {
+  transform: translateX(88px) scaleX(1.5) rotateY(-180deg) !important;
+}
+
+div.buttons > .form-next-btn:hover::before {
+  transform: translateX(58px) scaleX(1.5) rotateY(-180deg) !important;
+}

@@ -641,5 +641,9 @@ div.buttons > button {
 /* TODO: this CSS is too big, split it inot multiple files */
 
 :root {
-  accent-color: indigo;
+  accent-color: rgb(100, 0, 200);
+}
+
+input {
+  border-radius: 5px;
 }

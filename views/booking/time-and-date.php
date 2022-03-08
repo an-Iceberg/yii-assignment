@@ -42,6 +42,12 @@ NextAndBackButtonsAsset::register($this);
     </div>
   </div>
 
+  <div class="legend">
+    <div class="square-container"><div class="square selected-day"></div><span>Selected Day</span></div>
+    <div class="square-container"><div class="square open-days"></div><span>Open Days</span></div>
+    <div class="square-container"><div class="square today"></div><span>Today</span></div>
+  </div>
+
   <hr>
 
   <?= Html::hiddenInput('view', 'time-and-date') ?>
@@ -74,11 +80,14 @@ NextAndBackButtonsAsset::register($this);
 <?php ActiveForm::end() ?>
 
 <script>
+  // Initializes the holidays as a JSON object
   let holidays = [
-    <?php
-      foreach ($holidays as $holiday) {
-        echo '\''.$holiday.'\',';
-      }
-    ?>
+    <?php foreach ($holidays as $holiday) {
+      echo '{';
+      echo '"year": '.$holiday['year'].',';
+      echo '"month": '.$holiday['month'].',';
+      echo '"day": '.$holiday['day'];
+      echo '},';
+    } ?>
   ];
 </script>

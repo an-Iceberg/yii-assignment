@@ -123,10 +123,16 @@ class BookingController extends Controller
                 ->andWhere('weekday = :weekday', [':weekday' => $weekday])
                 ->one();
 
-                // If the holiday covers the work times completely, add it to the array of exclusion dates
+                // If the holiday covers the work times completely, format it and push it onto the exclusion list
                 if ($holidays[$key]['beginning_time'] <= $workTimes['from'] && $workTimes['until'] <= $holidays[$key]['end_time'])
                 {
-                  array_push($excludeTheseDates, $holidays[$key]['date']);
+                  $holiday = [
+                    'year' => intval(substr($holidays[$key]['date'], 0, 4)),
+                    'month' => intval(substr($holidays[$key]['date'], 5, 2)) - 1,
+                    'day' => intval(substr($holidays[$key]['date'], 8, 2))
+                  ];
+
+                  array_push($excludeTheseDates, $holiday);
                 }
               }
             }
@@ -163,6 +169,7 @@ class BookingController extends Controller
               'time' => $postParams['time']
             ]);
           }
+          // User goes back to change the treatment(s)
           elseif ($postParams['button'] == 'back')
           {
             $role = $postParams['role'];
@@ -173,8 +180,6 @@ class BookingController extends Controller
               'role' => $role,
               'treatments' => $treatments,
               'selectedTreatments' => $selectedTreatments,
-              'date' => $postParams['date'],
-              'time' => $postParams['time']
             ]);
           }
         break;
@@ -182,6 +187,20 @@ class BookingController extends Controller
         case 'personal-info':
           if ($postParams['button'] == 'next')
           {
+            // VarDumper::dump($postParams, 10, true);
+            return $this->render('overview', [
+              'postParams' => $postParams
+            ]);
+          }
+          elseif ($postParams['button'] == 'back')
+          {
+          }
+        break;
+
+        case 'overview':
+          if ($postParams['button'] == 'submit')
+          {
+VarDumper::dump($postParams, 10, true);
           }
           elseif ($postParams['button'] == 'back')
           {
@@ -417,7 +436,7 @@ class BookingController extends Controller
         // Creating the HTML snippet from the array of remaining open times
         foreach ($times as $time)
         {
-          $HTMLsnippet .= '<label class="input-label times">'.substr($time, 0, 5).'<input type="radio" name="time" value"'.$time.'"></label>';
+          $HTMLsnippet .= '<label class="input-label times">'.substr($time, 0, 5).'<input type="radio" name="time" value="'.$time.'"></label>';
         }
       }
       // Notify the user that there are no free time-slots available

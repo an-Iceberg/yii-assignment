@@ -1,5 +1,5 @@
-// TODO: most of these values will need to be injected with php somehow based on the language chosen
-// console.log(holidays);
+// TODO: most of these values will need to be injected with php based on the language chosen
+console.log(holidays);
 
 let datepicker = $('#date').datepicker({
   dateFormat: 'dd-mm-yy',
@@ -11,17 +11,34 @@ let datepicker = $('#date').datepicker({
   beforeShowDay: function(date) {
   // TODO: disable holidays
     let day = date.getDay();
-    console.log(date);
 
+    // Disables all Sundays
+    if (day == 0)
+    {
+      return [false, ''];
+    }
+
+    let disableToday = false;
+
+    // Searches for a holiday matching today
     holidays.forEach(holiday => {
-      if (date == holiday)
+      if (
+        date.getDate() == holiday.day &&
+        date.getMonth() == holiday.month &&
+        date.getFullYear() == holiday.year
+      )
       {
-        return [false, '', 'This day is a holiday'];
+        disableToday = true;
       }
     });
 
-    // Disables all Sundays
-    return [(day != 0), ''];
+    // Disables today, if today is a holiday
+    if (disableToday)
+    {
+      return [false, ''];
+    }
+
+    return [true, ''];
   },
   minDate: 0,
   maxDate: '+6m',
@@ -31,6 +48,7 @@ let datepicker = $('#date').datepicker({
   },
   showButtonPanel: true,
   altField: '#selectedDate',
+  altFormat: 'yy-mm-dd',
 
   // If the user selects a date, query the times form the DB
   onSelect: function(dateText, inst) {
@@ -56,8 +74,7 @@ let datepicker = $('#date').datepicker({
           $('#time-container').fadeIn(300);
         },
         error: function (error) {
-          console.log(':(');
-          console.log('Your Ajax call ran into a problem and needs to restart.');
+          console.log(':('+'\n'+'Something went wrong.');
           console.log(error);
           $('#time-container').fadeIn(300);
         }

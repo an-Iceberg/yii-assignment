@@ -176,7 +176,8 @@
 
 .ui-datepicker-prev.ui-state-disabled,
 .ui-datepicker-next.ui-state-disabled {
-  color: darkslateblue;
+  color: rgb(100, 0, 200);
+  cursor: not-allowed;
 }
 
 .ui-datepicker-unselectable.ui-state-disabled {
@@ -200,11 +201,6 @@ h2.h4 {
 #times {
   padding: 10px;
   flex-grow: 1;
-  /* display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-  justify-items: center;
-  align-items: center; */
 }
 
 .times {
@@ -214,9 +210,46 @@ h2.h4 {
   padding-left: 5px;
   padding-right: 5px;
   margin: 8px !important;
-  /* margin: 0 !important; */
 }
 
 .times input {
   margin-left: 5px;
+}
+
+.legend {
+  margin-top: 1rem;
+}
+
+.square {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+}
+
+.square-container {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+
+.square-container span {
+  margin-left: 10px;
+}
+
+.selected-day {
+  border: 1px solid gray;
+  background: white;
+}
+
+.open-days {
+  border: 1px solid gray;
+  background: #e2e9ef;
+}
+
+.today {
+  border: 2px solid orange;
+  background-image: repeating-linear-gradient(-45deg, #e2e9ef 0px, #e2e9ef 5px, white 5px, white 10px);
 }
