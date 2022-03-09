@@ -1,11 +1,14 @@
 <?php
 
+use app\assets\BackendIndexCSSAsset;
 use app\models\BackendUsers;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
 
 $login = new BackendUsers();
+
+BackendIndexCSSAsset::register($this);
 ?>
 
 <h1>Backend Login</h1>

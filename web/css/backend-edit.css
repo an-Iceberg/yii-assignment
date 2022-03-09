@@ -1,0 +1,161 @@
+.language-switcher {
+  display: flex;
+  flex-direction: row;
+}
+
+.language {
+  padding: 5px 10px;
+  color: #fff;
+  margin-right: 3px;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-left: 1px solid #fff;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #fff;
+  background: #1f2042;
+  /* z-index: 1; */
+}
+
+/* TODO: language hover effects */
+
+.active-language {
+  color: #000;
+  background: #ada8e0;
+  box-shadow: none;
+  /* z-index: 3; */
+}
+
+.top-row {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+.top-row a i {
+  font-size: 2.5rem;
+  line-height: 38px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.top-row .back-button {
+  border: 1px solid cyan;
+  border-radius: 5px;
+  background: transparent;
+  color: cyan;
+  text-shadow:
+  cyan 0px 0px 40px,
+  cyan 0px 0px 30px,
+  cyan 0px 0px 20px,
+  cyan 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px cyan inset,
+  0px 0px 5px 2px cyan;
+  transition: all .3s;
+}
+
+.top-row .back-button:hover {
+  background: cyan;
+  color: #2a004a ;
+  transition: all .3s;
+}
+
+.top-row .h3 {
+  color: cyan;
+  text-shadow: cyan 1px 0 10px;
+}
+
+.top-row .flex-filler {
+  flex-grow: 1;
+}
+
+.top-row .delete-button {
+  border: 1px solid #f72119;
+  border-radius: 5px;
+  background: transparent;
+  color: #f72119;
+  text-shadow:
+  #f72119 0px 0px 40px,
+  #f72119 0px 0px 30px,
+  #f72119 0px 0px 20px,
+  #f72119 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px #f72119 inset,
+  0px 0px 5px 2px #f72119;
+  transition: all .3s;
+}
+
+.top-row .delete-button:hover {
+  background: #f72119;
+  color: #2a004a ;
+  transition: all .3s;
+}
+
+.save-button {
+  border: 1px solid #ffb81c;
+  border-radius: 5px;
+  background: transparent;
+  color: #ffb81c;
+  text-shadow:
+  #ffb81c 0px 0px 40px,
+  #ffb81c 0px 0px 30px,
+  #ffb81c 0px 0px 20px,
+  #ffb81c 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px #ffb81c inset,
+  0px 0px 5px 2px #ffb81c;
+  transition: all .3s;
+}
+
+.save-button:hover {
+  background: #ffb81c;
+  color: #2a004a ;
+  transition: all .3s;
+}
+
+.treatments {
+  background: #fff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.treatments > label {
+  margin: .5rem 0 .5rem .5rem;
+}
+/* TODO: rename this */
+.grid-container {
+  border: 1px solid #fff;
+  background: #ada8e0;
+  border-radius: 5px;
+  padding: .5rem 0;
+  border-top-left-radius: 0;
+  margin-top: -1px;
+  /* z-index: 2; */
+}
+
+.grid-container input {
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.last-input-element {
+  margin-bottom: 0 !important;
+}
+
+.break {
+  margin: 10px;
+  padding: 10px;
+}
+
+.save {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-top: 10px;
+}
+
+.holiday-checkbox {
+  padding-left: 5px;
+  padding-right: 5px;
+}

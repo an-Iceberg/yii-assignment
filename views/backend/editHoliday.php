@@ -5,9 +5,12 @@
  * @var newEntry
  */
 
+use app\assets\BackendEditCSSAsset;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
+
+BackendEditCSSAsset::register($this);
 
 $this->title = $holiday->holiday_name;
 $this->params['currentPage'] = 'holidays';

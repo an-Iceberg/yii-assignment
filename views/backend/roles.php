@@ -4,11 +4,14 @@
  * @var dataProvider
  */
 
+use app\assets\BackendGridviewCSSAsset;
 use app\assets\RolesAsset;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
+
+BackendGridviewCSSAsset::register($this);
 
 $this->title = 'Roles';
 $this->params['currentPage'] = 'roles';

@@ -1,11 +1,14 @@
 <?php
 
+use app\assets\BackendGridviewCSSAsset;
 use app\assets\BookingsAsset;
 use app\modules\backend\models\Booking;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
+
+BackendGridviewCSSAsset::register($this);
 
 $this->title = 'Bookings';
 $this->params['currentPage'] = 'bookings';

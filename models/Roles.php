@@ -109,4 +109,20 @@ class Roles extends \yii\db\ActiveRecord
 
     return $duration['duration'];
   }
+
+  /**
+   * Returns the name of a specified role
+   *
+   * @param int $role The id of the role
+   * @return string The name of the role
+   */
+  public static function getRoleName($role)
+  {
+    $role = Roles::find()
+    ->select('role_name')
+    ->where('id = :id', [':id' => $role])
+    ->one();
+
+    return $role['role_name'];
+  }
 }

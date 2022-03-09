@@ -29,6 +29,7 @@ class BookingController extends Controller
       $postParams = Yii::$app->request->post();
 
       // TODO: handle empty/no input with appropriate error messages
+      // TODO: just pass in the $postParams everywhere, it's gonna be much easier to deal with
       // Rendering the next view depending on which view the user has been on previously
       switch ($postParams['view'])
       {
@@ -187,9 +188,13 @@ class BookingController extends Controller
         case 'personal-info':
           if ($postParams['button'] == 'next')
           {
-            // VarDumper::dump($postParams, 10, true);
+            $role = Roles::getRoleName($postParams['role']);
+            $treatmentNames = Treatments::getTreatmentNames($postParams['treatments']);
+
             return $this->render('overview', [
-              'postParams' => $postParams
+              'postParams' => $postParams,
+              'role' => $role,
+              'treatments' => $treatmentNames
             ]);
           }
           elseif ($postParams['button'] == 'back')
@@ -200,7 +205,8 @@ class BookingController extends Controller
         case 'overview':
           if ($postParams['button'] == 'submit')
           {
-VarDumper::dump($postParams, 10, true);
+            VarDumper::dump($postParams, 10, true);
+            // TODO: input validation and write to DB
           }
           elseif ($postParams['button'] == 'back')
           {
@@ -208,22 +214,20 @@ VarDumper::dump($postParams, 10, true);
         break;
 
         default:
-          // Retrieving all available roles from the database
-          $role = Roles::getAllActiveRoles();
+          $roles = Roles::getAllActiveRoles();
 
           return $this->render('role', [
-            'roles' => $role
+            'roles' => $roles
           ]);
         break;
       }
     }
     else
     {
-      // Retrieving all available roles from the database
-      $role = Roles::getAllActiveRoles();
+      $roles = Roles::getAllActiveRoles();
 
       return $this->render('role', [
-        'roles' => $role
+        'roles' => $roles
       ]);
     }
   }

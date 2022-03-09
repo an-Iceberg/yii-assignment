@@ -8,12 +8,14 @@
  * @var id
  */
 
+use app\assets\BackendEditCSSAsset;
 use app\assets\TreatmentsAsset;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\widgets\ActiveForm;
 
 TreatmentsAsset::register($this);
+BackendEditCSSAsset::register($this);
 
 $this->title = $booking->patient_lastName;
 $this->params['currentPage'] = 'bookings';

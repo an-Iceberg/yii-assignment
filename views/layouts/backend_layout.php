@@ -1,11 +1,13 @@
 <?php
 
 use app\assets\AppAsset;
+use app\assets\BackendCSSAsset;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 
 AppAsset::register($this);
+BackendCSSAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

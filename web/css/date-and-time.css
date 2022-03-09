@@ -1,9 +1,9 @@
 #date-and-time {
-  --border-radius: 5px;
+  /* --border-radius: 5px;
   --border-colour-date: #007bff;
   --background-colour: #e2e9ef;
   --border-colour-time: #6c757d;
-  --website-background-colour: #fff;
+  --website-background-colour: #fff; */
 
   height: 400px;
   display: flex;

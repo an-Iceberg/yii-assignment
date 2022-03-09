@@ -1,0 +1,42 @@
+.working-hours,
+.role-treatments {
+  background: #fff;
+  border-radius: 5px;
+  flex-grow: 1;
+  padding-left: .5rem;
+  padding-top: .5rem;
+}
+
+.treatment-delete-button {
+  width: 28px;
+  height: 28px;
+  background: #d9534f !important;
+  border-color: #d9534f !important;
+  color: #fff;
+}
+
+.treatment-delete-button > i {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.treatment-delete-button:hover {
+  background: #c9302c !important;
+  border-color: #c9302c !important;
+}
+
+.create-treatment {
+  border: 1px solid #337ab7;
+  border-radius: 5px;
+  background: #337ab7;
+  color: #fff;
+  display: flex;
+  margin-right: .5rem;
+  margin-bottom: .5rem;
+}
+
+.create-treatment:hover {
+  border-color: #286090;
+  background: #286090;
+}

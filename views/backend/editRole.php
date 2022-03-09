@@ -9,6 +9,7 @@
  * @var selectedHolidays
  */
 
+use app\assets\BackendEditCSSAsset;
 use app\assets\EditRoleAsset;
 use app\models\Holidays;
 use yii\helpers\Html;
@@ -17,6 +18,7 @@ use yii\widgets\ActiveForm;
 use yii\widgets\ListView;
 
 EditRoleAsset::register($this);
+BackendEditCSSAsset::register($this);
 
 $this->title = $role->role_name;
 $this->params['currentPage'] = 'roles';

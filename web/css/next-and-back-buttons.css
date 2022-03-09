@@ -1,4 +1,4 @@
-/* Pretty arrows :>
+/* Pretty arrows c:
 < >
 ≪ ≫
 ⋘ ⋙
@@ -17,7 +17,7 @@
 ⮘ ⮙ ⮚ ⮛
 */
 
-/* Animated back button :> */
+/* Animated back button c: */
 div.buttons > .form-back-btn::before {
   content: '⮞';
   transform: translateX(0px) scaleX(1.5);
@@ -52,7 +52,7 @@ div.buttons > .form-back-btn:hover::after {
   opacity: 1;
 }
 
-/* Animated next button :> */
+/* Animated next button c: */
 div.buttons > .form-next-btn::before {
   content: '⮜';
   transform: translateX(0px) scaleX(1.5);

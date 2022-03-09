@@ -72,4 +72,28 @@ class Treatments extends \yii\db\ActiveRecord
     ->where('role_id = :role_id', [':role_id' => $role])
     ->all();
   }
+
+  /**
+   * Retrieves the names of the treatments
+   *
+   * @param array $treatments The ids of the treatments
+   * @return array The names of the treatments
+   */
+  public static function getTreatmentNames($treatments)
+  {
+    $names = Treatments::find()
+    ->select('treatment_name')
+    ->where(['id' => $treatments])
+    ->all();
+
+    $nameArray = [];
+
+    // Extracting all the name strings from the active record objects
+    foreach ($names as $name)
+    {
+      array_push($nameArray, $name['treatment_name']);
+    }
+
+    return $nameArray;
+  }
 }

@@ -5,3 +5,19 @@ div.buttons > .form-next-btn:hover::after {
 div.buttons > .form-next-btn:hover::before {
   transform: translateX(58px) scaleX(1.5) rotateY(-180deg) !important;
 }
+
+p {
+  color: var(--border-colour-date);
+}
+
+h2 {
+  min-width: 300px;
+}
+
+.d-flex {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.d-flex:last-child {
+  border-bottom: none;
+}

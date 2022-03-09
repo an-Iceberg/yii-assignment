@@ -1,0 +1,58 @@
+.main.backend-main {
+  padding: 10px 20px;
+  width: calc(100% - 150px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: linear-gradient(to bottom, #2a004a 60%, coral 115%);
+}
+
+.backend-nav {
+  width: 150px;
+  background: linear-gradient(to bottom, #03004a 60%, blueviolet 115%);
+}
+
+.backend-nav-link {
+  margin-top: 8px;
+  padding: 1px;
+}
+
+.backend-nav-link,
+.backend-nav-link li {
+  text-decoration: none !important;
+  text-align: center;
+}
+
+.backend-nav-link li {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-radius: 0px 5px 50px 10px;
+  border: 1px solid magenta;
+  background: transparent;
+  color: magenta;
+  text-shadow:
+  magenta 0px 0px 40px,
+  magenta 0px 0px 30px,
+  magenta 0px 0px 20px,
+  magenta 0px 0px 10px;
+  box-shadow: 0px 0px 5px 2px magenta inset,
+  0px 0px 5px 2px magenta;
+  transition: all .3s;
+}
+
+.backend-nav-link li:hover {
+  background: magenta;
+  color: #2a004a;
+  transition: all .3s;
+}
+
+.backend-nav ul {
+  padding-left: 0;
+  width: 100%;
+}
+
+.backend-nav > ul > a > .selected-nav {
+  background: magenta;
+  color: #2a004a;
+}
