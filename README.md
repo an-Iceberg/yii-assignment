@@ -9,3 +9,5 @@
 This webapp has two front facing parts:
 * The frontend, to which users have access to and can create a booking with
 * The backend, to which only the personnel has access to in order to view/change/delete bookings or roles or other information
+
+[playlist about OSes](https://www.youtube.com/playlist?list=PLBlnK6fEyqRiVhbXDGLXDk_OQAeuVcp2O)
