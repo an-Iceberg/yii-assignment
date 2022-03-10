@@ -17,3 +17,8 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+
+.invalid-input {
+  border: 1px solid red !important;
+  background: #efe0e0 !important;
+}

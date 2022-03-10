@@ -28,19 +28,29 @@ class BookingController extends Controller
     {
       $postParams = Yii::$app->request->post();
 
+      // TODO: Database migrations
       // TODO: handle empty/no input with appropriate error messages
       // TODO: just pass in the $postParams everywhere, it's gonna be much easier to deal with
       // Rendering the next view depending on which view the user has been on previously
+      // TODO OPTIONAL: account for unset $postParams['view']
       switch ($postParams['view'])
       {
-        // User has selected a role
         case 'role':
-          // User moves on to select treatment
           if ($postParams['button'] == 'next')
           {
+            // User has not selected a role
+            if (!isset($postParams['role']))
+            {
+              return $this->render('role', [
+                'roles' => Roles::getAllActiveRoles(),
+                'error' => true
+              ]);
+            }
+
             $role = $postParams['role'];
             $treatments = Treatments::getTreatments($role);
 
+            // User moves on to select a treatment
             return $this->render('treatment', [
               'treatments' => $treatments,
               'role' => $role,
@@ -48,39 +58,17 @@ class BookingController extends Controller
           }
         break;
 
-        // User has selected a treatment
         case 'treatment':
-          // User moves on to select date and time
           if ($postParams['button'] == 'next')
           {
-            /**
-             * Returns a number representing the day of the week given a date
-             *
-             * @param int $year Four digit positive integer representing the year
-             * @param int $month Two digit positive integer no larger than 12 representing the month
-             * @param int $day Two digit positive integer no larger than 31/30/29/28 (depending on the month) positive integer representing the day of the month
-             * @return int The day of the week with 0 = Monday and 6 = Sunday
-             */
-            function getDayOfWeek($year, $month, $day)
+            // User has not selected a treatment
+            if (!isset($postParams['treatments']))
             {
-              // Adjusting the input values for the formula
-              if ($month < 3)
-              {
-                $month += 12;
-                $year--;
-              }
-
-              // The formula is an alternative to Zeller's rule; it can be found here => https://www.themathdoctors.org/zellers-rule-what-day-of-the-week-is-it/
-              $weekday = ($day + (2*$month) + floor(3*($month+1)/5) + $year + floor($year/4) - floor($year/100) + floor($year/400) + 2) % 7;
-
-              // Adjusting output value to correspond to 0 = Monday and 6 = Sunday
-              $weekday -= 2;
-              if ($weekday < 0)
-              {
-                $weekday += 7;
-              }
-
-              return $weekday;
+              return $this->render('treatment', [
+                'role' => $postParams['role'],
+                'treatments' => Treatments::getTreatments($postParams['role']),
+                'error' => true
+              ]);
             }
 
             $role = $postParams['role'];
@@ -92,57 +80,12 @@ class BookingController extends Controller
             // Calculating the total duration of all selected treatments
             $totalDuration = $duration * count($treatments);
 
-            // Retrieving all holidays for the selected role
-            $holidays = Holidays::getHolidaysForRole($postParams['role']);
-
-            $excludeTheseDates = [];
-
-            // Removing holidays from the array that are not required to be there
-            $today = date('Y-m-d');
-            $arraySize = count($holidays);
-            for ($key = 0; $key < $arraySize; $key++)
-            {
-              // If the holiday is in the past its no longer relevant thus can be removed
-              if ($holidays[$key]['date'] < $today)
-              {
-                unset($holidays[$key]);
-              }
-              // If the holiday doesn't cover 100% of the worktime it gets removed
-              else
-              {
-                // Find out, what day of the week the date is
-                $weekday = getDayOfWeek(
-                  intval(substr($holidays[$key]['date'], 0, 4)),
-                  intval(substr($holidays[$key]['date'], 5, 2)),
-                  intval(substr($holidays[$key]['date'], 8, 2))
-                );
-
-                // Retrieve said day of the work times for the role for said weekday
-                $workTimes = WorkTimes::find()
-                ->select('from, until')
-                ->where('role_id = :role_id', [':role_id' => $role])
-                ->andWhere('weekday = :weekday', [':weekday' => $weekday])
-                ->one();
-
-                // If the holiday covers the work times completely, format it and push it onto the exclusion list
-                if ($holidays[$key]['beginning_time'] <= $workTimes['from'] && $workTimes['until'] <= $holidays[$key]['end_time'])
-                {
-                  $holiday = [
-                    'year' => intval(substr($holidays[$key]['date'], 0, 4)),
-                    'month' => intval(substr($holidays[$key]['date'], 5, 2)) - 1,
-                    'day' => intval(substr($holidays[$key]['date'], 8, 2))
-                  ];
-
-                  array_push($excludeTheseDates, $holiday);
-                }
-              }
-            }
-
+            // User moves on to select date and time
             return $this->render('time-and-date', [
               'role' => $role,
               'treatments' => $treatments,
               'totalDuration' => $totalDuration,
-              'holidays' => $excludeTheseDates
+              'holidays' => $this->getHolidays($role)
             ]);
           }
           // User goes back to change the role
@@ -162,12 +105,41 @@ class BookingController extends Controller
         case 'time-and-date':
           if ($postParams['button'] == 'next')
           {
+            // User has not selected neither date nor time
+            if (!isset($postParams['date']) && !isset($postParams['time']))
+            {
+              $error = 2;
+            }
+            // User has not selected a date
+            elseif (!isset($postParams['date']))
+            {
+              $error = 1;
+            }
+            // User has not selected a time
+            elseif (!isset($postParams['time']))
+            {
+              $error = 0;
+            }
+
+            // Re-render view on invalid input
+            if (isset($error))
+            {
+              return $this->render('time-and-date', [
+                'role' => $postParams['role'],
+                'treatments' => $postParams['treatments'],
+                'totalDuration' => $postParams['totalDuration'],
+                'holidays' => $this->getHolidays($postParams['role']),
+                'error' => $error
+              ]);
+            }
+
             return $this->render('personal-info', [
               'role' => $postParams['role'],
               'treatments' => $postParams['treatments'],
               'totalDuration' => $postParams['totalDuration'],
               'date' => $postParams['date'],
-              'time' => $postParams['time']
+              'time' => $postParams['time'],
+              'send_confirmation' => true
             ]);
           }
           // User goes back to change the treatment(s)
@@ -188,28 +160,123 @@ class BookingController extends Controller
         case 'personal-info':
           if ($postParams['button'] == 'next')
           {
-            $role = Roles::getRoleName($postParams['role']);
-            $treatmentNames = Treatments::getTreatmentNames($postParams['treatments']);
+            $errors = [
+              'salutation' => true,
+              'lastName' => true,
+              'firstName' => true,
+              'birthdate' => true,
+              'street' => true,
+              'zipCode' => true,
+              'city' => true,
+              'telephone' => true,
+              'email' => true,
+              'terms-and-conditions' => true
+            ];
 
-            return $this->render('overview', [
-              'postParams' => $postParams,
-              'role' => $role,
-              'treatments' => $treatmentNames
-            ]);
+            $someInputIsInvalid = false;
+
+            // Input validation
+            foreach ($errors as $key => &$field)
+            {
+              // If the input is empty
+              if (!isset($postParams['client'][$key]) || $postParams['client'][$key] == '')
+              {
+                $field = false;
+                $someInputIsInvalid = true;
+              }
+              // TODO: valide input using model as well
+            }
+            unset($field);
+
+            // On invalid input, re-render the form again
+            if ($someInputIsInvalid)
+            {
+              return $this->render('personal-info', [
+                'role' => $postParams['role'],
+                'treatments' => $postParams['treatments'],
+                'totalDuration' => $postParams['totalDuration'],
+                'date' => $postParams['date'],
+                'time' => $postParams['time'],
+                'client' => $postParams['client'],
+                'errors' => $errors
+              ]);
+            }
+            // Move on to the overview
+            else
+            {
+              $role = Roles::getRoleName($postParams['role']);
+              $treatmentNames = Treatments::getTreatmentNames($postParams['treatments']);
+
+              return $this->render('overview', [
+                'postParams' => $postParams,
+                'role' => $role,
+                'treatments' => $treatmentNames
+              ]);
+            }
           }
           elseif ($postParams['button'] == 'back')
           {
+            return $this->render('time-and-date', [
+              'role' => $postParams['role'],
+              'treatments' => $postParams['treatments'],
+              'totalDuration' => $postParams['totalDuration'],
+              'holidays' => $this->getHolidays($postParams['role'])
+            ]);
           }
         break;
 
         case 'overview':
           if ($postParams['button'] == 'submit')
           {
-            VarDumper::dump($postParams, 10, true);
-            // TODO: input validation and write to DB
+            $booking = new Bookings();
+
+            foreach ($postParams['treatments'] as $item)
+            {
+              $item;
+            }
+
+            $booking->duration = $postParams['totalDuration'];
+            $booking->role_id = $postParams['role'];
+            $booking->treatment_id = $postParams['treatments'];
+            $booking->date = $postParams['date'];
+            $booking->time = $postParams['time'];
+            $booking->patient_salutation = $postParams['client']['salutation'];
+            $booking->patient_firstName = $postParams['client']['firstName'];
+            $booking->patient_lastName = $postParams['client']['lastName'];
+            $booking->patient_birthdate = $postParams['client']['birthdate'];
+            $booking->patient_street = $postParams['client']['street'];
+            $booking->patient_zipCode = $postParams['client']['zipCode'];
+            $booking->patient_city = $postParams['client']['city'];
+            $booking->patient_phoneNumber = $postParams['client']['telephone'];
+            $booking->patient_email = $postParams['client']['email'];
+            $booking->patient_comment = $postParams['client']['comment'] ?? '';
+            $booking->newPatient = isset($postParams['client']['newPatient']) ? 1 : 0;
+            $booking->callback = isset($postParams['client']['callback']) ? 1 :  0;
+            $booking->send_confirmation = isset($postParams['client']['send_confirmation']) ? 1 : 0;
+            $booking->status = 1;
+
+            if ($booking->validate())
+            {
+              $booking->save();
+
+              return $this->redirect('/');
+            }
+            else
+            {
+              return ':(<br>Something went wrong'.'<hr>'.VarDumper::dump($booking->errors, 10, true);
+            }
           }
+          // User goes back to change personal information
           elseif ($postParams['button'] == 'back')
           {
+            return $this->render('personal-info', [
+              'role' => $postParams['role'],
+              'treatments' => $postParams['treatments'],
+              'totalDuration' => $postParams['totalDuration'],
+              'date' => $postParams['date'],
+              'time' => $postParams['time'],
+              'client' => $postParams['client'],
+            ]);
           }
         break;
 
@@ -233,10 +300,97 @@ class BookingController extends Controller
   }
 
   /**
-   * Target for Ajax call; getting all the times for a specified date from the DB
-   * Returns a HTML snippet to be inserted into #times so that the client machine can run as efficiently as possible
+   * Takes a role and returns all the holidays that fully cover the worktimes for said role
    *
-   * @return string
+   * @param int $role The id of the role
+   * @return array The holidays that fully take up the worktimes
+   */
+  public function getHolidays($role)
+  {
+    // Retrieving all holidays for the selected role
+    $holidays = Holidays::getHolidaysForRole($role);
+
+    $excludeTheseDates = [];
+
+    // Removing holidays from the array that are not required to be there
+    $today = date('Y-m-d');
+    $arraySize = count($holidays);
+    for ($key = 0; $key < $arraySize; $key++)
+    {
+      // If the holiday is in the past its no longer relevant thus can be removed
+      if ($holidays[$key]['date'] < $today)
+      {
+        unset($holidays[$key]);
+      }
+      // If the holiday doesn't cover 100% of the worktime it gets removed
+      else
+      {
+        // Find out, what day of the week the date is
+        $weekday = $this->getDayOfWeek(
+          intval(substr($holidays[$key]['date'], 0, 4)),
+          intval(substr($holidays[$key]['date'], 5, 2)),
+          intval(substr($holidays[$key]['date'], 8, 2))
+        );
+
+        // Retrieve said day of the work times for the role for said weekday
+        $workTimes = WorkTimes::find()
+        ->select('from, until')
+        ->where('role_id = :role_id', [':role_id' => $role])
+        ->andWhere('weekday = :weekday', [':weekday' => $weekday])
+        ->one();
+
+        // If the holiday covers the work times completely, format it and push it onto the exclusion list
+        if ($holidays[$key]['beginning_time'] <= $workTimes['from'] && $workTimes['until'] <= $holidays[$key]['end_time'])
+        {
+          $holiday = [
+            'year' => intval(substr($holidays[$key]['date'], 0, 4)),
+            'month' => intval(substr($holidays[$key]['date'], 5, 2)) - 1,
+            'day' => intval(substr($holidays[$key]['date'], 8, 2))
+          ];
+
+          array_push($excludeTheseDates, $holiday);
+        }
+      }
+    }
+
+    return $excludeTheseDates;
+  }
+
+  /**
+   * Returns a number representing the day of the week given a date
+   *
+   * @param int $year Four digit positive integer representing the year
+   * @param int $month Two digit positive integer no larger than 12 representing the month
+   * @param int $day Two digit positive integer no larger than 31/30/29/28 (depending on the month) positive integer representing the day of the month
+   * @return int The day of the week with 0 = Monday and 6 = Sunday
+   */
+  public function getDayOfWeek($year, $month, $day)
+  {
+    // Adjusting the input values for the formula
+    if ($month < 3)
+    {
+      $month += 12;
+      $year--;
+    }
+
+    // The formula is an alternative to Zeller's rule; it can be found here => https://www.themathdoctors.org/zellers-rule-what-day-of-the-week-is-it/
+    $weekday = ($day + (2*$month) + floor(3*($month+1)/5) + $year + floor($year/4) - floor($year/100) + floor($year/400) + 2) % 7;
+
+    // Adjusting output value to correspond to 0 = Monday and 6 = Sunday
+    $weekday -= 2;
+    if ($weekday < 0)
+    {
+      $weekday += 7;
+    }
+
+    return $weekday;
+  }
+
+  /**
+   * Target for Ajax call; getting all the times for a specified date from the DB.
+   * Returns an HTML snippet to be inserted into #times so that the client machine can run as efficiently as possible
+   *
+   * @return string HTML formatted input fields
    */
   public function actionGetTimes()
   {
@@ -453,232 +607,5 @@ class BookingController extends Controller
     }
 
     return 'You\'re not supposed to be here.<br>;)';
-  }
-
-  // User chooses the role
-  public function actionRole()
-  {
-    $roles = Roles::find()
-    ->select('id, role_name')
-    ->where('status = true')
-    ->all();
-
-    return $this->render('role', [
-      'roles' => $roles
-    ]);
-  }
-
-  // User chooses the treatment available for the chosen role
-  public function actionTreatment()
-  {
-    // TODO: redirect on GET
-    if (Yii::$app->request->getMethod() == 'POST')
-    {
-      $postParams = Yii::$app->request->post();
-
-      $role = $postParams['role'];
-
-      // If the back button was clicked, redirect there
-      // if ()
-      // {}
-
-      $treatments = Treatments::find()
-      ->select('id, treatment_name')
-      ->where('role_id = :role_id', [':role_id' => $postParams['role']])
-      ->all();
-
-      return $this->render('treatment', [
-        'treatments' => $treatments,
-        'role' => $role
-      ]);
-    }
-    // Redirect on GET
-    else
-    {
-      return $this->redirect('/booking');
-    }
-  }
-
-  // User chooses appropriate time and date
-  public function actionTimeAndDate()
-  {
-    // TODO: redirect on GET
-    $postParams = Yii::$app->request->post();
-
-    $role = $postParams['role'];
-    $treatments = [];
-    foreach ($postParams['treatment'] as $key => $value) {
-      $treatments[] = $key;
-    }
-
-    // TODO: retrieve date and time
-
-    return $this->render('time-and-date', [
-      'treatments' => $treatments,
-      'role' => $role
-    ]);
-  }
-
-  public function actionPersonalInfo()
-  {
-    // TODO: redirect on get
-    return $this->render('personal-info');
-  }
-
-  /**
-   * Target for Ajax call
-   * Returns all holidays
-   *
-   * @return void|string
-   */
-  public function actionGetHolidays()
-  {
-    // If this site is not accessed via POST method, redirect to the index site
-    if (Yii::$app->request->method != 'POST')
-    {
-      return $this->redirect('/booking/booking');
-    }
-
-    // Retrieving holidays and bookings from the database
-    $holidays = Holidays::getHolidays();
-
-    $responseData = [];
-
-    // Populating the response data array with the dates
-    foreach ($holidays as $date)
-    {
-      $responseData[] = $date->date;
-    }
-
-    return json_encode($responseData);
-  }
-
-  /**
-   * Target for Ajax call
-   * Returns all bookings for a specific date
-   *
-   * @return void|string
-   */
-  public function actionGetBookings()
-  {
-    // If this site is not accessed via POST method, redirect to the index site
-    if (Yii::$app->request->method != 'POST')
-    {
-      return $this->redirect('/booking/booking');
-    }
-
-    $booking = Yii::$app->request->bodyParams['booking'];
-
-    // Retrieving all existing bookings in the relevant categories
-    $queryResults = Bookings::getBookings($booking['role'], $booking['treatment'], $booking['date'], $booking['time']);
-
-    $responseData = [];
-
-    // Extracting the date and appending it to the array
-    foreach ($queryResults as $value)
-    {
-      $responseData[] = substr($value->date, 11, 5);
-    }
-
-    return json_encode($responseData);
-  }
-
-  /**
-   * Displays booked appointment on successful booking
-   *
-   * @return void|string
-   */
-  public function actionInputValidation()
-  {
-    // Todo: User can create multiple DB entries by refreshing the page/going back to said page; fix that!
-    // If this site is not accessed via POST method, redirect to the index site
-    if (Yii::$app->request->method != 'POST')
-    {
-      return $this->redirect('/booking/booking');
-    }
-
-    $booking = new Bookings();
-
-    $requestData = Yii::$app->request->bodyParams['booking'];
-
-    // Assigning the request data to the Booking object
-    $booking->role = $requestData['role'];
-    $booking->treatment = $requestData['treatment'];
-    $booking->date = $requestData['date'];
-    $booking->time = $requestData['time'].':00';
-    $booking->patient_salutation = $requestData['patient_salutation'];
-    $booking->patient_firstName = $requestData['patient_firstName'];
-    $booking->patient_lastName = $requestData['patient_lastName'];
-    $booking->patient_birthdate = $requestData['patient_birthdate'];
-    $booking->patient_street = $requestData['patient_street'];
-    $booking->patient_zipCode = $requestData['patient_zipCode'];
-    $booking->patient_city = $requestData['patient_city'];
-    $booking->patient_phoneNumber = $requestData['patient_phoneNumber'];
-    $booking->patient_email = $requestData['patient_email'];
-    $booking->patient_comment = $requestData['patient_comment'];
-    $booking->newPatient = $requestData['newPatient'] == '1' ? 1 : 0;
-    $booking->recall = $requestData['recall'] == '1' ? 1 : 0;
-
-    // If the validation is successful, insert values into database
-    if ($booking->validate()) {
-
-      // Creating insert query
-      $insertQuery = Yii::$app->db->createCommand('INSERT INTO bookings VALUES (
-        :role,
-        :treatment,
-        :date,
-        :time,
-        :patient_salutation,
-        :patient_firstName,
-        :patient_lastName,
-        :patient_birthdate,
-        :patient_street,
-        :patient_zipCode,
-        :patient_city,
-        :patient_phoneNumber,
-        :patient_email,
-        :patient_comment,
-        :newPatient,
-        :recall
-      );');
-
-      // Binding values
-      $insertQuery->bindValue(':role', $booking->role)
-      ->bindValue(':treatment', $booking->treatment)
-      ->bindValue(':date', $booking->date)
-      ->bindValue(':patient_salutation', $booking->patient_salutation)
-      ->bindValue(':patient_firstName', $booking->patient_firstName)
-      ->bindValue(':patient_lastName', $booking->patient_lastName)
-      ->bindValue(':patient_birthdate', $booking->patient_birthdate)
-      ->bindValue(':patient_street', $booking->patient_street)
-      ->bindValue(':patient_zipCode', $booking->patient_zipCode)
-      ->bindValue(':patient_city', $booking->patient_city)
-      ->bindValue(':patient_phoneNumber', $booking->patient_phoneNumber)
-      ->bindValue(':patient_email', $booking->patient_email)
-      ->bindValue(':patient_comment', $booking->patient_comment)
-      ->bindValue(':newPatient', $booking->newPatient)
-      ->bindValue(':recall', $booking->recall);
-
-      // Executing query
-      $insertQuery->execute();
-
-      return $this->render('bookingSuccess', [
-        'message' => 'Your booking has been saved.'
-      ]);
-    }
-
-    $inputErrors = $booking->errors;
-    $displayErrors = [];
-
-    // Extracts all the errors from the object into a separate array
-    foreach ($inputErrors as $errors) {
-      foreach ($errors as $error) {
-        $displayErrors[] = $error;
-      }
-    }
-
-    return $this->render('bookingFailiure', [
-      'message' => implode('<br>', $displayErrors)
-    ]);
   }
 }

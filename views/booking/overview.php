@@ -22,12 +22,12 @@ OverviewCSSAsset::register($this);
   <div class="grid-container">
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Role</h2>
+      <h2 class="h6">Role</h2>
       <p><?= $role ?></p>
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Treatment(s)</h2>
+      <h2 class="h6">Treatment(s)</h2>
       <div class="treatments">
         <?php foreach ($treatments as $treatment)
         {
@@ -37,83 +37,85 @@ OverviewCSSAsset::register($this);
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Date and Time</h2>
+      <h2 class="h6">Date and Time</h2>
       <div class="date-and-time">
         <p><?= $postParams['date'] ?> at <?= $postParams['time'] ?></p>
       </div>
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Personal Information</h2>
+      <h2 class="h6">Personal Information</h2>
       <div class="personal-information">
-        <p><span class="capitalize"><?= $postParams['salutation'] ?></span>&nbsp;<?= $postParams['lastName'] ?>&nbsp;<?= $postParams['firstName'] ?> born <?= $postParams['birthdate'] ?></p>
-        <p><?= $postParams['street'] ?></p>
-        <p><?= $postParams['city'] ?>&nbsp;<?= $postParams['zipCode'] ?></p>
-        <p><?= $postParams['email'] ?>&nbsp;<?= $postParams['telephone'] ?></p>
+        <p><span class="capitalize"><?= $postParams['client']['salutation'] ?></span>&nbsp;<?= $postParams['client']['lastName'] ?>&nbsp;<?= $postParams['client']['firstName'] ?> born <?= $postParams['client']['birthdate'] ?></p>
+        <p><?= $postParams['client']['street'] ?></p>
+        <p><?= $postParams['client']['city'] ?>&nbsp;<?= $postParams['client']['zipCode'] ?></p>
+        <p><?= $postParams['client']['email'] ?>&nbsp;<?= $postParams['client']['telephone'] ?></p>
       </div>
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Comment</h2>
-      <p><?= $postParams['comment'] ?></p>
+      <h2 class="h6">Comment</h2>
+      <p><?= $postParams['client']['comment'] ?></p>
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">New Patient?</h2>
-      <p><?= isset($postParams['newPatient']) ? 'Yes' : 'No' ?></p>
+      <h2 class="h6">New Patient?</h2>
+      <p><?= isset($postParams['client']['newPatient']) ? 'Yes' : 'No' ?></p>
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Reminder?</h2>
-      <p><?= isset($postParams['callback']) ? 'Yes' : 'No' ?></p>
+      <h2 class="h6">Reminder?</h2>
+      <p><?= isset($postParams['client']['callback']) ? 'Yes' : 'No' ?></p>
     </div>
 
     <div class="d-flex flex-row">
-      <h2 class="h4">Send confirmation E-Mail?</h2>
-      <p><?= isset($postParams['send_confirmation']) ? 'Yes' : 'No' ?></p>
+      <h2 class="h6">Send confirmation E-Mail?</h2>
+      <p><?= isset($postParams['client']['send_confirmation']) ? 'Yes' : 'No' ?></p>
     </div>
 
   </div>
 
   <hr>
 
-  <?= Html::hiddenInput('lastName', $postParams['lastName']) ?>
-  <?= Html::hiddenInput('firstName', $postParams['firstName']) ?>
-  <?= Html::hiddenInput('birthdate', $postParams['birthdate']) ?>
-  <?= Html::hiddenInput('street', $postParams['street']) ?>
-  <?= Html::hiddenInput('zipCode', $postParams['zipCode']) ?>
-  <?= Html::hiddenInput('city', $postParams['city']) ?>
-  <?= Html::hiddenInput('telephone', $postParams['telephone']) ?>
-  <?= Html::hiddenInput('email', $postParams['email']) ?>
+  <?= Html::hiddenInput('client[salutation]', $postParams['client']['salutation']) ?>
+  <?= Html::hiddenInput('client[lastName]', $postParams['client']['lastName']) ?>
+  <?= Html::hiddenInput('client[firstName]', $postParams['client']['firstName']) ?>
+  <?= Html::hiddenInput('client[birthdate]', $postParams['client']['birthdate']) ?>
+  <?= Html::hiddenInput('client[street]', $postParams['client']['street']) ?>
+  <?= Html::hiddenInput('client[zipCode]', $postParams['client']['zipCode']) ?>
+  <?= Html::hiddenInput('client[city]', $postParams['client']['city']) ?>
+  <?= Html::hiddenInput('client[telephone]', $postParams['client']['telephone']) ?>
+  <?= Html::hiddenInput('client[email]', $postParams['client']['email']) ?>
 
-  <?php if (isset($postParams['comment']))
+  <?php if (isset($postParams['client']['comment']))
   {
-    echo Html::hiddenInput('comment', $postParams['comment']);
+    echo Html::hiddenInput('client[comment]', $postParams['client']['comment']);
   } ?>
 
-  <?php if (isset($postParams['newPatient']))
+  <?php if (isset($postParams['client']['newPatient']))
   {
-    echo Html::hiddenInput('newPatient', $postParams['newPatient']);
+    echo Html::hiddenInput('client[newPatient]', $postParams['client']['newPatient']);
   } ?>
 
-  <?php if (isset($postParams['callback']))
+  <?php if (isset($postParams['client']['callback']))
   {
-    echo Html::hiddenInput('callback', $postParams['callback']);
+    echo Html::hiddenInput('client[callback]', $postParams['client']['callback']);
   } ?>
 
-  <?php if (isset($postParams['send_confirmation']))
+  <?php if (isset($postParams['client']['send_confirmation']))
   {
-    echo Html::hiddenInput('send_confirmation', $postParams['send_confirmation']);
+    echo Html::hiddenInput('client[send_confirmation]', $postParams['client']['send_confirmation']);
   } ?>
 
   <?= Html::hiddenInput('role', $postParams['role']) ?>
   <?php foreach ($postParams['treatments'] as $treatment)
   {
-    echo Html::hiddenInput('treatment[]', $treatment);
+    echo Html::hiddenInput('treatments[]', $treatment);
   } ?>
   <?= Html::hiddenInput('totalDuration', $postParams['totalDuration']) ?>
   <?= Html::hiddenInput('date', $postParams['date']) ?>
   <?= Html::hiddenInput('time', $postParams['time']) ?>
+  <?= Html::hiddenInput('view', 'overview') ?>
 
   <div class="buttons">
     <?= Html::submitButton('Back', [

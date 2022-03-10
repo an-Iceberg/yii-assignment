@@ -9,7 +9,6 @@ let datepicker = $('#date').datepicker({
   changeYear: true,
   firstDay: 1,
   beforeShowDay: function(date) {
-  // TODO: disable holidays
     let day = date.getDay();
 
     // Disables all Sundays

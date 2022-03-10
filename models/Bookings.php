@@ -11,7 +11,7 @@ use yii\helpers\VarDumper;
  * @property int $id
  * @property int|null $duration
  * @property int|null $role_id
- * @property int|null $treatment_id
+ * @property JSON|null $treatment_id
  * @property string|null $date
  * @property string|null $time
  * @property string|null $patient_salutation

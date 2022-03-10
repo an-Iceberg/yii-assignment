@@ -5,6 +5,7 @@
  * @var int $role
  * @var array $treatments
  * @var array $selectedTreatments
+ * @var bool $error
  */
 
 use app\assets\NextAndBackButtonsAsset;
@@ -50,6 +51,10 @@ NextAndBackButtonsAsset::register($this);
       &nbsp;<?= $treatment['treatment_name'] ?>
     </label>
 
+  <?php } ?>
+
+  <?php if (isset($error)) { ?>
+    <div class="alert alert-danger" role="alert">Please select a treatment from the list above.</div>
   <?php } ?>
 
   <hr>

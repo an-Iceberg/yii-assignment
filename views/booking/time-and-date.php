@@ -5,6 +5,12 @@
  * @var int $role
  * @var array $treatments
  * @var int $totalDuration
+ * @var array $holidays
+ * @var int $error => [
+ *   2 -> no date nor time
+ *   1 -> no date
+ *   0 -> no time
+ * ]
  */
 
 use app\assets\DatepickerAsset;
@@ -47,6 +53,18 @@ NextAndBackButtonsAsset::register($this);
     <div class="square-container"><div class="square open-days"></div><span>Open Days</span></div>
     <div class="square-container"><div class="square today"></div><span>Today</span></div>
   </div>
+
+  <?php if (isset($error)) { ?>
+    <?php if ($error == 2) { ?>
+      <div class="alert alert-danger" role="alert">Please select a date and time.</div>
+    <?php }
+    elseif ($error == 1) { ?>
+      <div class="alert alert-danger" role="alert">Please select a date.</div>
+    <?php }
+    elseif ($error == 0) { ?>
+      <div class="alert alert-danger" role="alert">Please select a time.</div>
+    <?php } ?>
+  <?php } ?>
 
   <hr>
 

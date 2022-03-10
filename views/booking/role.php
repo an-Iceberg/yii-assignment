@@ -1,9 +1,12 @@
 <?php
 
+// TODO GLOBAL: add aria-labels everywhere
+
 /**
  * This view expects:
  * @var array $roles
  * @var int $selectedRole
+ * @var bool $error
  */
 
 use app\assets\NextAndBackButtonsAsset;
@@ -44,6 +47,10 @@ NextAndBackButtonsAsset::register($this);
       &nbsp;<?= $role['role_name'] ?>
     </label>
 
+  <?php } ?>
+
+  <?php if (isset($error)) { ?>
+    <div class="alert alert-danger" role="alert">Please select a role from the list above.</div>
   <?php } ?>
 
   <hr>

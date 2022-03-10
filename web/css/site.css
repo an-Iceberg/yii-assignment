@@ -243,3 +243,7 @@ div.buttons > button {
 input {
   border-radius: 5px;
 }
+
+main {
+  min-height: 100vh;
+}
