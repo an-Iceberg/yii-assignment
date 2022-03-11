@@ -25,8 +25,7 @@ BackendCSSAsset::register($this);
 <?php // The navigation bar on the left side ?>
 <div class="backend-nav">
   <ul>
-    <?php // Applying conditional formatting to the selected nav element
-    // TODO: find a better solution, this is very janky ?>
+    <?php // Applying conditional formatting to the selected nav element ?>
     <a class="backend-nav-link" href="/backend/bookings">
       <li class="<?= $this->params['currentPage'] == 'bookings' ? 'selected-nav' : '' ?>">
         Bookings

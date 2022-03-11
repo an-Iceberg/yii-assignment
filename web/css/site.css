@@ -223,16 +223,8 @@ div.buttons > button {
   position: relative;
 }
 
-.btn-outline-primary,
-.btn-outline-secondary {
-  border-left-style: double;
-  border-right-style: double;
-  border-left-width: 4px;
-  border-right-width: 4px;
-}
-
 :root {
-  accent-color: rgb(100, 0, 200);
+  accent-color: #7000ff;
   --border-radius: 5px;
   --border-colour-date: #007bff;
   --background-colour: #e2e9ef;

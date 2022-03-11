@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=calendar_db',
+    'dsn' => 'mysql:host=127.0.0.1;dbname=calendar_db',
     'username' => 'root',
     'password' => '',
     'charset' => 'utf8',

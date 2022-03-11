@@ -31,10 +31,11 @@ function createUrl($viewName, $model)
   ]) ?>
 </div>
 
-<?= // TODO: filtering
+<?=
   GridView::widget
   (
     [
+      // TODO: add ability to filter columns
       'dataProvider' => $dataProvider,
       'layout' => '{items}{pager}{summary}',
       'columns' =>

@@ -40,3 +40,33 @@
   border-color: #286090;
   background: #286090;
 }
+
+.working-hours {
+  padding-top: 1.1rem;
+  padding-bottom: .5rem;
+  padding-right: .5rem;
+}
+
+.working-hours .capitalize {
+  border-radius: 5px;
+  border: 1px solid #e2e9ef;
+  margin-bottom: 20px;
+  padding-left: .5rem;
+  padding-right: .5rem;
+  width: max-content;
+  position: relative;
+}
+
+.working-hours .capitalize:last-child {
+  margin-bottom: 0;
+}
+
+.working-hours .capitalize > span {
+  position: absolute;
+  border: 1px solid #e2e9ef;
+  background: #fff;
+  width: max-content;
+  border-radius: 5px;
+  padding-right: 6px;
+  top: -10px;
+}

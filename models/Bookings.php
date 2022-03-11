@@ -45,7 +45,6 @@ class Bookings extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      // TODO: treatment_id needs custom input validation (JSON)
       [['duration', 'role_id', 'patient_zipCode', 'status'], 'integer'],
       [['date', 'time', 'patient_birthdate'], 'safe'],
       [['patient_comment'], 'string'],
@@ -55,6 +54,7 @@ class Bookings extends \yii\db\ActiveRecord
       [['patient_phoneNumber'], 'string', 'max' => 20],
       [['patient_email'], 'string', 'max' => 254],
 
+      // TODO: treatment_id needs custom input validation (JSON)
       // Input validation with regex
       [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],
       [['time'], 'match', 'pattern' => '/\d{2}:\d{2}:00/'],

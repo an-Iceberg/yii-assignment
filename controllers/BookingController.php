@@ -29,10 +29,9 @@ class BookingController extends Controller
       $postParams = Yii::$app->request->post();
 
       // TODO: Database migrations
-      // TODO: handle empty/no input with appropriate error messages
       // TODO: just pass in the $postParams everywhere, it's gonna be much easier to deal with
-      // Rendering the next view depending on which view the user has been on previously
       // TODO OPTIONAL: account for unset $postParams['view']
+      // Rendering the next view depending on which view the user has been on previously
       switch ($postParams['view'])
       {
         case 'role':
@@ -184,7 +183,7 @@ class BookingController extends Controller
                 $field = false;
                 $someInputIsInvalid = true;
               }
-              // TODO: valide input using model as well
+              // TODO: valide input using model as well (maybe do this using JS?)
             }
             unset($field);
 

@@ -58,9 +58,7 @@ $this->params['currentPage'] = 'bookings';
 <?php // Booking data ?>
 <div class="grid-container">
   <label class="input-label"><span>Duration (min)</span>
-    <?= $this->render('partials/duration-select', [
-      'model' => $booking
-    ]) ?>
+    <input type="number" value="<?= $booking->duration ?>" name="duration">
   </label>
 
   <?php // TODO: whenever the user selects a new date, update the times with Ajax ?>

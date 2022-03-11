@@ -2,9 +2,18 @@ table {
   background: #fff;
 }
 
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+  padding-right: 5px;
+  border-radius: 0;
+}
+
 .pagination > li {
   border: 1px solid #dee2e6;
   margin-left: -1px;
+  background: #fff;
 }
 
 .pagination > li > a,
@@ -22,17 +31,12 @@ table {
   border-bottom-right-radius: 5px;
 }
 
-.action-icon {
-  font-size: 30px;
+.summary {
+  color: #fff;
 }
 
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 5px;
-  padding-right: 5px;
-  border-top: 3px solid lightgray;
-  border-radius: 0;
+.action-icon {
+  font-size: 30px;
 }
 
 .create-new-button {

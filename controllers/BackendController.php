@@ -1,5 +1,4 @@
 <?php
-// TODO: duration select: make sure that only multiples of the duration can be selected
 
 namespace app\controllers;
 

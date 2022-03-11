@@ -75,9 +75,7 @@ $this->params['currentPage'] = 'roles';
   <div class="break"></div>
 
   <label class="input-label"><span>Duration (min)</span>
-    <?= $this->render('partials/duration-select', [
-      'model' => $role
-    ]) ?>
+    <input type="number" value="<?= $role->duration ?>" name="duration">
   </label>
 
   <div class="input-label"><span>Treatments</span>
