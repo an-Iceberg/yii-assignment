@@ -3,8 +3,11 @@
 namespace app\controllers;
 
 use app\models\Bookings;
+use app\models\BookingsSearch;
 use app\models\Holidays;
+use app\models\HolidaysSearch;
 use app\models\Roles;
+use app\models\RolesSearch;
 use app\models\Treatments;
 use app\models\WhoHasHolidays;
 use app\models\WorkTimes;
@@ -12,29 +15,75 @@ use Yii;
 use yii\base\Controller;
 use yii\data\ActiveDataProvider;
 use yii\db\Query;
+use yii\filters\AccessControl;
 use yii\helpers\VarDumper;
 
 class BackendController extends Controller
 {
   public $layout = 'backend_layout';
 
-  // This is the login page for the backend
+  /** {@inheritDoc} */
+  public function behaviors()
+  {
+    return [
+      'access' => [
+        'class' => AccessControl::class,
+        'only' => [
+          'index',
+          'bookings',
+          'edit-bookings',
+          'delete-booking',
+          'calendar',
+          'roles',
+          'edit-role',
+          'delete-role',
+          'holidays',
+          'edit-holiday',
+          'delete-holiday'
+        ],
+        'rules' => [
+          [
+            // Unauthorized users are redirected to the login page
+            'allow' => true,
+            'actions' => ['index'],
+            'roles' => ['?']
+          ],
+          [
+            'allow' => true,
+            'actions' => [
+              'bookings',
+              'edit-bookings',
+              'delete-booking',
+              'calendar',
+              'roles',
+              'edit-role',
+              'delete-role',
+              'holidays',
+              'edit-holiday',
+              'delete-holiday'
+            ],
+            'roles' => ['@']
+          ]
+        ]
+      ]
+    ];
+  }
+
+  /** This is the login page for the backend */
   public function actionIndex()
   {
     $this->layout = '@app/views/layouts/main.php';
 
-    // User is trying to log in
-    if (Yii::$app->request->method == 'POST')
+    // If a user is already logged in, redirect to the bookings page
+    if (!Yii::$app->user->isGuest)
     {
-      return $this->render('index', [
-        'data' => Yii::$app->request->bodyParams
-      ]);
+      return Yii::$app->getResponse()->redirect('/backend/bookings');
     }
 
     return $this->render('index');
   }
 
-  // Displays all bookings present in the DB
+  /** Displays all bookings present in the DB */
   public function actionBookings()
   {
     $getParams = Yii::$app->request->get();
@@ -42,26 +91,16 @@ class BackendController extends Controller
     // Decrementing page by one since the dataprovider has 0-based index
     (isset($getParams['page'])) ? $getParams['page'] -= 1 : '';
 
-    $query = Bookings::find()
-    ->select(['role_name', 'role_id', 'bookings.id', 'patient_salutation', 'patient_lastName', 'date', 'time', 'bookings.status'])
-    ->innerJoinWith('role');
-
-    $dataProvider = new ActiveDataProvider([
-      'query' => $query,
-      'pagination' =>
-      [
-        'totalCount' => Bookings::find()->count(),
-        'pageSize' => 10,
-        'page' => $getParams['page'] ?? 0
-      ]
-    ]);
+    $searchModel = new BookingsSearch();
+    $dataProvider = $searchModel->search($getParams);
 
     return $this->render('bookings', [
-      'dataProvider' => $dataProvider
+      'dataProvider' => $dataProvider,
+      'searchModel' => $searchModel
     ]);
   }
 
-  // Displays the data of the selected booking
+  /** Displays the data of the selected booking */
   public function actionEditBooking()
   {
     if (Yii::$app->request->method == 'GET')
@@ -180,7 +219,7 @@ class BackendController extends Controller
     }
   }
 
-  // Deleting an existing booking
+  /** Deleting an existing booking */
   public function actionDeleteBooking()
   {
     $getParams = Yii::$app->request->post();
@@ -194,7 +233,7 @@ class BackendController extends Controller
     return Yii::$app->getResponse()->redirect('/backend/bookings');
   }
 
-  // Target for Ajax call for the selection of treatments
+  /** Target for Ajax call for the selection of treatments */
   public function actionGetTreatments()
   {
     // Data being sent in format ['role' => '<role_id>']
@@ -218,13 +257,13 @@ class BackendController extends Controller
     return $HTMLsnippet;
   }
 
-  // The Calendar to be displayed
+  /** The Calendar to be displayed */
   public function actionCalendar()
   {
     return $this->render('calendar');
   }
 
-  // Displays all created roles
+  /** Displays all created roles */
   public function actionRoles()
   {
     $getParams = Yii::$app->request->get();
@@ -235,22 +274,17 @@ class BackendController extends Controller
       $getParams['page'] -= 1;
     }
 
-    $dataProvider = new ActiveDataProvider([
-      'query' => Roles::find()->select(['id', 'role_name', 'email', 'status', 'sort_order']),
-      'pagination' => [
-        'totalCount' => Roles::find()->count(),
-        'pageSize' => 10,
-        'page' => $getParams['page'] ?? 0
-      ]
-    ]);
+    $searchModel = new RolesSearch();
+    $dataProvider = $searchModel->search($getParams);
 
     return $this->render('roles', [
-      'dataProvider' => $dataProvider
+      'dataProvider' => $dataProvider,
+      'searchModel' => $searchModel
     ]);
   }
 
-  // TODO: refactor and clean this mess up! C'est un sacré bordel
-  // Displays the data of the selected role
+  // TODO: refactor and clean this mess up
+  /** Displays the data of the selected role */
   public function actionEditRole()
   {
     // Viewing the role
@@ -559,7 +593,7 @@ class BackendController extends Controller
     return Yii::$app->getResponse()->redirect('/backend/roles');
   }
 
-  // Deletes the specified role from the DB
+  /** Deletes the specified role from the DB */
   public function actionDeleteRole()
   {
     // Extracting the id of the role
@@ -613,21 +647,16 @@ class BackendController extends Controller
       $getParams['page'] -= 1;
     }
 
-    $dataProvider = new ActiveDataProvider([
-      'query' => Holidays::find()->select(['id', 'holiday_name', 'date']),
-      'pagination' => [
-        'totalCount' => Holidays::find()->count(),
-        'pageSize' => 10,
-        'page' => $getParams['page'] ?? 0
-      ]
-    ]);
+    $searchModel = new HolidaysSearch();
+    $dataProvider = $searchModel->search($getParams);
 
     return $this->render('holidays', [
-      'dataProvider' => $dataProvider
+      'dataProvider' => $dataProvider,
+      'searchModel' => $searchModel
     ]);
   }
 
-  // Displays the data of the selected holiday
+  /** Displays the data of the selected holiday */
   public function actionEditHoliday()
   {
     // Viewing the holiday
@@ -707,7 +736,7 @@ class BackendController extends Controller
     return Yii::$app->getResponse()->redirect('/backend/holidays');
   }
 
-  // Deletes the specified holiday from the DB
+  /** Deletes the specified holiday from the DB */
   public function actionDeleteHoliday()
   {
     $getParams = Yii::$app->request->post();

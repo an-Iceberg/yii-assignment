@@ -29,7 +29,8 @@ div.buttons > .form-back-btn::before {
   opacity: 0;
   transition: transform .9s, opacity .3s;
 }
-div.buttons > .form-back-btn:hover::before {
+div.buttons > .form-back-btn:hover::before,
+div.buttons > .form-back-btn:focus::before {
   transition: transform .3s, opacity .3s;
   transform: translateX(-42px) scaleX(1.5) rotateY(-180deg);
   opacity: 1;
@@ -46,7 +47,8 @@ div.buttons > .form-back-btn::after {
   opacity: 0;
   transition: transform .9s, opacity .3s;
 }
-div.buttons > .form-back-btn:hover::after {
+div.buttons > .form-back-btn:hover::after,
+div.buttons > .form-back-btn:focus::after {
   transition: transform .3s, opacity .3s;
   transform: translateX(-72px) scaleX(1.5) rotateY(-180deg);
   opacity: 1;
@@ -64,7 +66,8 @@ div.buttons > .form-next-btn::before {
   opacity: 0;
   transition: transform .9s, opacity .3s;
 }
-div.buttons > .form-next-btn:hover::before {
+div.buttons > .form-next-btn:hover::before,
+div.buttons > .form-next-btn:focus::before {
   transition: transform .3s, opacity .3s;
   transform: translateX(42px) scaleX(1.5) rotateY(-180deg);
   opacity: 1;
@@ -81,7 +84,8 @@ div.buttons > .form-next-btn::after {
   opacity: 0;
   transition: transform .9s, opacity .3s;
 }
-div.buttons > .form-next-btn:hover::after {
+div.buttons > .form-next-btn:hover::after,
+div.buttons > .form-next-btn:focus::after {
   transition: transform .3s, opacity .3s;
   transform: translateX(72px) scaleX(1.5) rotateY(-180deg);
   opacity: 1;

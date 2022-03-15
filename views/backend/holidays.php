@@ -1,7 +1,9 @@
 <?php
 
 /**
- * @var dataProvider
+ * This view expects:
+ * @var array $dataProvider
+ * @var array $searchModel
  */
 
 use app\assets\BackendGridviewCSSAsset;
@@ -37,11 +39,12 @@ function createUrl($viewName, $model)
   ]) ?>
 </div>
 
-<?= // TODO: filtering
+<?=
   GridView::widget
   (
     [
       'dataProvider' => $dataProvider,
+      'filterModel' => $searchModel,
       'layout' => '{items}{pager}{summary}',
       'columns' =>
       [

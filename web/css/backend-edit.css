@@ -53,7 +53,8 @@
   transition: all .3s;
 }
 
-.top-row .back-button:hover {
+.top-row .back-button:hover,
+.top-row .back-button:focus {
   background: cyan;
   color: #2a004a ;
   transition: all .3s;
@@ -83,7 +84,8 @@
   transition: all .3s;
 }
 
-.top-row .delete-button:hover {
+.top-row .delete-button:hover,
+.top-row .delete-button:focus {
   background: #f72119;
   color: #2a004a ;
   transition: all .3s;
@@ -104,7 +106,8 @@
   transition: all .3s;
 }
 
-.save-button:hover {
+.save-button:hover,
+.save-button:focus {
   background: #ffb81c;
   color: #2a004a ;
   transition: all .3s;

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * This view expects:
+ * @var array $dataProvider
+ * @var array $searchModel
+ */
+
 use app\assets\BackendGridviewCSSAsset;
 use app\assets\BookingsAsset;
 use app\modules\backend\models\Booking;
@@ -31,17 +37,17 @@ function createUrl($viewName, $model)
   ]) ?>
 </div>
 
-<?=
+<?= // TODO: proper filtering input of 'Status' using dropdown menu (and maybe date as well)
   GridView::widget
   (
     [
-      // TODO: add ability to filter columns
       'dataProvider' => $dataProvider,
+      'filterModel' => $searchModel,
       'layout' => '{items}{pager}{summary}',
       'columns' =>
       [
         [
-          // TODO: make this column sortable
+          // TODO OPTIONAL: make this column sortable (is explained in the Yii documentation)
           'label' => 'Role',
           'attribute' => 'roles.role_name',
           'enableSorting' => true,

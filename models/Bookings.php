@@ -55,7 +55,6 @@ class Bookings extends \yii\db\ActiveRecord
       [['patient_email'], 'string', 'max' => 254],
 
       // TODO: treatment_id needs custom input validation (JSON)
-      // Input validation with regex
       [['date'], 'match', 'pattern' => '/\d{4}-\d{2}-\d{2}/'],
       [['time'], 'match', 'pattern' => '/\d{2}:\d{2}:00/'],
       [['patient_firstName', 'patient_lastName'], 'match', 'pattern' => '/^[a-zA-Z\-\s]{1,50}$/'],

@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string|null $username
- * @property string|null $password
+ * @property string|null $hashed_password
  */
 class BackendUsers extends \yii\db\ActiveRecord
 {
@@ -28,7 +28,7 @@ class BackendUsers extends \yii\db\ActiveRecord
   {
     return [
       [['username'], 'string', 'max' => 50],
-      [['password'], 'string', 'max' => 255],
+      [['hashed_password'], 'string', 'max' => 255],
     ];
   }
 
@@ -40,7 +40,7 @@ class BackendUsers extends \yii\db\ActiveRecord
     return [
       'id' => 'User ID',
       'username' => 'Username',
-      'password' => 'Password',
+      'hashed_password' => 'Password',
     ];
   }
 }

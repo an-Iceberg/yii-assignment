@@ -1,8 +1,10 @@
-div.buttons > .form-next-btn:hover::after {
+div.buttons > .form-next-btn:hover::after,
+div.buttons > .form-next-btn:focus::after {
   transform: translateX(88px) scaleX(1.5) rotateY(-180deg) !important;
 }
 
-div.buttons > .form-next-btn:hover::before {
+div.buttons > .form-next-btn:hover::before,
+div.buttons > .form-next-btn:focus::before {
   transform: translateX(58px) scaleX(1.5) rotateY(-180deg) !important;
 }
 

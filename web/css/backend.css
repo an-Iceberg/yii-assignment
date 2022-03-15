@@ -41,7 +41,8 @@
   transition: all .3s;
 }
 
-.backend-nav-link li:hover {
+.backend-nav-link li:hover,
+.backend-nav-link li:focus {
   background: magenta;
   color: #2a004a;
   transition: all .3s;

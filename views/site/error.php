@@ -1,27 +1,26 @@
 <?php
 
-/** @var yii\web\View $this */
-/** @var string $name */
-/** @var string $message */
-/** @var Exception$exception */
+/**
+ * @var yii\web\View $this
+ * @var string $name
+ * @var string $message
+ * @var Exception $exception
+ */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = $name;
+
 ?>
 <div class="site-error">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+  <h1><?= Html::encode($this->title) ?></h1>
+  <p><?= nl2br(Html::encode($message)) ?></p>
 
-    <div class="alert alert-danger">
-        <?= nl2br(Html::encode($message)) ?>
-    </div>
+  <br><hr><br>
 
-    <p>
-        The above error occurred while the Web server was processing your request.
-    </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
-    </p>
+  <p>Why don't you enjoy a cup of calming jasmin tea.</p>
+  <img src="<?= Url::to('@web/css/images/uncle_iroh.jpg') ?>" alt="Uncle Iroh">
 
 </div>

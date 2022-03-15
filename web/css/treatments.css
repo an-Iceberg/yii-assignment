@@ -21,7 +21,8 @@
   margin-right: auto;
 }
 
-.treatment-delete-button:hover {
+.treatment-delete-button:hover,
+.treatment-delete-button:focus {
   background: #c9302c !important;
   border-color: #c9302c !important;
 }
@@ -36,7 +37,8 @@
   margin-bottom: .5rem;
 }
 
-.create-treatment:hover {
+.create-treatment:hover,
+.create-treatment:focus {
   border-color: #286090;
   background: #286090;
 }

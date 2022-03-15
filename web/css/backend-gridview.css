@@ -54,7 +54,8 @@ table {
   transition: all .3s;
 }
 
-.create-new-button:hover {
+.create-new-button:hover,
+.create-new-button:focus {
   background: #39ff14;
   color: #2a004a ;
   transition: all .3s;
@@ -72,7 +73,8 @@ table {
   display: inline;
 }
 
-.delete-form-icon:hover {
+.delete-form-icon:hover,
+.delete-form-icon:focus {
   background: #c9302c;
   border-color: #c9302c;
 }

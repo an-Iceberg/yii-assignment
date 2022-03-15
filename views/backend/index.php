@@ -8,6 +8,8 @@ use yii\widgets\ActiveForm;
 
 $login = new BackendUsers();
 
+$this->title = 'Backend Login';
+
 BackendIndexCSSAsset::register($this);
 ?>
 
@@ -30,17 +32,8 @@ BackendIndexCSSAsset::register($this);
 
   <div class="form-group">
     <?= Html::submitButton('Login', [
-      'class' => 'btn btn-primary'
+      'class' => 'btn btn-outline-primary'
     ]) ?>
   </div>
 
 <?php ActiveForm::end(); ?>
-
-<pre>
-  <?php
-    if (isset($data))
-    {
-      echo VarDumper::dump($data, 10, true);
-    }
-  ?>
-</pre>
