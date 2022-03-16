@@ -72,6 +72,13 @@ class BackendController extends Controller
   /** This is the login page for the backend */
   public function actionIndex()
   {
+    if (Yii::$app->request->method == 'POST')
+    {
+      VarDumper::dump(Yii::$app->request->post(), 10, true);
+
+      $postParams = Yii::$app->request->post();
+    }
+
     $this->layout = '@app/views/layouts/main.php';
 
     // If a user is already logged in, redirect to the bookings page

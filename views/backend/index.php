@@ -17,17 +17,17 @@ BackendIndexCSSAsset::register($this);
 
 <?php $form = ActiveForm::begin([
   'method' => 'POST',
-  'action' => '/backend/backend/index'
+  'action' => '/backend/index'
 ]); ?>
 
   <div class="form-group backend-login">
     <label for="username">Name</label>
-      <input style="padding: 4px !important;" type="text" name="backend-login[username]" id="username" class="form-control" required>
+    <input style="padding: 4px !important;" type="text" name="backend-login[username]" id="username" class="form-control" required>
   </div>
 
   <div class="form-group backend-login">
     <label for="password">Password</label>
-      <input type="password" name="backend-login[password]" id="password" class="form-control" required>
+    <input type="password" name="backend-login[password]" id="password" class="form-control" required>
   </div>
 
   <div class="form-group">
