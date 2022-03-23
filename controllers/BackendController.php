@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\BackendUsers;
 use app\models\Bookings;
 use app\models\BookingsSearch;
 use app\models\Holidays;
@@ -31,7 +32,7 @@ class BackendController extends Controller
         'only' => [
           'index',
           'bookings',
-          'edit-bookings',
+          'edit-booking',
           'delete-booking',
           'calendar',
           'roles',
@@ -51,8 +52,9 @@ class BackendController extends Controller
           [
             'allow' => true,
             'actions' => [
+              'index',
               'bookings',
-              'edit-bookings',
+              'edit-booking',
               'delete-booking',
               'calendar',
               'roles',
@@ -72,22 +74,45 @@ class BackendController extends Controller
   /** This is the login page for the backend */
   public function actionIndex()
   {
+    $errorMessage = null;
+
     if (Yii::$app->request->method == 'POST')
     {
-      VarDumper::dump(Yii::$app->request->post(), 10, true);
-
       $postParams = Yii::$app->request->post();
+
+      // User is trying to log in
+      if ($postParams['button'] == 'login')
+      {
+        $identity = BackendUsers::findOne(['username' => $postParams['login']['username']]);
+
+        if ($identity != null)
+        {
+          // TODO: password verification
+          Yii::$app->user->login($identity);
+
+          return Yii::$app->getResponse()->redirect('/backend/bookings');
+        }
+        else
+        {
+          $errorMessage = 'The user you are trying to log in as doesn\'t seem to exist.';
+        }
+      }
+      // User is trying to log out
+      elseif ($postParams['button'] == 'logout')
+      {
+        Yii::$app->user->logout();
+      }
+      else
+      {
+        $errorMessage = 'You are trying to perform an impossible action.';
+      }
     }
 
     $this->layout = '@app/views/layouts/main.php';
 
-    // If a user is already logged in, redirect to the bookings page
-    if (!Yii::$app->user->isGuest)
-    {
-      return Yii::$app->getResponse()->redirect('/backend/bookings');
-    }
-
-    return $this->render('index');
+    return $this->render('index', [
+      'errorMessage' => $errorMessage
+    ]);
   }
 
   /** Displays all bookings present in the DB */

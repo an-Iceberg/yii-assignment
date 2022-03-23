@@ -3,15 +3,17 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "backend_users".
  *
  * @property int $id
  * @property string|null $username
- * @property string|null $hashed_password
+ * @property string|null $password
+ * @property string|null $auth_key
  */
-class BackendUsers extends \yii\db\ActiveRecord
+class BackendUsers extends \yii\db\ActiveRecord implements IdentityInterface
 {
   /**
    * {@inheritdoc}
@@ -28,7 +30,7 @@ class BackendUsers extends \yii\db\ActiveRecord
   {
     return [
       [['username'], 'string', 'max' => 50],
-      [['hashed_password'], 'string', 'max' => 255],
+      [['password', 'auth_key'], 'string', 'max' => 255],
     ];
   }
 
@@ -38,9 +40,49 @@ class BackendUsers extends \yii\db\ActiveRecord
   public function attributeLabels()
   {
     return [
-      'id' => 'User ID',
+      'id' => 'ID',
       'username' => 'Username',
-      'hashed_password' => 'Password',
+      'password' => 'Password',
+      'auth_key' => 'Auth Key',
     ];
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function findIdentity($id)
+  {
+    return static::findOne($id);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function findIdentityByAccessToken($token, $type = null)
+  {
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getAuthKey()
+  {
+    return $this->auth_key;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function validateAuthKey($authKey)
+  {
+    return $this->getAuthKey() === $authKey;
   }
 }

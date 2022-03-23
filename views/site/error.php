@@ -21,6 +21,6 @@ $this->title = $name;
   <br><hr><br>
 
   <p>Why don't you enjoy a cup of calming jasmin tea.</p>
-  <img src="<?= Url::to('@web/css/images/uncle_iroh.jpg') ?>" alt="Uncle Iroh">
+  <img src="<?= Url::to('@web/css/images/uncle_iroh.jpg') ?>" alt="Uncle Iroh" style="max-width: 347px;">
 
 </div>
