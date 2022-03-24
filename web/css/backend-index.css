@@ -1,3 +1,44 @@
 .backend-login {
   max-width: 350px;
 }
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("images/skyline.png"), linear-gradient(to top, coral 0%, #2a004a 50%);
+  background-repeat: repeat-x;
+  background-size: 750px;
+  background-position: bottom;
+}
+
+.container {
+  width: max-content;
+  background: transparent;
+  color: #fff;
+  padding: 20px !important;
+  border-width: 5px;
+  border-style: solid;
+  /* TODO: account for different header text content */
+  border-image: conic-gradient(from 180deg at 50% 50%, transparent 15%, red, darkviolet, blue, transparent 85%) 1;
+  border-radius: 5px;
+  position: relative;
+  z-index: 2;
+}
+
+/* .gradient-border {
+  position: absolute;
+  border-radius: 5px;
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  background-image: conic-gradient(red, orange, green, yellow, blue, red);
+  z-index: -1;
+} */
+
+br {
+  display: none;
+}

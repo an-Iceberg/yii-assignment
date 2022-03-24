@@ -85,4 +85,16 @@ class BackendUsers extends \yii\db\ActiveRecord implements IdentityInterface
   {
     return $this->getAuthKey() === $authKey;
   }
+
+  /**
+   * Validates the password
+   *
+   * @param string $password Password given by the user.
+   * @return void If the password provided is valid for the current user.
+   */
+  public function validatePassword($password)
+  {
+    // TODO: password hashing
+    return $this->password === $password;
+  }
 }

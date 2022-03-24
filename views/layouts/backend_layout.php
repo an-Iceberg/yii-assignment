@@ -5,6 +5,7 @@ use app\assets\BackendCSSAsset;
 use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
+use yii\widgets\ActiveForm;
 
 AppAsset::register($this);
 BackendCSSAsset::register($this);
@@ -26,27 +27,46 @@ BackendCSSAsset::register($this);
 <div class="backend-nav">
   <ul>
     <?php // Applying conditional formatting to the selected nav element ?>
-    <a class="backend-nav-link" href="/backend/bookings">
-      <li class="<?= $this->params['currentPage'] == 'bookings' ? 'selected-nav' : '' ?>">
-        Bookings
-      </li>
-    </a>
-    <a class="backend-nav-link" href="/backend/calendar">
-      <li class="<?= $this->params['currentPage'] == 'calendar' ? 'selected-nav' : '' ?>">
-        Calendar
-      </li>
-    </a>
-    <a class="backend-nav-link" href="/backend/roles">
-      <li class="<?= $this->params['currentPage'] == 'roles' ? 'selected-nav' : '' ?>">
-        Roles
-      </li>
-    </a>
-    <a class="backend-nav-link" href="/backend/holidays">
-      <li class="<?= $this->params['currentPage'] == 'holidays' ? 'selected-nav' : '' ?>">
-        Holidays
-      </li>
-    </a>
+    <li>
+      <a href="/backend/bookings">
+        <div class="backend-nav-link <?= $this->params['currentPage'] == 'bookings' ? 'selected-nav' : '' ?>">Bookings</div>
+      </a>
+    </li>
+    <li>
+      <a href="/backend/calendar">
+        <div class="backend-nav-link <?= $this->params['currentPage'] == 'calendar' ? 'selected-nav' : '' ?>">Calendar</div>
+      </a>
+    </li>
+    <li>
+      <a href="/backend/roles">
+        <div class="backend-nav-link <?= $this->params['currentPage'] == 'roles' ? 'selected-nav' : '' ?>">Roles</div>
+      </a>
+    </li>
+    <li>
+      <a href="/backend/holidays">
+        <div class="backend-nav-link <?= $this->params['currentPage'] == 'holidays' ? 'selected-nav' : '' ?>">Holidays</div>
+      </a>
+    </li>
+
+    <li class="spacer"></li>
+
+    <li class="logout-button-container">
+      <?php $form = ActiveForm::begin([
+        'method' => 'POST',
+        'action' => '/backend/index'
+      ]); ?>
+
+      <?= Html::submitButton('<i class="nf nf-mdi-logout logout-icon"></i> Logout', [
+        'class' => 'logout-button',
+        'name' => 'button',
+        'value' => 'logout'
+      ]) ?>
+
+      <?php ActiveForm::end(); ?>
+    </li>
+
   </ul>
+
 </div>
 
 <main role="main" class="main backend-main flex-shrink-0">

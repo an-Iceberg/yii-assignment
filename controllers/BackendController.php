@@ -75,23 +75,40 @@ class BackendController extends Controller
   public function actionIndex()
   {
     $errorMessage = null;
+    $username = null;
 
     if (Yii::$app->request->method == 'POST')
     {
       $postParams = Yii::$app->request->post();
+
+      // If the user has already filled in a username it gets put again so they don't have to type it again
+      if (isset($postParams['login']['username']))
+      {
+        $username = $postParams['login']['username'];
+      }
 
       // User is trying to log in
       if ($postParams['button'] == 'login')
       {
         $identity = BackendUsers::findOne(['username' => $postParams['login']['username']]);
 
+        // The user exists in the DB
         if ($identity != null)
         {
-          // TODO: password verification
-          Yii::$app->user->login($identity);
+          // Password is valid, user is logged in
+          if ($identity->validatePassword($postParams['login']['password']))
+          {
+            Yii::$app->user->login($identity);
 
-          return Yii::$app->getResponse()->redirect('/backend/bookings');
+            return Yii::$app->getResponse()->redirect('/backend/bookings');
+          }
+          // Wrong password
+          else
+          {
+            $errorMessage = 'The password is incorrect.';
+          }
         }
+        // User doesn't exist in the DB
         else
         {
           $errorMessage = 'The user you are trying to log in as doesn\'t seem to exist.';
@@ -111,7 +128,8 @@ class BackendController extends Controller
     $this->layout = '@app/views/layouts/main.php';
 
     return $this->render('index', [
-      'errorMessage' => $errorMessage
+      'errorMessage' => $errorMessage,
+      'username' => $username
     ]);
   }
 
